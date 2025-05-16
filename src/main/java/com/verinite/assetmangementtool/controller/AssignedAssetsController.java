@@ -90,23 +90,4 @@ public class AssignedAssetsController {
 		return assignedAssetsService.getAllAssetsAssignedToParticularEmployee(empId);
 	}
 
-	@GetMapping("/export/assigned-assets")
-	public ResponseEntity<byte[]> exportAssignedAssets() {
-		try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
-			// Generate Excel file content in memory
-			assignedAssetsService.exportAssignedAssetsToExcel(out);
-
-			// Set response headers for file download
-			HttpHeaders headers = new HttpHeaders();
-			headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-			headers.setContentDispositionFormData("attachment", "assigned_assets.xlsx");
-
-			return ResponseEntity.ok()
-					.headers(headers)
-					.body(out.toByteArray());
-		} catch (Exception e) {
-			return ResponseEntity.internalServerError()
-					.body(("Error generating Excel file: " + e.getMessage()).getBytes());
-		}
-	}
 }

@@ -1,12 +1,10 @@
 package com.verinite.assetmangementtool.controller;
 
-import java.io.ByteArrayOutputStream;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.validation.Valid;
-
+import com.verinite.assetmangementtool.dto.AssetsDto;
+import com.verinite.assetmangementtool.response.SaveAssetResponse;
+import com.verinite.assetmangementtool.service.AssetNameServiceImpl;
+import com.verinite.assetmangementtool.service.AssetService;
+import com.verinite.assetmangementtool.service.AssetServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -16,25 +14,12 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import com.verinite.assetmangementtool.dto.AssetsDto;
-import com.verinite.assetmangementtool.dto.AssignableAssetDto;
-import com.verinite.assetmangementtool.entity.AssetsEntity;
-import com.verinite.assetmangementtool.response.SaveAssetResponse;
-import com.verinite.assetmangementtool.service.AssetNameServiceImpl;
-import com.verinite.assetmangementtool.service.AssetService;
-import com.verinite.assetmangementtool.service.AssetServiceImpl;
+import java.io.ByteArrayOutputStream;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
@@ -42,97 +27,104 @@ import com.verinite.assetmangementtool.service.AssetServiceImpl;
 @RequestMapping("/assetManager/v1/")
 public class AssetsController implements ApplicationRunner {
 
-	AssetNameServiceImpl assetNameServiceImpl;
+    AssetNameServiceImpl assetNameServiceImpl;
 
-	@Autowired
-	AssetService assetService2;
+    @Autowired
+    AssetService assetService2;
+    @Autowired
+    AssetServiceImpl assetService;
 
-	public AssetsController(AssetNameServiceImpl assetNameServiceImpl) {
-		super();
-		this.assetNameServiceImpl = assetNameServiceImpl;
-	}
+    public AssetsController(AssetNameServiceImpl assetNameServiceImpl) {
+        super();
+        this.assetNameServiceImpl = assetNameServiceImpl;
+    }
 
-	@Autowired
-	AssetServiceImpl assetService;
-
-//	@GetMapping("/listOfAssets")
+    //	@GetMapping("/listOfAssets")
 //	public ResponseEntity<List<AssetsEntity>> getAllAssets() {
 //		List<AssetsEntity> assets = assetService.listOfAllAsset();
 //		return ResponseEntity.ok(assets); // Respond with the list of assets and HTTP 200 OK
 //	}
-	@GetMapping("/listOfAssets")
-	public ResponseEntity<List<AssetsDto>> getAllAssets() {
-		List<AssetsDto> assetsList = assetService.listOfAllAsset();
-		if (assetsList.isEmpty()) {
-			return ResponseEntity.noContent().build(); // Return 204 No Content if the list is empty
-		}
-		return ResponseEntity.ok(assetsList); // Return 200 OK with the asset list
-	}
+    @GetMapping("/listOfAssets")
+    public ResponseEntity<List<AssetsDto>> getAllAssets() {
+        List<AssetsDto> assetsList = assetService.listOfAllAsset();
+        if (assetsList.isEmpty()) {
+            return ResponseEntity.noContent().build(); // Return 204 No Content if the list is empty
+        }
+        return ResponseEntity.ok(assetsList); // Return 200 OK with the asset list
+    }
 
-	@PostMapping("asset/saveAsset")
-	public ResponseEntity<AssetsDto> saveAsset(@RequestBody AssetsDto assetDto) {
-		AssetsDto savedAsset = assetService.saveAsset(assetDto);
-		return new ResponseEntity<>(savedAsset, HttpStatus.CREATED);
-	}
+    @PostMapping("asset/saveAsset")
+    public ResponseEntity<AssetsDto> saveAsset(@RequestBody AssetsDto assetDto) {
+        AssetsDto savedAsset = assetService.saveAsset(assetDto);
+        return new ResponseEntity<>(savedAsset, HttpStatus.CREATED);
+    }
 
-	@GetMapping("asset/id/{serialNumber}")
-	public Object getById(@PathVariable String serialNumber) {
-		// LOGGER.debug("Hited getById endpoint");
-		return assetService.getAssetBySerialNumber(serialNumber);
-	}
+    @GetMapping("asset/id/{serialNumber}")
+    public Object getById(@PathVariable String serialNumber) {
+        // LOGGER.debug("Hited getById endpoint");
+        return assetService.getAssetBySerialNumber(serialNumber);
+    }
 
-	@PutMapping("asset/updateAsset/{serialNumber}")
-	public ResponseEntity<SaveAssetResponse> updateEmployee(@PathVariable String serialNumber,
-			@RequestBody SaveAssetResponse saveAssetResponse) {
+    @PutMapping("asset/updateAsset/{serialNumber}")
+    public ResponseEntity<SaveAssetResponse> updateEmployee(@PathVariable String serialNumber,
+                                                            @RequestBody SaveAssetResponse saveAssetResponse) {
 
-		saveAssetResponse.setSerialNumber(serialNumber);
+        saveAssetResponse.setSerialNumber(serialNumber);
 
-		SaveAssetResponse updateAsset = assetService.updateAsset(saveAssetResponse);
+        SaveAssetResponse updateAsset = assetService.updateAsset(saveAssetResponse);
 
-		return new ResponseEntity<>(updateAsset, HttpStatus.OK);
-	}
+        return new ResponseEntity<>(updateAsset, HttpStatus.OK);
+    }
 
-	@DeleteMapping("asset/delete/{id}")
-	public String delete(@PathVariable int id) {
-		assetService.deleteAsset(id);
-		return "Asset delete successfully. ";
-	}
+    @DeleteMapping("asset/delete/{id}")
+    public String delete(@PathVariable int id) {
+        assetService.deleteAsset(id);
+        return "Asset delete successfully. ";
+    }
 
-	@ResponseStatus(HttpStatus.BAD_REQUEST)
-	@ExceptionHandler(MethodArgumentNotValidException.class)
-	public Map<String, String> handleValidationExceptions(MethodArgumentNotValidException ex) {
-		Map<String, String> errors = new HashMap<>();
-		ex.getBindingResult().getAllErrors().forEach((error) -> {
-			String fieldName = ((FieldError) error).getField();
-			String errorMessage = error.getDefaultMessage();
-			errors.put(fieldName, errorMessage);
-		});
-		return errors;
-	}
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public Map<String, String> handleValidationExceptions(MethodArgumentNotValidException ex) {
+        Map<String, String> errors = new HashMap<>();
+        ex.getBindingResult().getAllErrors().forEach((error) -> {
+            String fieldName = ((FieldError) error).getField();
+            String errorMessage = error.getDefaultMessage();
+            errors.put(fieldName, errorMessage);
+        });
+        return errors;
+    }
 
-	@Override
-	public void run(ApplicationArguments args) throws Exception {
+    @Override
+    public void run(ApplicationArguments args) throws Exception {
 
-	}
-	@GetMapping("/export/assets")
-	public ResponseEntity<byte[]> exportAssets() {
-		try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
-			// Generate Excel file content in memory
-			assetService.exportAssetsToExcel(out);
+    }
 
-			// Set response headers for file download
-			HttpHeaders headers = new HttpHeaders();
-			headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-			headers.setContentDispositionFormData("attachment", "assets.xlsx");
+    @GetMapping("/export/assets/{exportType}")
+    public ResponseEntity<byte[]> exportAssets(
+            @PathVariable String exportType,
+            @RequestParam(required = false) String filter) {
+        try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
 
-			return ResponseEntity.ok()
-					.headers(headers)
-					.body(out.toByteArray());
-		} catch (Exception e) {
-			return ResponseEntity.internalServerError()
-					.body(("Error generating Excel file: " + e.getMessage()).getBytes());
-		}
-	}
+            String filename = filter != null ? filter + "_" : "";
+            assetService.exportAssetsToExcel(out, exportType, filter);
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+
+            headers.setContentDispositionFormData("attachment", filename + exportType + "_assets.xlsx");
+
+            return ResponseEntity.ok()
+                    .headers(headers)
+                    .body(out.toByteArray());
+        } catch (Exception e) {
+            System.err.println("Error generating Excel file: " + e.getMessage());
+            e.printStackTrace();
+
+            return ResponseEntity.internalServerError()
+                    .body(("Error generating Excel file: " + e.getMessage()).getBytes());
+        }
+    }
+
 //	@GetMapping("/getAllAssetType/{names}")
 //	public List<AssetsEntity> getByAssetType(@PathVariable String names) {
 //
@@ -141,7 +133,7 @@ public class AssetsController implements ApplicationRunner {
 //
 //	}
 
-	// working
+    // working
 //	@GetMapping("asset/get/by/status/{status}")
 //	public List<AssetsEntity> getThroughStatus(@PathVariable String status) {
 //		// LOGGER.debug("Hited getThroughState endPoint");

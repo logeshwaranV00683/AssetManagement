@@ -15,10 +15,7 @@ import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
 import com.verinite.assetmangementtool.entity.*;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -275,58 +272,12 @@ public class AssignedAssetsServiceImpl implements AssignedAssetsService {
 	}
 
 	public List<AssignedAssetsEntity> getAllAssetsAssignedToParticularEmployee(String empId) {
-		List<AssignedAssetsEntity> assetsEntities = assignedAssetsRepository.findByEmpId(empId);
-		return assetsEntities;
+        return assignedAssetsRepository.findByEmpId(empId);
 	}
 
 	@Override
 	public Object save(AssignableAssetDto assignableAssetDto) {
 		// TODO Auto-generated method stub
 		return null;
-	}
-	public void exportAssignedAssetsToExcel(OutputStream outputStream) throws Exception {
-		List<AssignedAssetsEntity> assignedAssets = assignedAssetsRepository.findAll();
-
-		// Create Excel workbook and sheet
-		Workbook workbook = new XSSFWorkbook();
-		Sheet sheet = workbook.createSheet("Assigned Assets");
-
-		// Create header row
-		Row headerRow = sheet.createRow(0);
-		String[] headers = {"Assigned Assets ID", "Asset ID", "Asset Name", "Serial Number", "Emp ID", "Status", "Type",
-				"Purchase Date", "Warranty Date", "Location", "Loc Code", "Model Name", "Operating System",
-				"Return Date", "Added By", "Assigned Date", "Assigned By"};
-		for (int i = 0; i < headers.length; i++) {
-			Cell cell = headerRow.createCell(i);
-			cell.setCellValue(headers[i]);
-		}
-
-		// Fill data rows
-		int rowNum = 1;
-		for (AssignedAssetsEntity asset : assignedAssets) {
-			Row row = sheet.createRow(rowNum++);
-			row.createCell(0).setCellValue(asset.getAssignedAssetsId());
-			row.createCell(1).setCellValue(asset.getAssetId() != null ? asset.getAssetId() : 0);
-			row.createCell(2).setCellValue(asset.getAssetName());
-			row.createCell(3).setCellValue(asset.getSerialNumber());
-			row.createCell(4).setCellValue(asset.getEmpId());
-			row.createCell(5).setCellValue(asset.getStatus());
-			row.createCell(6).setCellValue(asset.getType());
-			row.createCell(7).setCellValue(asset.getPurchaseDate());
-			row.createCell(8).setCellValue(asset.getWarrantyDate());
-			row.createCell(9).setCellValue(asset.getLocation());
-			row.createCell(10).setCellValue(asset.getLocCode());
-			row.createCell(11).setCellValue(asset.getModelName());
-			row.createCell(12).setCellValue(asset.getOperatingSystem());
-			row.createCell(13).setCellValue(asset.getReturnDate() != null ? asset.getReturnDate().toString() : "");
-			row.createCell(14).setCellValue(asset.getAddedBy());
-			row.createCell(15).setCellValue(asset.getAssignedDate() != null ? asset.getAssignedDate().toString() : "");
-			row.createCell(16).setCellValue(asset.getAssignedBy());
-
-		}
-
-		// Write to the output stream
-		workbook.write(outputStream);
-		workbook.close();
 	}
 }

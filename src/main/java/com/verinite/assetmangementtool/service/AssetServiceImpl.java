@@ -12,10 +12,16 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+
+import com.verinite.assetmangementtool.entity.*;
+import org.apache.logging.log4j.util.PropertySource.Comparator;
+import org.apache.poi.ss.usermodel.*;
+
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,10 +33,6 @@ import org.springframework.stereotype.Service;
 
 import com.verinite.assetmangementtool.dto.AssetCounterDto;
 import com.verinite.assetmangementtool.dto.AssetsDto;
-import com.verinite.assetmangementtool.entity.AssetsEntity;
-import com.verinite.assetmangementtool.entity.AssetsHistoryEntity;
-import com.verinite.assetmangementtool.entity.AssignedAssetsEntity;
-import com.verinite.assetmangementtool.entity.CountOfAssets;
 import com.verinite.assetmangementtool.repository.AssetCountRepository;
 import com.verinite.assetmangementtool.repository.AssetsHistoryRepository;
 import com.verinite.assetmangementtool.repository.AssetsRepository;
@@ -47,7 +49,9 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
 	@Autowired
 	AssetsRepository assetRepo;
 	@Autowired
-	AssetCountRepository assetCountRepository;;
+	AssetCountRepository assetCountRepository;
+	@Autowired
+	ScarpRepository scrapRepository;
 	@Autowired
 	AssetsHistoryRepository assetsHistoryRepository;
 	@Autowired
@@ -162,82 +166,82 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
 
 	private void updateCountOfAssets(CountOfAssets countOfAssets, String assetName) {
 		switch (assetName.toLowerCase()) {
-		case "laptop":
-			countOfAssets.setLaptopCount(countOfAssets.getLaptopCount() + 1);
-			countOfAssets.setUnAssignedLaptopCount(countOfAssets.getUnAssignedLaptopCount() + 1);
-			break;
-		case "mouse":
-			countOfAssets.setMouseCount(countOfAssets.getMouseCount() + 1);
-			countOfAssets.setUnAssignedMouseCount(countOfAssets.getUnAssignedMouseCount() + 1);
-			break;
-		case "laptopcharger":
-			countOfAssets.setLaptopChargerCount(countOfAssets.getLaptopChargerCount() + 1);
-			countOfAssets.setUnAssignedLaptopChargerCount(countOfAssets.getUnAssignedLaptopChargerCount() + 1);
-			break;
-		// Add cases for other asset types as needed
-		default:
-			// Handle unknown asset types
-			break;
+			case "laptop":
+				countOfAssets.setLaptopCount(countOfAssets.getLaptopCount() + 1);
+				countOfAssets.setUnAssignedLaptopCount(countOfAssets.getUnAssignedLaptopCount() + 1);
+				break;
+			case "mouse":
+				countOfAssets.setMouseCount(countOfAssets.getMouseCount() + 1);
+				countOfAssets.setUnAssignedMouseCount(countOfAssets.getUnAssignedMouseCount() + 1);
+				break;
+			case "laptopcharger":
+				countOfAssets.setLaptopChargerCount(countOfAssets.getLaptopChargerCount() + 1);
+				countOfAssets.setUnAssignedLaptopChargerCount(countOfAssets.getUnAssignedLaptopChargerCount() + 1);
+				break;
+			// Add cases for other asset types as needed
+			default:
+				// Handle unknown asset types
+				break;
 		}
 	}
 
 	private void updateAssetCount(CountOfAssets countOfAssets, String assetName) {
 		switch (assetName.toLowerCase()) {
-		case "laptop":
-			countOfAssets.setLaptopCount(countOfAssets.getLaptopCount() + 1);
-			countOfAssets.setUnAssignedLaptopCount(countOfAssets.getUnAssignedLaptopCount() + 1);
-			break;
-		case "mouse":
-			countOfAssets.setMouseCount(countOfAssets.getMouseCount() + 1);
-			countOfAssets.setUnAssignedMouseCount(countOfAssets.getUnAssignedMouseCount() + 1);
-			break;
-		case "laptopcharger":
-			countOfAssets.setLaptopChargerCount(countOfAssets.getLaptopChargerCount() + 1);
-			countOfAssets.setUnAssignedLaptopChargerCount(countOfAssets.getUnAssignedLaptopChargerCount() + 1);
-			break;
-		case "headphone":
-			countOfAssets.setHeadPhonesCount(countOfAssets.getHeadPhonesCount() + 1);
-			countOfAssets.setUnAssignedHeadphonesCount(countOfAssets.getUnAssignedHeadphonesCount() + 1);
-			break;
-		case "bag":
-			countOfAssets.setBagCount(countOfAssets.getBagCount() + 1);
-			countOfAssets.setUnAssignedBagCount(countOfAssets.getUnAssignedBagCount() + 1);
-			break;
-		case "datacard":
-			countOfAssets.setDataCardCount(countOfAssets.getDataCardCount() + 1);
-			countOfAssets.setUnAssignedDataCardCount(countOfAssets.getUnAssignedDataCardCount() + 1);
-			break;
-		case "mobile":
-			countOfAssets.setMobileCount(countOfAssets.getMobileCount() + 1);
-			countOfAssets.setUnAssignedMobileCount(countOfAssets.getUnAssignedMobileCount() + 1);
-			break;
-		case "camera":
-			countOfAssets.setCameraCount(countOfAssets.getCameraCount() + 1);
-			countOfAssets.setUnAssignedCameraCount(countOfAssets.getUnAssignedCameraCount() + 1);
-			break;
-		case "projector":
-			countOfAssets.setProjectorCount(countOfAssets.getProjectorCount() + 1);
-			countOfAssets.setUnAssignedProjectorCount(countOfAssets.getUnAssignedProjectorCount() + 1);
-			break;
-		case "firewall":
-			countOfAssets.setFireWallCount(countOfAssets.getFireWallCount() + 1);
-			countOfAssets.setUnAssignedFireWallCount(countOfAssets.getUnAssignedFireWallCount() + 1);
-			break;
-		case "switch":
-			countOfAssets.setSwitchCount(countOfAssets.getSwitchCount() + 1);
-			countOfAssets.setUnAssignedSwitchCount(countOfAssets.getUnAssignedSwitchCount() + 1);
-			break;
-		case "dvr":
-			countOfAssets.setDvrCount(countOfAssets.getDvrCount() + 1);
-			countOfAssets.setUnAssignedDvrCount(countOfAssets.getUnAssignedDvrCount() + 1);
-			break;
-		case "speaker":
-			countOfAssets.setSpeakerCount(countOfAssets.getSpeakerCount() + 1);
-			countOfAssets.setUnAssignedSpeakerCount(countOfAssets.getUnAssignedSpeakerCount() + 1);
-			break;
-		default:
-			// Handle unexpected asset names
-			throw new IllegalArgumentException("Unknown asset name: " + assetName);
+			case "laptop":
+				countOfAssets.setLaptopCount(countOfAssets.getLaptopCount() + 1);
+				countOfAssets.setUnAssignedLaptopCount(countOfAssets.getUnAssignedLaptopCount() + 1);
+				break;
+			case "mouse":
+				countOfAssets.setMouseCount(countOfAssets.getMouseCount() + 1);
+				countOfAssets.setUnAssignedMouseCount(countOfAssets.getUnAssignedMouseCount() + 1);
+				break;
+			case "laptopcharger":
+				countOfAssets.setLaptopChargerCount(countOfAssets.getLaptopChargerCount() + 1);
+				countOfAssets.setUnAssignedLaptopChargerCount(countOfAssets.getUnAssignedLaptopChargerCount() + 1);
+				break;
+			case "headphone":
+				countOfAssets.setHeadPhonesCount(countOfAssets.getHeadPhonesCount() + 1);
+				countOfAssets.setUnAssignedHeadphonesCount(countOfAssets.getUnAssignedHeadphonesCount() + 1);
+				break;
+			case "bag":
+				countOfAssets.setBagCount(countOfAssets.getBagCount() + 1);
+				countOfAssets.setUnAssignedBagCount(countOfAssets.getUnAssignedBagCount() + 1);
+				break;
+			case "datacard":
+				countOfAssets.setDataCardCount(countOfAssets.getDataCardCount() + 1);
+				countOfAssets.setUnAssignedDataCardCount(countOfAssets.getUnAssignedDataCardCount() + 1);
+				break;
+			case "mobile":
+				countOfAssets.setMobileCount(countOfAssets.getMobileCount() + 1);
+				countOfAssets.setUnAssignedMobileCount(countOfAssets.getUnAssignedMobileCount() + 1);
+				break;
+			case "camera":
+				countOfAssets.setCameraCount(countOfAssets.getCameraCount() + 1);
+				countOfAssets.setUnAssignedCameraCount(countOfAssets.getUnAssignedCameraCount() + 1);
+				break;
+			case "projector":
+				countOfAssets.setProjectorCount(countOfAssets.getProjectorCount() + 1);
+				countOfAssets.setUnAssignedProjectorCount(countOfAssets.getUnAssignedProjectorCount() + 1);
+				break;
+			case "firewall":
+				countOfAssets.setFireWallCount(countOfAssets.getFireWallCount() + 1);
+				countOfAssets.setUnAssignedFireWallCount(countOfAssets.getUnAssignedFireWallCount() + 1);
+				break;
+			case "switch":
+				countOfAssets.setSwitchCount(countOfAssets.getSwitchCount() + 1);
+				countOfAssets.setUnAssignedSwitchCount(countOfAssets.getUnAssignedSwitchCount() + 1);
+				break;
+			case "dvr":
+				countOfAssets.setDvrCount(countOfAssets.getDvrCount() + 1);
+				countOfAssets.setUnAssignedDvrCount(countOfAssets.getUnAssignedDvrCount() + 1);
+				break;
+			case "speaker":
+				countOfAssets.setSpeakerCount(countOfAssets.getSpeakerCount() + 1);
+				countOfAssets.setUnAssignedSpeakerCount(countOfAssets.getUnAssignedSpeakerCount() + 1);
+				break;
+			default:
+				// Handle unexpected asset names
+				throw new IllegalArgumentException("Unknown asset name: " + assetName);
 		}
 	}
 
@@ -614,22 +618,20 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
 			System.out.println(e.getMessage());
 			return "Serial Number not found or The Item belongs to this Serial Number is in Scrap";
 		}
-		System.out.println("Updated Sussfully");
-		return "Updated Sussfully";
+		System.out.println("Updated Successfully");
+		return "Updated Successfully";
 	}
 
 	@Override
 	public List<AssetsEntity> getUnAssigned() {
-		List<AssetsEntity> list = assetRepo.findAll().stream().filter(x -> x.getStatus().equalsIgnoreCase("unassigned"))
-				.collect(Collectors.toList());
-		return list;
+        return assetRepo.findAll().stream().filter(x -> x.getStatus().equalsIgnoreCase("unassigned"))
+                .collect(Collectors.toList());
 	}
 
 	@Override
 	public List<AssetsEntity> getAssigned() {
-		List<AssetsEntity> list = assetRepo.findAll().stream().filter(x -> x.getStatus().equalsIgnoreCase("assigned"))
-				.collect(Collectors.toList());
-		return list;
+        return assetRepo.findAll().stream().filter(x -> x.getStatus().equalsIgnoreCase("assigned"))
+                .collect(Collectors.toList());
 	}
 
 	@Override
@@ -665,50 +667,136 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
 	public List<AssetsDto> listOfAllAsset() {
 		List<AssetsEntity> assetsEntities = assetRepo.findAllByOrderByAssetIdDesc(); // Fetch all asset entities
 		return assetsEntities.stream().map(asset -> modelMapper.map(asset, AssetsDto.class)) // Convert each entity to
-																								// DTO
+				// DTO
 				.collect(Collectors.toList()); // Collect the results as a list of DTOs
 	}
-	public void exportAssetsToExcel(OutputStream outputStream) throws Exception {
-		List<AssetsEntity> assets = assetRepo.findAll();
 
-		// Create Excel workbook and sheet
+	public void exportAssetsToExcel(OutputStream outputStream, String exportType, String filter) throws Exception {
+
+		List<?> assets;
+
+		if ("Scrap".equalsIgnoreCase(exportType)) {
+			assets = filter == null || filter.isEmpty()
+					? scrapRepository.findAll()
+					: scrapRepository.findByFilter("%" + filter.toLowerCase() + "%");
+		} else if (exportType.isBlank() || exportType.equalsIgnoreCase("all")) {
+			assets = filter == null || filter.isEmpty()
+					? assetRepo.findAll()
+					: assetRepo.findByFilter("%" + filter.toLowerCase() + "%");
+		} else {
+			assets = filter == null || filter.isEmpty()
+					? assetRepo.findByStatus(exportType)
+					: assetRepo.findByStatusAndFilter(exportType, "%" + filter.toLowerCase() + "%");
+		}
+
 		Workbook workbook = new XSSFWorkbook();
-		Sheet sheet = workbook.createSheet("Assets");
+		Sheet sheet = workbook.createSheet(exportType + " Assets");
 
-		// Create header row
+		CellStyle headerStyle = createHeaderStyle(workbook);
+		CellStyle dataStyle = createDataStyle(workbook);
+
+		String[] headers = getHeaders(exportType);
 		Row headerRow = sheet.createRow(0);
-		String[] headers = {"Asset ID", "Asset Name", "Serial Number", "Emp ID", "Status", "Type", "Purchase Date",
-				"Warranty Date", "Location", "Loc Code", "Model Name", "Operating System", "Return Date",
-				"Added By", "Assigned Date", "Assigned By"};
 		for (int i = 0; i < headers.length; i++) {
 			Cell cell = headerRow.createCell(i);
 			cell.setCellValue(headers[i]);
+			cell.setCellStyle(headerStyle);
 		}
 
-		// Fill data rows
 		int rowNum = 1;
-		for (AssetsEntity asset : assets) {
+		for (Object asset : assets) {
 			Row row = sheet.createRow(rowNum++);
-			row.createCell(0).setCellValue(asset.getAssetId());
-			row.createCell(1).setCellValue(asset.getAssetName());
-			row.createCell(2).setCellValue(asset.getSerialNumber());
-			row.createCell(3).setCellValue(asset.getEmpId());
-			row.createCell(4).setCellValue(asset.getStatus());
-			row.createCell(5).setCellValue(asset.getType());
-			row.createCell(6).setCellValue(asset.getPurchaseDate());
-			row.createCell(7).setCellValue(asset.getWarrantyDate());
-			row.createCell(8).setCellValue(asset.getLocation());
-			row.createCell(9).setCellValue(asset.getLocCode() != null ? asset.getLocCode() : 0);
-			row.createCell(10).setCellValue(asset.getModelName());
-			row.createCell(11).setCellValue(asset.getOperatingSystem());
-			row.createCell(12).setCellValue(asset.getReturnDate() != null ? asset.getReturnDate().toString() : "");
-			row.createCell(13).setCellValue(asset.getAddedBy());
-			row.createCell(14).setCellValue(asset.getAssignedDate() != null ? asset.getAssignedDate().toString() : "");
-			row.createCell(15).setCellValue(asset.getAssignedBy());
+			populateDataRow(row, asset, dataStyle, exportType);
 		}
 
-		// Write to the output stream
+		for (int i = 0; i < headers.length; i++) {
+			sheet.autoSizeColumn(i);
+		}
+
 		workbook.write(outputStream);
 		workbook.close();
+	}
+
+	private void createDataCell(Row row, int colIdx, String value, CellStyle style) {
+		Cell cell = row.createCell(colIdx);
+		cell.setCellValue(value);
+		cell.setCellStyle(style);
+	}
+
+	private CellStyle createHeaderStyle(Workbook workbook) {
+		CellStyle style = workbook.createCellStyle();
+		Font font = workbook.createFont();
+		font.setBold(true);
+		font.setFontHeightInPoints((short) 12);
+		font.setColor(IndexedColors.WHITE.getIndex());
+		style.setFont(font);
+		style.setFillForegroundColor(IndexedColors.SKY_BLUE.getIndex());
+		style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+		style.setAlignment(HorizontalAlignment.CENTER);
+		style.setVerticalAlignment(VerticalAlignment.CENTER);
+		style.setBorderBottom(BorderStyle.THIN);
+		style.setBorderTop(BorderStyle.THIN);
+		style.setBorderLeft(BorderStyle.THIN);
+		style.setBorderRight(BorderStyle.THIN);
+		return style;
+	}
+
+	private CellStyle createDataStyle(Workbook workbook) {
+		CellStyle style = workbook.createCellStyle();
+		Font font = workbook.createFont();
+		font.setFontHeightInPoints((short) 10);
+		font.setColor(IndexedColors.BLACK.getIndex());
+		style.setFont(font);
+		style.setAlignment(HorizontalAlignment.LEFT);
+		style.setVerticalAlignment(VerticalAlignment.CENTER);
+		style.setBorderBottom(BorderStyle.THIN);
+		style.setBorderTop(BorderStyle.THIN);
+		style.setBorderLeft(BorderStyle.THIN);
+		style.setBorderRight(BorderStyle.THIN);
+		return style;
+	}
+
+	private void populateDataRow(Row row, Object asset, CellStyle style, String exportType) {
+		int col = 0;
+		if (asset instanceof ScrapEntity) {
+			ScrapEntity scrap = (ScrapEntity) asset;
+			createDataCell(row, col++, String.valueOf(scrap.getScrapId()), style);
+			createDataCell(row, col++, scrap.getAssetname(), style);
+			createDataCell(row, col++, scrap.getSerialNo(), style);
+			createDataCell(row, col++, String.valueOf(scrap.getPurchaseDate()), style);
+			createDataCell(row, col++, String.valueOf(scrap.getWarrantyDate()), style);
+			createDataCell(row, col++, scrap.getUsers(), style);
+			createDataCell(row, col++, scrap.getStatus(), style);
+			createDataCell(row, col++, scrap.getType(), style);
+			createDataCell(row, col++, String.valueOf(scrap.getAssetId()), style);
+		} else if (asset instanceof AssetsEntity) {
+			AssetsEntity a = (AssetsEntity) asset;
+			createDataCell(row, col++, String.valueOf(a.getAssetId()), style);
+			createDataCell(row, col++, a.getAssetName(), style);
+			createDataCell(row, col++, a.getSerialNumber(), style);
+			createDataCell(row, col++, String.valueOf(a.getEmpId()), style);
+			createDataCell(row, col++, a.getStatus(), style);
+			createDataCell(row, col++, a.getType(), style);
+			createDataCell(row, col++, String.valueOf(a.getPurchaseDate()), style);
+			createDataCell(row, col++, String.valueOf(a.getWarrantyDate()), style);
+			createDataCell(row, col++, a.getLocation(), style);
+			createDataCell(row, col++, a.getLocCode() != null ? a.getLocCode().toString() : "0", style);
+			createDataCell(row, col++, a.getModelName(), style);
+			createDataCell(row, col++, a.getOperatingSystem(), style);
+			createDataCell(row, col++, String.valueOf(a.getReturnDate()), style);
+			createDataCell(row, col++, a.getAddedBy(), style);
+			createDataCell(row, col++, String.valueOf(a.getAssignedDate()), style);
+			createDataCell(row, col++, a.getAssignedBy(), style);
+			createDataCell(row, col++, a.getAssertSourcedBy(), style);
+		}
+	}
+	private String[] getHeaders(String exportType) {
+		if ("Scrap".equalsIgnoreCase(exportType)) {
+			return new String[]{"Scrap ID", "Asset Name", "Serial No", "Purchase Date", "Warranty Date",
+					"Users", "Status", "Type", "Asset ID"};
+		}
+		return new String[]{"Asset ID", "Asset Name", "Serial Number", "Emp ID", "Status", "Type", "Purchase Date",
+				"Warranty Date", "Location", "Loc Code", "Model Name", "Operating System", "Return Date",
+				"Added By", "Assigned Date", "Assigned By","Sourced By"};
 	}
 }

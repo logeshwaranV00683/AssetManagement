@@ -30,5 +30,4 @@ public class AssetmanagementtoolApplication extends SpringBootServletInitializer
 	protected SpringApplicationBuilder configure(SpringApplicationBuilder builder) {
 		return builder.sources(AssetmanagementtoolApplication.class);
 	}
-
 }
