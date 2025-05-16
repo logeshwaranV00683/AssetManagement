@@ -3,6 +3,7 @@ package com.verinite.assetmangementtool.service;
 import com.verinite.assetmangementtool.entity.AssetsHistoryEntity;
 import com.verinite.assetmangementtool.repository.AssetsHistoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,9 +15,9 @@ public class AssetsHistoryServiceImpl implements AssetsHistoryServices{
 	AssetsHistoryRepository assetsHistoryRepository;
 
 	@Override
-	public AssetsHistoryEntity saveHistory(AssetsHistoryEntity history) {
+	public AssetsHistoryEntity saveHistory(AssetsHistoryEntity assetsHistoryEntity) {
 
-		return assetsHistoryRepository.save(history);
+		return assetsHistoryRepository.save(assetsHistoryEntity);
 
 	}
 
@@ -26,8 +27,15 @@ public class AssetsHistoryServiceImpl implements AssetsHistoryServices{
 	}
 
 	@Override
-	public Object getByHistoryId(long id) {
-		return assetsHistoryRepository.findById(id).get();
+	public Object getByHistoryId(String serialNumber) {
+
+		for(AssetsHistoryEntity assetsHistoryEntity:getAll()){
+			if(serialNumber.equalsIgnoreCase(assetsHistoryEntity.getSerialNumber())){
+				return assetsHistoryRepository.findById(assetsHistoryEntity.getHistoryId()).orElseThrow(() -> new UsernameNotFoundException(" there is no Asset  not found with serial number " + serialNumber));
+
+			}
+		}
+		return  null;
 	}
 
 }

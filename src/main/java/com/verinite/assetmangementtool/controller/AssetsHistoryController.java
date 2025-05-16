@@ -16,11 +16,11 @@ public class AssetsHistoryController {
 	@Autowired
 	private AssetsHistoryServices assetsHistoryServices;
 	
-	@PostMapping("history/save")
+	@PostMapping("Assets/history/save")
 	public AssetsHistoryEntity save(@RequestBody AssetsHistoryEntity history) {
 		return assetsHistoryServices.saveHistory(history);
 	}
-	@GetMapping("history/get/all")
+	@GetMapping("Assets/history/get/all")
 	public List<AssetsHistoryEntity> getAll(){
 		return assetsHistoryServices.getAll();
 	}
@@ -37,8 +37,8 @@ public class AssetsHistoryController {
 //		return assetsHistoryServices.updateHistory(mail, history);
 //	}
 		
-	@GetMapping("history/get/by/id/{id}")
-	public Object getByHisytoryId(@PathVariable long id) {
-		return assetsHistoryServices.getByHistoryId(id);
+	@GetMapping("Assets/history/get/by/id/{id}")
+	public Object getByHistoryId(@RequestParam String serialNumber) {
+		return assetsHistoryServices.getByHistoryId(serialNumber);
 	}
 }

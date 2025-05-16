@@ -6,11 +6,11 @@ import java.util.List;
 
 public interface AssetsHistoryServices {
 
-	public AssetsHistoryEntity  saveHistory(AssetsHistoryEntity history);
+	public AssetsHistoryEntity  saveHistory(AssetsHistoryEntity assetsHistoryEntity);
 	public List<AssetsHistoryEntity> getAll();
 	//public Object getByMail(String mail);
 	//public Object returnDetails(String mail);
 	//public Object updateHistory(String mail,AssetsHistoryEntity history);
-	public Object getByHistoryId(long id);
+	public Object getByHistoryId(String serialNumber);
 
 }
