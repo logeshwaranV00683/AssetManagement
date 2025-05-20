@@ -33,7 +33,7 @@ const Sidebar = () => {
     { key: 'dashboard', icon: <DashboardIcon fontSize="large" />, label: 'Dashboard' },
     { key: 'assets', icon: <MonitorIcon fontSize="large" />, label: 'Assets' },
     { key: 'employee', icon: <PeopleIcon fontSize="large" />, label: 'Employees' },
-    { key: 'history', icon: <HistoryIcon fontSize="large" />, label: 'Asset History' },
+    { key: 'assethistory', icon: <HistoryIcon fontSize="large" />, label: 'Asset History' },
     { key: 'services', icon: <AppsIcon fontSize="large" />, label: 'Services' },
     { key: 'report', icon: <HistoryIcon fontSize="large" />, label: 'Report' },
   ];
