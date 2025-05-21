@@ -150,14 +150,21 @@ function EditEmployeeModal({ open, handleClose, employee, refreshEmployeeList, v
               margin="normal"
               disabled={viewOnly}
             />
-            <TextField
-              label="Role"
-              value={role}
-              onChange={(e) => setRole(e.target.value)}
-              fullWidth
-              margin="normal"
-              disabled={viewOnly}
-            />
+            <FormControl fullWidth className={classes.formControl} disabled={viewOnly}>
+              <InputLabel htmlFor="role">Role</InputLabel>
+              <Select
+                label="Role"
+                value={role}
+                onChange={(e) => setRole(e.target.value)}
+                inputProps={{
+                name: 'role',
+                id: 'role',
+               }}
+              >
+                <MenuItem value="User">User</MenuItem>
+                <MenuItem value="Admin">Admin</MenuItem>
+              </Select>
+            </FormControl>
             <TextField
               label="Email"
               value={mail}
@@ -182,16 +189,16 @@ function EditEmployeeModal({ open, handleClose, employee, refreshEmployeeList, v
               margin="normal"
               disabled={viewOnly}
             />
-            <FormControl fullWidth className={classes.formControl}>
+            <FormControl fullWidth className={classes.formControl} disabled={viewOnly}>
               <InputLabel htmlFor="status">Status</InputLabel>
               <Select
+                label="Status"
                 value={status}
                 onChange={(e) => setStatus(e.target.value)}
                 inputProps={{
-                  name: 'status',
-                  id: 'status',
-                }}
-                disabled={viewOnly}
+                name: 'status',
+                id: 'status',
+               }}
               >
                 <MenuItem value="Active">Active</MenuItem>
                 <MenuItem value="Inactive">Inactive</MenuItem>

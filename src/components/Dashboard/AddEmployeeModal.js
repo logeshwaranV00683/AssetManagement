@@ -69,7 +69,7 @@ function AddEmployeeModal({ open, handleClose, refreshEmployeeList }) {
       empId,
       firstName,
       lastName,
-      role,
+      role: 'User',
       mail,
       mobile,
       location,
@@ -134,13 +134,6 @@ function AddEmployeeModal({ open, handleClose, refreshEmployeeList }) {
               margin="normal"
             />
             <TextField
-              label="Role"
-              value={role}
-              onChange={(e) => setRole(e.target.value)}
-              fullWidth
-              margin="normal"
-            />
-            <TextField
               label="Email"
               value={mail}
               onChange={(e) => setMail(e.target.value)}
@@ -164,12 +157,13 @@ function AddEmployeeModal({ open, handleClose, refreshEmployeeList }) {
             <FormControl fullWidth className={classes.formControl}>
               <InputLabel htmlFor="status">Status</InputLabel>
               <Select
+                label="Status"
                 value={status}
                 onChange={(e) => setStatus(e.target.value)}
                 inputProps={{
-                  name: 'status',
-                  id: 'status',
-                }}
+                name: 'status',
+                id: 'status',
+               }}
               >
                 <MenuItem value="Active">Active</MenuItem>
                 <MenuItem value="Inactive">Inactive</MenuItem>
