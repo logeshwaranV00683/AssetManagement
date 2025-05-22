@@ -10,9 +10,9 @@ import java.util.List;
 @Repository
 public interface LocationRepository extends JpaRepository<LocationEntity, Number> {
 
-	List<Object> findByState(String locName);
+    List<Object> findByState(String locName);
 
-	List<Object> findByCountry(String countryName);
-	
+    List<Object> findByCountry(String countryName);
+
 
 }

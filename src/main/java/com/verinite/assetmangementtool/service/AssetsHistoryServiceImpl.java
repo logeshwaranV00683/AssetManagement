@@ -9,33 +9,33 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class AssetsHistoryServiceImpl implements AssetsHistoryServices{
+public class AssetsHistoryServiceImpl implements AssetsHistoryServices {
 
-	@Autowired
-	AssetsHistoryRepository assetsHistoryRepository;
+    @Autowired
+    AssetsHistoryRepository assetsHistoryRepository;
 
-	@Override
-	public AssetsHistoryEntity saveHistory(AssetsHistoryEntity assetsHistoryEntity) {
+    @Override
+    public AssetsHistoryEntity saveHistory(AssetsHistoryEntity assetsHistoryEntity) {
 
-		return assetsHistoryRepository.save(assetsHistoryEntity);
+        return assetsHistoryRepository.save(assetsHistoryEntity);
 
-	}
+    }
 
-	@Override
-	public List<AssetsHistoryEntity> getAll() {
-		return assetsHistoryRepository.findAll();
-	}
+    @Override
+    public List<AssetsHistoryEntity> getAll() {
+        return assetsHistoryRepository.findAll();
+    }
 
-	@Override
-	public Object getByHistoryId(String serialNumber) {
+    @Override
+    public Object getByHistoryId(String serialNumber) {
 
-		for(AssetsHistoryEntity assetsHistoryEntity:getAll()){
-			if(serialNumber.equalsIgnoreCase(assetsHistoryEntity.getSerialNumber())){
-				return assetsHistoryRepository.findById(assetsHistoryEntity.getHistoryId()).orElseThrow(() -> new UsernameNotFoundException(" there is no Asset  not found with serial number " + serialNumber));
+        for (AssetsHistoryEntity assetsHistoryEntity : getAll()) {
+            if (serialNumber.equalsIgnoreCase(assetsHistoryEntity.getSerialNumber())) {
+                return assetsHistoryRepository.findById(assetsHistoryEntity.getHistoryId()).orElseThrow(() -> new UsernameNotFoundException(" there is no Asset  not found with serial number " + serialNumber));
 
-			}
-		}
-		return  null;
-	}
+            }
+        }
+        return null;
+    }
 
 }

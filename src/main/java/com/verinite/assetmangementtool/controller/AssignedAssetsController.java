@@ -1,20 +1,15 @@
 package com.verinite.assetmangementtool.controller;
 
-import java.io.ByteArrayOutputStream;
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
 import com.verinite.assetmangementtool.dto.AssignableAssetDto;
 import com.verinite.assetmangementtool.dto.AssignedAssetDtoList;
 import com.verinite.assetmangementtool.entity.AssignedAssetsEntity;
 import com.verinite.assetmangementtool.service.AssetServiceImpl;
 import com.verinite.assetmangementtool.service.AssignedAssetsServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/assetManager/v1/admin/")
@@ -22,11 +17,11 @@ import com.verinite.assetmangementtool.service.AssignedAssetsServiceImpl;
 //@CrossOrigin(origins = "https://asset-tool.netlify.app", allowedHeaders = "*", allowCredentials = "true")
 public class AssignedAssetsController {
 
-	@Autowired
-	private AssignedAssetsServiceImpl assignedAssetsService;
+    @Autowired
+    private AssignedAssetsServiceImpl assignedAssetsService;
 
-	@Autowired
-	private AssetServiceImpl assetService;
+    @Autowired
+    private AssetServiceImpl assetService;
 
 //	@PostMapping("assignable/save")
 //	public ResponseEntity<?> assignAsset(@RequestBody AssignableAssetDto assignableAssetDto) {
@@ -38,56 +33,58 @@ public class AssignedAssetsController {
 //		}
 //	}
 
-	@PostMapping("assignable/save")
-	public ResponseEntity<?> assignMultipleAssets(@RequestBody List<AssignableAssetDto> assignableAssetDtos) {
-		if (assignableAssetDtos == null || assignableAssetDtos.isEmpty()) {
-			return ResponseEntity.badRequest().body("Asset list is empty");
-		}
+    @PostMapping("assignable/save")
+    public ResponseEntity<?> assignMultipleAssets(@RequestBody List<AssignableAssetDto> assignableAssetDtos) {
+        if (assignableAssetDtos == null || assignableAssetDtos.isEmpty()) {
+            return ResponseEntity.badRequest().body("Asset list is empty");
+        }
 
-		// Call the service method to save/assign assets
-		return assignedAssetsService.save(assignableAssetDtos);
-	}
-	@PutMapping("asset/un-assign")
-	public ResponseEntity<?> unassignAssetApi(@RequestParam  Integer assignedAssetId) {
+        // Call the service method to save/assign assets
+        return assignedAssetsService.save(assignableAssetDtos);
+    }
 
-		AssignedAssetsEntity assignedAssets =  assignedAssetsService.unAssignAsset(assignedAssetId);
-		return ResponseEntity.ok(assignedAssets);
-	}
-	@GetMapping("get-assigned-assetss/{assignedId}")
-	public AssignedAssetsEntity getAssignedAssetsById(@PathVariable("assignedId") int assignedId) {
-		return assignedAssetsService.getAssignedAssetsById(assignedId);
-	}
+    @PutMapping("asset/un-assign")
+    public ResponseEntity<?> unassignAssetApi(@RequestParam Integer assignedAssetId) {
 
-	@GetMapping("get-assigned-assets/{assetId}")
-	public AssignedAssetsEntity getAssignedAssetsByAssetId(@PathVariable("assetId") int assetId) {
-		return assignedAssetsService.getAssignedAssetsByAssetsId(assetId);
-	}
+        AssignedAssetsEntity assignedAssets = assignedAssetsService.unAssignAsset(assignedAssetId);
+        return ResponseEntity.ok(assignedAssets);
+    }
 
-	@GetMapping("getall/assigend/assets")
-	public ResponseEntity<List<AssignedAssetDtoList>> getAllAssignedAssets() {
-		List<AssignedAssetDtoList> assignedAssets = assignedAssetsService.getAllassignedAssets();
-		return ResponseEntity.ok(assignedAssets); // Returns HTTP 200 with the list of assigned assets
-	}
+    @GetMapping("get-assigned-assetss/{assignedId}")
+    public AssignedAssetsEntity getAssignedAssetsById(@PathVariable("assignedId") int assignedId) {
+        return assignedAssetsService.getAssignedAssetsById(assignedId);
+    }
 
-	@PutMapping("update-assigned-assets/{assignedId}")
-	public AssignedAssetsEntity updateAssignedAssets(@PathVariable("assignedId") Integer assignedId,
-			@RequestBody AssignedAssetsEntity assignedAssetsEntity) {
-		return assignedAssetsService.updateAssignedAssets(assignedId, assignedAssetsEntity);
-	}
+    @GetMapping("get-assigned-assets/{assetId}")
+    public AssignedAssetsEntity getAssignedAssetsByAssetId(@PathVariable("assetId") int assetId) {
+        return assignedAssetsService.getAssignedAssetsByAssetsId(assetId);
+    }
 
-	@DeleteMapping("update-assigned-assets/{assignedId}")
-	public String deleteAssignedAssets(@PathVariable("assignedId") int assignedId) {
-		return assignedAssetsService.deleteAssignedAssets(assignedId);
-	}
+    @GetMapping("getall/assigend/assets")
+    public ResponseEntity<List<AssignedAssetDtoList>> getAllAssignedAssets() {
+        List<AssignedAssetDtoList> assignedAssets = assignedAssetsService.getAllassignedAssets();
+        return ResponseEntity.ok(assignedAssets); // Returns HTTP 200 with the list of assigned assets
+    }
 
-	@GetMapping("get-recent-assigned")
-	public ResponseEntity<?> getRecentAssigned() {
-		return assignedAssetsService.getRecentAssigned();
-	}
+    @PutMapping("update-assigned-assets/{assignedId}")
+    public AssignedAssetsEntity updateAssignedAssets(@PathVariable("assignedId") Integer assignedId,
+                                                     @RequestBody AssignedAssetsEntity assignedAssetsEntity) {
+        return assignedAssetsService.updateAssignedAssets(assignedId, assignedAssetsEntity);
+    }
 
-	@GetMapping("get/all/assigned/assets/by/{empId}")
-	public List<AssignedAssetsEntity> getAllByAssignedAssetsById(@PathVariable String empId) {
-		return assignedAssetsService.getAllAssetsAssignedToParticularEmployee(empId);
-	}
+    @DeleteMapping("update-assigned-assets/{assignedId}")
+    public String deleteAssignedAssets(@PathVariable("assignedId") int assignedId) {
+        return assignedAssetsService.deleteAssignedAssets(assignedId);
+    }
+
+    @GetMapping("get-recent-assigned")
+    public ResponseEntity<?> getRecentAssigned() {
+        return assignedAssetsService.getRecentAssigned();
+    }
+
+    @GetMapping("get/all/assigned/assets/by/{empId}")
+    public List<AssignedAssetsEntity> getAllByAssignedAssetsById(@PathVariable String empId) {
+        return assignedAssetsService.getAllAssetsAssignedToParticularEmployee(empId);
+    }
 
 }

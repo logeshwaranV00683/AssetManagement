@@ -1,8 +1,6 @@
 package com.verinite.assetmangementtool.entity;
 
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -13,38 +11,38 @@ import java.util.Date;
 @Data
 public class AssetsEntity {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "asset_id")
-	private int assetId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "asset_id")
+    private int assetId;
 
-	private String assetName;
+    private String assetName;
 
-	private String serialNumber;
+    private String serialNumber;
 
-	private String empId;
+    private String empId;
 
-	private String status;
+    private String status;
 
-	private String type;
+    private String type;
 
-	private String purchaseDate;
+    private String purchaseDate;
 
-	private String warrantyDate;
+    private String warrantyDate;
 
-	private String location;
+    private String location;
 
-	private Integer locCode;
+    private Integer locCode;
 
-	private String modelName;
+    private String modelName;
 
-	private String operatingSystem;
+    private String operatingSystem;
 
-	private Date returnDate;
-	private String addedBy;
-	private Date assignedDate;
-	private String assignedBy;
-	private String assertSourcedBy;
+    private Date returnDate;
+    private String addedBy;
+    private Date assignedDate;
+    private String assignedBy;
+    private String assertSourcedBy;
 
 
 }

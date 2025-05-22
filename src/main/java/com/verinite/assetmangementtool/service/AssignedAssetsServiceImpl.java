@@ -1,8 +1,22 @@
 package com.verinite.assetmangementtool.service;
 
-import static java.time.temporal.ChronoUnit.DAYS;
+import com.verinite.assetmangementtool.dto.AssignableAssetDto;
+import com.verinite.assetmangementtool.dto.AssignedAssetDtoList;
+import com.verinite.assetmangementtool.dto.RecentAssignedEmp;
+import com.verinite.assetmangementtool.entity.AssetsEntity;
+import com.verinite.assetmangementtool.entity.AssignedAssetsEntity;
+import com.verinite.assetmangementtool.entity.CountOfAssets;
+import com.verinite.assetmangementtool.entity.EmployeeEntity;
+import com.verinite.assetmangementtool.repository.AssetCountRepository;
+import com.verinite.assetmangementtool.repository.AssetsRepository;
+import com.verinite.assetmangementtool.repository.AssignedAssetsRepository;
+import com.verinite.assetmangementtool.repository.EmployeeRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Service;
 
-import java.io.OutputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -11,273 +25,252 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
-
-import com.verinite.assetmangementtool.entity.*;
-import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Service;
-
-import com.verinite.assetmangementtool.dto.AssignableAssetDto;
-import com.verinite.assetmangementtool.dto.AssignedAssetDtoList;
-import com.verinite.assetmangementtool.dto.RecentAssignedEmp;
-import com.verinite.assetmangementtool.repository.AssetCountRepository;
-import com.verinite.assetmangementtool.repository.AssetsRepository;
-import com.verinite.assetmangementtool.repository.AssignedAssetsRepository;
-import com.verinite.assetmangementtool.repository.EmployeeRepository;
+import static java.time.temporal.ChronoUnit.DAYS;
 
 @Service
 public class AssignedAssetsServiceImpl implements AssignedAssetsService {
 
-	@Autowired
-	EmployeeRepository employeeRepository;
-	@Autowired
-	private AssignedAssetsRepository assignedAssetsRepository;
+    @Autowired
+    EmployeeRepository employeeRepository;
+    @Autowired
+    AssetsRepository assetsRepo;
+    @Autowired
+    AssetCountRepository assetCountRepository;
+    @Autowired
+    EmailAssetService emailAssetService;
+    @Autowired
+    private AssignedAssetsRepository assignedAssetsRepository;
 
-	@Autowired
-	AssetsRepository assetsRepo;
+    @Override
+    public AssignedAssetsEntity saveAssignedAssets(AssignedAssetsEntity assignedAssetsEntity) {
+        return assignedAssetsRepository.save(assignedAssetsEntity);
+    }
 
-	@Autowired
-	AssetCountRepository assetCountRepository;
+    @Override
+    public AssignedAssetsEntity getAssignedAssetsById(int assignedId) {
+        return assignedAssetsRepository.findByAssignedAssetsId(assignedId);
+    }
 
-	@Autowired
-	EmailAssetService emailAssetService;
-	@Override
-	public AssignedAssetsEntity saveAssignedAssets(AssignedAssetsEntity assignedAssetsEntity) {
-		return assignedAssetsRepository.save(assignedAssetsEntity);
-	}
+    @Override
+    public AssignedAssetsEntity getAssignedAssetsByAssetsId(int assetId) {
+        return assignedAssetsRepository.findByAssignedAssetsId(assetId);
+    }
 
-	@Override
-	public AssignedAssetsEntity getAssignedAssetsById(int assignedId) {
-		return assignedAssetsRepository.findByAssignedAssetsId(assignedId);
-	}
+    public List<AssignedAssetDtoList> getAllassignedAssets() {
+        return assignedAssetsRepository.findAllByOrderByAssignedAssetsIdDesc().stream().filter(asset -> asset.getEmpId() != null).map(asset -> {
+            // Fetch employee entity by empId
+            EmployeeEntity employee = employeeRepository.findByEmpId(asset.getEmpId());
 
-	@Override
-	public AssignedAssetsEntity getAssignedAssetsByAssetsId(int assetId) {
-		return assignedAssetsRepository.findByAssignedAssetsId(assetId);
-	}
+            AssignedAssetDtoList dto = new AssignedAssetDtoList();
 
-	public List<AssignedAssetDtoList> getAllassignedAssets() {
-		return assignedAssetsRepository.findAllByOrderByAssignedAssetsIdDesc().stream().filter(asset -> asset.getEmpId() != null).map(asset -> {
-			// Fetch employee entity by empId
-			EmployeeEntity employee = employeeRepository.findByEmpId(asset.getEmpId());
+            // Mapping asset entity fields to DTO
+            dto.setAssignedAssetsId(asset.getAssignedAssetsId());
+            dto.setAssetId(asset.getAssetId());
+            dto.setAssetName(asset.getAssetName() != null ? asset.getAssetName() : "");
+            dto.setSerialNumber(asset.getSerialNumber() != null ? asset.getSerialNumber() : "");
+            dto.setEmpId(asset.getEmpId() != null ? asset.getEmpId() : "");
+            dto.setStatus(asset.getStatus() != null ? asset.getStatus() : "");
+            dto.setType(asset.getType() != null ? asset.getType() : "");
+            dto.setPurchaseDate(asset.getPurchaseDate() != null ? asset.getPurchaseDate() : "");
+            dto.setWarrantyDate(asset.getWarrantyDate() != null ? asset.getWarrantyDate() : "");
+            dto.setLocation(asset.getLocation() != null ? asset.getLocation() : "");
+            dto.setLocCode(asset.getLocCode());
+            dto.setModelName(asset.getModelName() != null ? asset.getModelName() : "");
+            dto.setOperatingSystem(asset.getOperatingSystem() != null ? asset.getOperatingSystem() : "");
+            dto.setReturnDate(asset.getReturnDate());
+            dto.setAddedBy(asset.getAddedBy() != null ? asset.getAddedBy() : "");
+            dto.setAssignedDate(asset.getAssignedDate());
+            dto.setAssignedBy(asset.getAssignedBy() != null ? asset.getAssignedBy() : "");
+            dto.setAssertSourcedBy(asset.getAssertSourcedBy() != null ? asset.getAssertSourcedBy() : "");
 
-			AssignedAssetDtoList dto = new AssignedAssetDtoList();
+            // Null check for employee
+            if (employee != null) {
+                dto.setEmpFirstName(employee.getFirstName() != null ? employee.getFirstName() : "Unknown");
+                dto.setEmpLastName(employee.getLastName() != null ? employee.getLastName() : "");
+            } else {
+                // Handle the case where the employee is not found
+                dto.setEmpFirstName("Unknown");
+                dto.setEmpLastName("");
+            }
 
-			// Mapping asset entity fields to DTO
-			dto.setAssignedAssetsId(asset.getAssignedAssetsId());
-			dto.setAssetId(asset.getAssetId());
-			dto.setAssetName(asset.getAssetName() != null ? asset.getAssetName() : "");
-			dto.setSerialNumber(asset.getSerialNumber() != null ? asset.getSerialNumber() : "");
-			dto.setEmpId(asset.getEmpId() != null ? asset.getEmpId() : "");
-			dto.setStatus(asset.getStatus() != null ? asset.getStatus() : "");
-			dto.setType(asset.getType() != null ? asset.getType() : "");
-			dto.setPurchaseDate(asset.getPurchaseDate() != null ? asset.getPurchaseDate() : "");
-			dto.setWarrantyDate(asset.getWarrantyDate() != null ? asset.getWarrantyDate() : "");
-			dto.setLocation(asset.getLocation() != null ? asset.getLocation() : "");
-			dto.setLocCode(asset.getLocCode());
-			dto.setModelName(asset.getModelName() != null ? asset.getModelName() : "");
-			dto.setOperatingSystem(asset.getOperatingSystem() != null ? asset.getOperatingSystem() : "");
-			dto.setReturnDate(asset.getReturnDate());
-			dto.setAddedBy(asset.getAddedBy() != null ? asset.getAddedBy() : "");
-			dto.setAssignedDate(asset.getAssignedDate());
-			dto.setAssignedBy(asset.getAssignedBy() != null ? asset.getAssignedBy() : "");
-			dto.setAssertSourcedBy(asset.getAssertSourcedBy() != null ? asset.getAssertSourcedBy() : "");
+            return dto;
+        }).collect(Collectors.toList());
+    }
 
-			// Null check for employee
-			if (employee != null) {
-				dto.setEmpFirstName(employee.getFirstName() != null ? employee.getFirstName() : "Unknown");
-				dto.setEmpLastName(employee.getLastName() != null ? employee.getLastName() : "");
-			} else {
-				// Handle the case where the employee is not found
-				dto.setEmpFirstName("Unknown");
-				dto.setEmpLastName("");
-			}
+    @Override
+    public AssignedAssetsEntity updateAssignedAssets(int assignedId, AssignedAssetsEntity assignedAssetsEntity) {
+        AssignedAssetsEntity assignedAssetsEntitys = new AssignedAssetsEntity();
+        try {
+            assignedAssetsEntitys = assignedAssetsRepository.findByAssignedAssetsId(assignedId);
+        } catch (Exception e) {
+            System.out.println("Given id not found");
+        }
 
-			return dto;
-		}).collect(Collectors.toList());
-	}
+        assignedAssetsEntitys.setAssetId(assignedAssetsEntity.getAssetId());
 
-	@Override
-	public AssignedAssetsEntity updateAssignedAssets(int assignedId, AssignedAssetsEntity assignedAssetsEntity) {
-		AssignedAssetsEntity assignedAssetsEntitys = new AssignedAssetsEntity();
-		try {
-			assignedAssetsEntitys = assignedAssetsRepository.findByAssignedAssetsId(assignedId);
-		} catch (Exception e) {
-			System.out.println("Given id not found");
-		}
+        return assignedAssetsRepository.save(assignedAssetsEntitys);
+    }
 
-		assignedAssetsEntitys.setAssetId(assignedAssetsEntity.getAssetId());
+    public AssignedAssetsEntity unAssignAsset(Integer assignedAssetId) {
+        AssignedAssetsEntity assignedAssetsEntitys = new AssignedAssetsEntity();
+        try {
+            int assignedAssetsEntity = assignedAssetsRepository.updateUnassignStatus("UnAssigned", assignedAssetId);
+            if (assignedAssetsEntity == 1) {
+                assignedAssetsEntitys = assignedAssetsRepository.findByAssignedAssetsId(assignedAssetId);
+                assetsRepo.updateUnassignStatus("UnAssigned", assignedAssetsEntitys.getSerialNumber());
+            }
+        } catch (Exception e) {
+            System.out.println("Given id not found");
+        }
 
-		return assignedAssetsRepository.save(assignedAssetsEntitys);
-	}
+        return assignedAssetsEntitys;
+    }
 
-	public AssignedAssetsEntity unAssignAsset(Integer assignedAssetId) {
-		AssignedAssetsEntity assignedAssetsEntitys = new AssignedAssetsEntity();
-		try {
-		int assignedAssetsEntity = assignedAssetsRepository.updateUnassignStatus("UnAssigned",assignedAssetId);
-			if(assignedAssetsEntity == 1){
-				assignedAssetsEntitys = assignedAssetsRepository.findByAssignedAssetsId(assignedAssetId);
-			assetsRepo.updateUnassignStatus("UnAssigned",assignedAssetsEntitys.getSerialNumber());
-		}
-		} catch (Exception e) {
-			System.out.println("Given id not found");
-		}
+    @Override
+    public String deleteAssignedAssets(int assignedId) {
+        String deletedMessage = "Record deleted successfully";
+        String notFoundMessage = "Given id not found";
 
-		return assignedAssetsEntitys;
-	}
+        AssignedAssetsEntity assignedAssetsEntity = assignedAssetsRepository.findByAssignedAssetsId(assignedId);
 
-	@Override
-	public String deleteAssignedAssets(int assignedId) {
-		String deletedMessage = "Record deleted successfully";
-		String notFoundMessage = "Given id not found";
+        if (assignedAssetsEntity == null) {
+            return notFoundMessage;
+        }
 
-		AssignedAssetsEntity assignedAssetsEntity = assignedAssetsRepository.findByAssignedAssetsId(assignedId);
+        assignedAssetsRepository.delete(assignedAssetsEntity);
+        return deletedMessage;
+    }
 
-		if (assignedAssetsEntity == null) {
-			return notFoundMessage;
-		}
+    public ResponseEntity<?> save(List<AssignableAssetDto> assignableAssetDtos) {
+        String empId = assignableAssetDtos.get(0).getEmpId(); // Assuming all assets belong to the same employee
+        EmployeeEntity employeeEntity = employeeRepository.findByEmpId(empId);
+        if (employeeEntity != null) {
+            try {
+                List<CountOfAssets> countOfAssets = assetCountRepository.findAll();
+                for (AssignableAssetDto assignableAssetDto : assignableAssetDtos) {
+                    AssetsEntity asset = assetsRepo.findBySerialNumber(assignableAssetDto.getSerialNumber());
+                    if (asset == null) {
+                        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Asset not found");
+                    }
 
-		assignedAssetsRepository.delete(assignedAssetsEntity);
-		return deletedMessage;
-	}
+                    if (!asset.getStatus().equalsIgnoreCase("scrap")) {
+                        AssignedAssetsEntity assignedAssetsEntity = new AssignedAssetsEntity();
+                        assignedAssetsEntity.setAssetId(asset.getAssetId());
+                        assignedAssetsEntity.setAssetName(asset.getAssetName());
+                        assignedAssetsEntity.setEmpId(empId);
+                        assignedAssetsEntity.setLocation(asset.getLocation());
+                        assignedAssetsEntity.setModelName(asset.getModelName());
+                        assignedAssetsEntity.setOperatingSystem(asset.getOperatingSystem());
+                        assignedAssetsEntity.setPurchaseDate(asset.getPurchaseDate());
+                        assignedAssetsEntity.setWarrantyDate(asset.getWarrantyDate());
+                        assignedAssetsEntity.setAssignedBy(assignableAssetDto.getAssignedBy());
+                        assignedAssetsEntity.setAssignedDate(assignableAssetDto.getAssignedDate());
+                        assignedAssetsEntity.setStatus("Assigned");
+                        assignedAssetsEntity.setType(asset.getType());
+                        assignedAssetsEntity.setSerialNumber(asset.getSerialNumber());
+                        asset.setStatus("Assigned");
+                        asset.setAssignedDate(assignableAssetDto.getAssignedDate());
+                        asset.setAssignedBy(assignableAssetDto.getAssignedBy());
+                        asset.setEmpId(empId);
+                        assignedAssetsEntity.setAssertSourcedBy(asset.getAssertSourcedBy());
 
-	public ResponseEntity<?> save(List<AssignableAssetDto> assignableAssetDtos) {
-		String empId = assignableAssetDtos.get(0).getEmpId(); // Assuming all assets belong to the same employee
-		EmployeeEntity employeeEntity = employeeRepository.findByEmpId(empId);
-		if (employeeEntity != null) {
-			try {
-				List<CountOfAssets> countOfAssets = assetCountRepository.findAll();
-				for (AssignableAssetDto assignableAssetDto : assignableAssetDtos) {
-					AssetsEntity asset = assetsRepo.findBySerialNumber(assignableAssetDto.getSerialNumber());
-					if (asset == null) {
-						return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Asset not found");
-					}
+                        for (CountOfAssets i : countOfAssets) {
+                            if (asset.getLocation().equalsIgnoreCase(i.getLocation())) {
+                                updateUnassignedCount(asset, i);
+                                assetCountRepository.save(i);
+                            }
+                        }
 
-					if (!asset.getStatus().equalsIgnoreCase("scrap")) {
-						AssignedAssetsEntity assignedAssetsEntity = new AssignedAssetsEntity();
-						assignedAssetsEntity.setAssetId(asset.getAssetId());
-						assignedAssetsEntity.setAssetName(asset.getAssetName());
-						assignedAssetsEntity.setEmpId(empId);
-						assignedAssetsEntity.setLocation(asset.getLocation());
-						assignedAssetsEntity.setModelName(asset.getModelName());
-						assignedAssetsEntity.setOperatingSystem(asset.getOperatingSystem());
-						assignedAssetsEntity.setPurchaseDate(asset.getPurchaseDate());
-						assignedAssetsEntity.setWarrantyDate(asset.getWarrantyDate());
-						assignedAssetsEntity.setAssignedBy(assignableAssetDto.getAssignedBy());
-						assignedAssetsEntity.setAssignedDate(assignableAssetDto.getAssignedDate());
-						assignedAssetsEntity.setStatus("Assigned");
-						assignedAssetsEntity.setType(asset.getType());
-						assignedAssetsEntity.setSerialNumber(asset.getSerialNumber());
-						asset.setStatus("Assigned");
-						asset.setAssignedDate(assignableAssetDto.getAssignedDate());
-						asset.setAssignedBy(assignableAssetDto.getAssignedBy());
-						asset.setEmpId(empId);
-						assignedAssetsEntity.setAssertSourcedBy(asset.getAssertSourcedBy());
+                        assignedAssetsRepository.save(assignedAssetsEntity);
+                        assetsRepo.save(asset); // Update asset status
+                        emailAssetService.save(assignableAssetDtos);
+                    } else {
+                        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Asset was in Scrap");
+                    }
+                }
+                return ResponseEntity.ok("Asset Assigned To " + employeeEntity.getEmpId());
+            } catch (Exception e) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("asset");
+            }
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("emp");
+        }
+    }
 
-						for (CountOfAssets i : countOfAssets) {
-							if (asset.getLocation().equalsIgnoreCase(i.getLocation())) {
-								updateUnassignedCount(asset, i);
-								assetCountRepository.save(i);
-							}
-						}
+    private void updateUnassignedCount(AssetsEntity asset, CountOfAssets i) {
+        String assetName = asset.getAssetName().toLowerCase();
+        switch (assetName) {
+            case "laptop":
+                i.setUnAssignedLaptopCount(i.getUnAssignedLaptopCount() - 1);
+                break;
+            case "mouse":
+                i.setUnAssignedMouseCount(i.getUnAssignedMouseCount() - 1);
+                break;
+            case "laptopcharger":
+                i.setUnAssignedLaptopChargerCount(i.getUnAssignedLaptopChargerCount() - 1);
+                break;
+            case "headphone":
+                i.setUnAssignedHeadphonesCount(i.getUnAssignedHeadphonesCount() - 1);
+                break;
+            case "bag":
+                i.setUnAssignedBagCount(i.getUnAssignedBagCount() - 1);
+                break;
+            case "datacard":
+                i.setUnAssignedDataCardCount(i.getUnAssignedDataCardCount() - 1);
+                break;
+            case "mobile":
+                i.setUnAssignedMobileCount(i.getUnAssignedMobileCount() - 1);
+                break;
+            case "camera":
+                i.setUnAssignedCameraCount(i.getUnAssignedCameraCount() - 1);
+                break;
+            case "projector":
+                i.setUnAssignedProjectorCount(i.getUnAssignedProjectorCount() - 1);
+                break;
+            case "firewall":
+                i.setUnAssignedFireWallCount(i.getUnAssignedFireWallCount() - 1);
+                break;
+            case "switch":
+                i.setUnAssignedSwitchCount(i.getUnAssignedSwitchCount() - 1);
+                break;
+            case "dvr":
+                i.setUnAssignedDvrCount(i.getUnAssignedDvrCount() - 1);
+                break;
+            case "speaker":
+                i.setUnAssignedSpeakerCount(i.getUnAssignedSpeakerCount() - 1);
+                break;
+            default:
+                break;
+        }
+    }
 
-						assignedAssetsRepository.save(assignedAssetsEntity);
-						assetsRepo.save(asset); // Update asset status
-						emailAssetService.save(assignableAssetDtos);
-					} else {
-						return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Asset was in Scrap");
-					}
-				}
-				return ResponseEntity.ok("Asset Assigned To "+employeeEntity.getEmpId());
-			} catch (Exception e) {
-				return ResponseEntity.status(HttpStatus.NOT_FOUND).body("asset");
-			}
-		} else {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("emp");
-		}
-	}
+    @Override
+    @Async
+    public ResponseEntity<?> getRecentAssigned() {
+        RecentAssignedEmp recent = new RecentAssignedEmp();
+        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
+        List<EmployeeEntity> emps = new ArrayList<>();
+        List<RecentAssignedEmp> recentAssignedEmpSet = new ArrayList<>();
+        List<AssignedAssetsEntity> set = assignedAssetsRepository.findByEmpIdNotNull().stream().filter(x -> {
+            try {
+                return (DAYS.between(sf.parse(x.getAssignedDate().toString()).toInstant(),
+                        new Date().toInstant())) < 15;
+            } catch (ParseException e) {
+                throw new RuntimeException(e);
+            }
+        }).collect(Collectors.toList());
+        set.forEach(x -> emps.add(employeeRepository.findByEmpId(x.getEmpId())));
+        List<EmployeeEntity> uniqEmp = new ArrayList<>(new HashSet<>(emps));
+        return ResponseEntity.ok().body(uniqEmp);
+    }
 
-	private void updateUnassignedCount(AssetsEntity asset, CountOfAssets i) {
-		String assetName = asset.getAssetName().toLowerCase();
-		switch (assetName) {
-		case "laptop":
-			i.setUnAssignedLaptopCount(i.getUnAssignedLaptopCount() - 1);
-			break;
-		case "mouse":
-			i.setUnAssignedMouseCount(i.getUnAssignedMouseCount() - 1);
-			break;
-		case "laptopcharger":
-			i.setUnAssignedLaptopChargerCount(i.getUnAssignedLaptopChargerCount() - 1);
-			break;
-		case "headphone":
-			i.setUnAssignedHeadphonesCount(i.getUnAssignedHeadphonesCount() - 1);
-			break;
-		case "bag":
-			i.setUnAssignedBagCount(i.getUnAssignedBagCount() - 1);
-			break;
-		case "datacard":
-			i.setUnAssignedDataCardCount(i.getUnAssignedDataCardCount() - 1);
-			break;
-		case "mobile":
-			i.setUnAssignedMobileCount(i.getUnAssignedMobileCount() - 1);
-			break;
-		case "camera":
-			i.setUnAssignedCameraCount(i.getUnAssignedCameraCount() - 1);
-			break;
-		case "projector":
-			i.setUnAssignedProjectorCount(i.getUnAssignedProjectorCount() - 1);
-			break;
-		case "firewall":
-			i.setUnAssignedFireWallCount(i.getUnAssignedFireWallCount() - 1);
-			break;
-		case "switch":
-			i.setUnAssignedSwitchCount(i.getUnAssignedSwitchCount() - 1);
-			break;
-		case "dvr":
-			i.setUnAssignedDvrCount(i.getUnAssignedDvrCount() - 1);
-			break;
-		case "speaker":
-			i.setUnAssignedSpeakerCount(i.getUnAssignedSpeakerCount() - 1);
-			break;
-		default:
-			break;
-		}
-	}
-
-	@Override
-	@Async
-	public ResponseEntity<?> getRecentAssigned() {
-		RecentAssignedEmp recent = new RecentAssignedEmp();
-		SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
-		List<EmployeeEntity> emps = new ArrayList<>();
-		List<RecentAssignedEmp> recentAssignedEmpSet = new ArrayList<>();
-		List<AssignedAssetsEntity> set = assignedAssetsRepository.findByEmpIdNotNull().stream().filter(x -> {
-			try {
-				return (DAYS.between(sf.parse(x.getAssignedDate().toString()).toInstant(),
-						new Date().toInstant())) < 15;
-			} catch (ParseException e) {
-				throw new RuntimeException(e);
-			}
-		}).collect(Collectors.toList());
-		set.forEach(x -> emps.add(employeeRepository.findByEmpId(x.getEmpId())));
-		List<EmployeeEntity> uniqEmp = new ArrayList<>(new HashSet<>(emps));
-		return ResponseEntity.ok().body(uniqEmp);
-	}
-
-	public List<AssignedAssetsEntity> getAllAssetsAssignedToParticularEmployee(String empId) {
+    public List<AssignedAssetsEntity> getAllAssetsAssignedToParticularEmployee(String empId) {
         return assignedAssetsRepository.findByEmpId(empId);
-	}
+    }
 
-	@Override
-	public Object save(AssignableAssetDto assignableAssetDto) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public Object save(AssignableAssetDto assignableAssetDto) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

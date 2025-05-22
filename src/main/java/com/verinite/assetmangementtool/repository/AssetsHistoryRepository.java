@@ -5,11 +5,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface AssetsHistoryRepository extends JpaRepository<AssetsHistoryEntity, Number>{
+public interface AssetsHistoryRepository extends JpaRepository<AssetsHistoryEntity, Number> {
 
-	//AssetsHistoryEntity getAssetsHistoryByAssetsId(int assetId);
+    //AssetsHistoryEntity getAssetsHistoryByAssetsId(int assetId);
 
-	//AssetsHistoryEntity findByMail(String mail);
+    //AssetsHistoryEntity findByMail(String mail);
 
 
 }

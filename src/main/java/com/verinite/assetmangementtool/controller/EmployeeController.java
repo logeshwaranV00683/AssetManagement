@@ -85,7 +85,7 @@ public class EmployeeController {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"));
 
-            String fileName = URLEncoder.encode(filename+ exportType + "_employees.xlsx", StandardCharsets.UTF_8);
+            String fileName = URLEncoder.encode(filename + exportType + "_employees.xlsx", StandardCharsets.UTF_8);
             headers.setContentDisposition(ContentDisposition.attachment().filename(fileName).build());
 
             return ResponseEntity.ok()
@@ -96,8 +96,6 @@ public class EmployeeController {
                     .body(("Error generating Excel file: " + e.getMessage()).getBytes());
         }
     }
-
-
 
 
     @PutMapping("/updateEmp/{empId}")

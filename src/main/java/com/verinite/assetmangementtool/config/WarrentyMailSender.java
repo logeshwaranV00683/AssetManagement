@@ -20,11 +20,11 @@ import java.util.List;
 @Configuration
 public class WarrentyMailSender {
 
-   @Autowired
-   private AssetsRepository repository;
+    @Autowired
+    private AssetsRepository repository;
 
-   @Autowired
-   private NotificationMailer notificationMail;
+    @Autowired
+    private NotificationMailer notificationMail;
 
     @Scheduled(cron = "0 18 14 * * *")
     public void getWarrentyExpiredAssets() throws MessagingException, UnsupportedEncodingException {
@@ -43,22 +43,22 @@ public class WarrentyMailSender {
 
             System.out.println(ChronoUnit.DAYS.between(new Date().toInstant(), date1.toInstant()));
             long numberOfDays = ChronoUnit.DAYS.between(new Date().toInstant(), date1.toInstant());
-            if (numberOfDays == 90 ) {
+            if (numberOfDays == 90) {
                 System.out.println("Success");
                 lessThanNinetyDays.add(entity);
                 //notificationMail.notifyMailer("elangovan.p@verinite.com",lessThanNinetyDays);
             }
-            if (numberOfDays == 60 ) {
+            if (numberOfDays == 60) {
                 System.out.println("Success");
                 lessThanNinetyDays.add(entity);
                 //notificationMail.notifyMailer("elangovan.p@verinite.com",lessThanNinetyDays);
             }
-            if (numberOfDays == 30 ) {
+            if (numberOfDays == 30) {
                 System.out.println("Success");
                 lessThanNinetyDays.add(entity);
                 //notificationMail.notifyMailer("elangovan.p@verinite.com",lessThanNinetyDays);
             }
-            if(numberOfDays <= 15 && numberOfDays >=1){
+            if (numberOfDays <= 15 && numberOfDays >= 1) {
                 System.out.println("Success");
                 lessThanNinetyDays.add(entity);
                 //notificationMail.notifyMailer("elangovan.p@verinite.com",lessThanNinetyDays);
@@ -66,11 +66,10 @@ public class WarrentyMailSender {
 
         }
 
-        if(!lessThanNinetyDays.isEmpty()){
-            notificationMail.notifyMailer("elangovan.p@verinite.com",lessThanNinetyDays);
+        if (!lessThanNinetyDays.isEmpty()) {
+            notificationMail.notifyMailer("elangovan.p@verinite.com", lessThanNinetyDays);
         }
     }
-
 
 
 }

@@ -6,13 +6,7 @@ import com.verinite.assetmangementtool.repository.ScarpRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.temporal.Temporal;
-import java.util.Date;
 import java.util.List;
-
-import static java.time.temporal.ChronoUnit.DAYS;
 
 @Service
 public class ScrapServiceImpl implements ScrapService {
@@ -20,6 +14,7 @@ public class ScrapServiceImpl implements ScrapService {
     ScrapService scrapService;
     @Autowired
     ScarpRepository scarpRepository;
+
     @Override
     public ScrapEntity postScrap(ScrapEntity scrapTable) {
         return scarpRepository.save(scrapTable);
@@ -35,21 +30,21 @@ public class ScrapServiceImpl implements ScrapService {
         try {
             return scarpRepository.findById(scrapId).get();
 
-        }catch (Exception e){
-            return scrapId+"not found";
+        } catch (Exception e) {
+            return scrapId + "not found";
         }
     }
 
     @Override
     public Object ScrapPut(ScrapEntity scrapTable, int scrapId) {
         try {
-        	ScrapEntity scrapTable1 = scarpRepository.findById(scrapId).get();
+            ScrapEntity scrapTable1 = scarpRepository.findById(scrapId).get();
             scrapTable1.setAssetname(scrapTable.getAssetname());
             scrapTable1.setUsers(scrapTable.getUsers());
             scrapTable1.setType(scrapTable.getType());
             return scarpRepository.save(scrapTable1);
-        }catch (Exception e){
-            return"not found"+ scrapId;
+        } catch (Exception e) {
+            return "not found" + scrapId;
         }
     }
 

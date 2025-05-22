@@ -9,22 +9,23 @@ import org.springframework.stereotype.Service;
 @Service
 public class AdminPromotionMailer {
 
-        @Autowired
-        private JavaMailSender mailSender;
-
-        public void promoteToAdmin(AdminRegistrationDto adminRegistrationDto, String password) {
-            String subject = "You're now an Admin for Asset Management Tool!";
-            String body = getBody(adminRegistrationDto,password);
-            sendEmail(adminRegistrationDto.getMail(), subject, body);
-        }
+    @Autowired
+    private JavaMailSender mailSender;
 
     private static String getBody(AdminRegistrationDto adminRegistrationDto, String password) {
-        return "Hi " + adminRegistrationDto.getFirstName()+ ",\n\n"
+        return "Hi " + adminRegistrationDto.getFirstName() + ",\n\n"
                 + "You've been promoted to Admin.\n\n"
                 + "Your User ID: " + adminRegistrationDto.getEmpId() + "\n\n"
                 + "Your Temporary Password: " + password + "\n\n"
                 + "Thank you.";
     }
+
+    public void promoteToAdmin(AdminRegistrationDto adminRegistrationDto, String password) {
+        String subject = "You're now an Admin for Asset Management Tool!";
+        String body = getBody(adminRegistrationDto, password);
+        sendEmail(adminRegistrationDto.getMail(), subject, body);
+    }
+
     public void sendEmail(String to, String subject, String text) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(to);

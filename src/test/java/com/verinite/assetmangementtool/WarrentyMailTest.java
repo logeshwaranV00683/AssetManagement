@@ -3,7 +3,7 @@ package com.verinite.assetmangementtool;
 //import com.verinite.assetmangementtool.config.WarrentyMailSender;
 //import com.verinite.assetmangementtool.entity.AssetsEntity;
 //import com.verinite.assetmangementtool.repository.AssetsRepository;
-////import org.junit.Test;
+/// /import org.junit.Test;
 //import org.junit.jupiter.api.Test;
 //
 //
@@ -97,7 +97,7 @@ public class WarrentyMailTest {
 
     }
 
-    private AssetsEntity dummyAssetsEntity(){
+    private AssetsEntity dummyAssetsEntity() {
         AssetsEntity assetEntity = new AssetsEntity();
         assetEntity.setAssetName("Laptop");
         assetEntity.setAddedBy("Ahalya");

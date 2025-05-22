@@ -10,25 +10,25 @@ import javax.persistence.*;
 @Setter
 @Table(name = "tbl_asset_names")
 public class AssetNameDTO {
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Long assetNameId;
-	private String assetName;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long assetNameId;
+    private String assetName;
 
-	public Long getAssetNameId() {
-		return assetNameId;
-	}
+    public Long getAssetNameId() {
+        return assetNameId;
+    }
 
-	public void setAssetNameId(Long assetNameId) {
-		this.assetNameId = assetNameId;
-	}
+    public void setAssetNameId(Long assetNameId) {
+        this.assetNameId = assetNameId;
+    }
 
-	public String getAssetName() {
-		return assetName;
-	}
+    public String getAssetName() {
+        return assetName;
+    }
 
-	public void setAssetName(String assetName) {
-		this.assetName = assetName;
-	}
+    public void setAssetName(String assetName) {
+        this.assetName = assetName;
+    }
 
 }

@@ -7,5 +7,5 @@ import lombok.Setter;
 @Setter
 public class LoginResponse {
     private String responseCode;
-    
+
 }

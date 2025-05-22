@@ -9,6 +9,7 @@ import java.util.List;
 
 public interface AdminService {
     public Object registerNewAdmin(AdminRegistrationEntity registration);
+
     public List<AdminRegistrationEntity> getAll();
 
     ResponseEntity checkLogin(AdminLoginDto login) throws Exception;

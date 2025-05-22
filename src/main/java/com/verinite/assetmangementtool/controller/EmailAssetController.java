@@ -15,7 +15,7 @@
 //
 //@RestController
 //@CrossOrigin(origins = "*", allowedHeaders = "*")
-////@CrossOrigin(origins = "https://asset-tool.netlify.app", allowedHeaders = "*", allowCredentials = "true")
+/// /@CrossOrigin(origins = "https://asset-tool.netlify.app", allowedHeaders = "*", allowCredentials = "true")
 //@RequestMapping("/api/assets")
 //public class EmailAssetController {
 //

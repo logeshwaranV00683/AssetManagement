@@ -24,25 +24,30 @@ public class DesignationEntity {
     @Pattern(regexp = "^[A-Z][a-z ]{3,12}$", message = "Position name must contains Alphabets only and it should be in the limit of 3 to 12 charectors")
 
     private String position;
-	public Long getDescId() {
-		return descId;
-	}
-	public void setDescId(Long descId) {
-		this.descId = descId;
-	}
-	public String getTitle() {
-		return title;
-	}
-	public void setTitle(String title) {
-		this.title = title;
-	}
-	public String getPosition() {
-		return position;
-	}
-	public void setPosition(String position) {
-		this.position = position;
-	}
-    
-    
+
+    public Long getDescId() {
+        return descId;
+    }
+
+    public void setDescId(Long descId) {
+        this.descId = descId;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getPosition() {
+        return position;
+    }
+
+    public void setPosition(String position) {
+        this.position = position;
+    }
+
 
 }

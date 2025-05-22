@@ -1,18 +1,18 @@
 package com.verinite.assetmangementtool.dto;
 
 public class EmployeeDto {
-//	private String empId;
-	private String firstName;
-	private String lastName;
-	//private String role;
-	private String mail;
-	private String mobile;
-	private String location;
-	//private String status;
-	private String department;
-	private String designation;
+    //	private String empId;
+    private String firstName;
+    private String lastName;
+    //private String role;
+    private String mail;
+    private String mobile;
+    private String location;
+    //private String status;
+    private String department;
+    private String designation;
 
-	// Getters and Setters
+    // Getters and Setters
 //	public String getEmpId() {
 //		return empId;
 //	}
@@ -21,21 +21,21 @@ public class EmployeeDto {
 //		this.empId = empId;
 //	}
 
-	public String getFirstName() {
-		return firstName;
-	}
+    public String getFirstName() {
+        return firstName;
+    }
 
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
-	}
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
 
-	public String getLastName() {
-		return lastName;
-	}
+    public String getLastName() {
+        return lastName;
+    }
 
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
-	}
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
 
 //	public String getRole() {
 //		return role;
@@ -45,29 +45,29 @@ public class EmployeeDto {
 //		this.role = role;
 //	}
 
-	public String getMail() {
-		return mail;
-	}
+    public String getMail() {
+        return mail;
+    }
 
-	public void setMail(String mail) {
-		this.mail = mail;
-	}
+    public void setMail(String mail) {
+        this.mail = mail;
+    }
 
-	public String getMobile() {
-		return mobile;
-	}
+    public String getMobile() {
+        return mobile;
+    }
 
-	public void setMobile(String mobile) {
-		this.mobile = mobile;
-	}
+    public void setMobile(String mobile) {
+        this.mobile = mobile;
+    }
 
-	public String getLocation() {
-		return location;
-	}
+    public String getLocation() {
+        return location;
+    }
 
-	public void setLocation(String location) {
-		this.location = location;
-	}
+    public void setLocation(String location) {
+        this.location = location;
+    }
 
 //	public String getStatus() {
 //		return status;
@@ -77,19 +77,19 @@ public class EmployeeDto {
 //		this.status = status;
 //	}
 
-	public String getDepartment() {
-		return department;
-	}
+    public String getDepartment() {
+        return department;
+    }
 
-	public void setDepartment(String department) {
-		this.department = department;
-	}
+    public void setDepartment(String department) {
+        this.department = department;
+    }
 
-	public String getDesignation() {
-		return designation;
-	}
+    public String getDesignation() {
+        return designation;
+    }
 
-	public void setDesignation(String designation) {
-		this.designation = designation;
-	}
+    public void setDesignation(String designation) {
+        this.designation = designation;
+    }
 }

@@ -12,10 +12,12 @@ import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
+
 @Service
 public class NotificationMailer {
     @Autowired
     private JavaMailSender mailSender;
+
     public ResponseEntity notifyMailer(String mail, List<AssetsEntity> list) throws MessagingException, UnsupportedEncodingException {
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message);
@@ -26,17 +28,17 @@ public class NotificationMailer {
 
         helper.setSubject(subject);
 
-        String tableRow="";
-        for (AssetsEntity item:list){
-           tableRow=tableRow+  "  <tr>\n" +
-                   "    <td>"+item.getAssetName()+"</td>\n" +
-                   "    <td>"+item.getSerialNumber()+"</td>\n" +
-                   "    <td>"+item.getWarrantyDate()+"</td>\n" +
-                   "  </tr>";
+        String tableRow = "";
+        for (AssetsEntity item : list) {
+            tableRow = tableRow + "  <tr>\n" +
+                    "    <td>" + item.getAssetName() + "</td>\n" +
+                    "    <td>" + item.getSerialNumber() + "</td>\n" +
+                    "    <td>" + item.getWarrantyDate() + "</td>\n" +
+                    "  </tr>";
 
 
         }
-        String content="<!DOCTYPE html>\n" +
+        String content = "<!DOCTYPE html>\n" +
                 "<html>\n" +
                 "<head>\n" +
                 "<style>\n" +
@@ -71,7 +73,7 @@ public class NotificationMailer {
                 "    <th>Serial Number</th>\n" +
                 "    <th>Warranty Date</th>\n" +
                 "  </tr>\n" +
-              tableRow+
+                tableRow +
                 "  \n" +
                 "</table>\n" +
                 "\n" +

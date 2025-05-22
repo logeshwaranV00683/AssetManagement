@@ -1,43 +1,40 @@
 package com.verinite.assetmangementtool.model;
 
 public class LoginDto {
-private String empId;
-	private String password;
-	
-	
-	public LoginDto()
-	{
-		
-	}
+    private String empId;
+    private String password;
 
 
-	public LoginDto(String empId, String password) {
-		super();
-		this.empId = empId;
-		this.password = password;
-	}
+    public LoginDto() {
+
+    }
 
 
-	public String getEmpId() {
-		return empId;
-	}
+    public LoginDto(String empId, String password) {
+        super();
+        this.empId = empId;
+        this.password = password;
+    }
 
 
-	public void setEmpId(String empId) {
-		this.empId = empId;
-	}
+    public String getEmpId() {
+        return empId;
+    }
 
 
-	public String getPassword() {
-		return password;
-	}
+    public void setEmpId(String empId) {
+        this.empId = empId;
+    }
 
 
-	public void setPassword(String password) {
-		this.password = password;
-	}
+    public String getPassword() {
+        return password;
+    }
 
-	
 
-	
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+
 }

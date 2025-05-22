@@ -12,8 +12,9 @@ import java.util.List;
 public class DesignationServiceImpl implements DesignationService {
     @Autowired
     DesignationRepository repository;
+
     public DesignationEntity newDesigination(DesignationEntity designation) {
-         return repository.save(designation);
+        return repository.save(designation);
     }
 
     public List<DesignationEntity> getAll() {

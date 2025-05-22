@@ -165,20 +165,15 @@ public class EmployeeServiceImpl implements EmployeeService {
             }
 
             if (employee.getRole() != null) {
-                if(employee.getRole().equalsIgnoreCase("Admin"))
-                {
-                    if(!adminRegistrationRepository.existsByEmpId(employee.getEmpId()))
-                    {
-                    adminServiceImpl.registerNewAdminWithoutPassword(existingEmployee);
-                    }
-                    else
-                    {
+                if (employee.getRole().equalsIgnoreCase("Admin")) {
+                    if (!adminRegistrationRepository.existsByEmpId(employee.getEmpId())) {
+                        adminServiceImpl.registerNewAdminWithoutPassword(existingEmployee);
+                    } else {
                         adminServiceImpl.updateAdminEntity(existingEmployee);
                     }
                 }
-                if(employee.getRole().equalsIgnoreCase("User"))
-                {
-                    if(existingEmployee.getRole().equalsIgnoreCase("Admin")) {
+                if (employee.getRole().equalsIgnoreCase("User")) {
+                    if (existingEmployee.getRole().equalsIgnoreCase("Admin")) {
                         adminServiceImpl.deleteAdmin(existingEmployee.getEmpId());
                     }
                 }

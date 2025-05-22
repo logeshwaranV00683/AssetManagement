@@ -9,41 +9,41 @@ import java.util.Date;
 @Getter
 public class AssignableAssetDto {
 
-	private String empId;
-	private String serialNumber;
-	private Date assignedDate;
-	private String assignedBy;
+    private String empId;
+    private String serialNumber;
+    private Date assignedDate;
+    private String assignedBy;
 
-	public String getEmpId() {
-		return empId;
-	}
+    public String getEmpId() {
+        return empId;
+    }
 
-	public void setEmpId(String empId) {
-		this.empId = empId;
-	}
+    public void setEmpId(String empId) {
+        this.empId = empId;
+    }
 
-	public String getSerialNumber() {
-		return serialNumber;
-	}
+    public String getSerialNumber() {
+        return serialNumber;
+    }
 
-	public void setSerialNumber(String serialNumber) {
-		this.serialNumber = serialNumber;
-	}
+    public void setSerialNumber(String serialNumber) {
+        this.serialNumber = serialNumber;
+    }
 
-	public Date getAssignedDate() {
-		return assignedDate;
-	}
+    public Date getAssignedDate() {
+        return assignedDate;
+    }
 
-	public void setAssignedDate(Date assignedDate) {
-		this.assignedDate = assignedDate;
-	}
+    public void setAssignedDate(Date assignedDate) {
+        this.assignedDate = assignedDate;
+    }
 
-	public String getAssignedBy() {
-		return assignedBy;
-	}
+    public String getAssignedBy() {
+        return assignedBy;
+    }
 
-	public void setAssignedBy(String assignedBy) {
-		this.assignedBy = assignedBy;
-	}
+    public void setAssignedBy(String assignedBy) {
+        this.assignedBy = assignedBy;
+    }
 
 }

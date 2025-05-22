@@ -13,28 +13,31 @@ import java.util.List;
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 public class ScrapController {
     //Logger logger = LoggerFactory.getLogger(ScrapController.class);
-    
+
     @Autowired
     private ScrapService scrapService;
-    
+
     @PostMapping("/scrappost")
-    public ScrapEntity postScrap(@RequestBody ScrapEntity scrapTable){
+    public ScrapEntity postScrap(@RequestBody ScrapEntity scrapTable) {
         //logger.info("debug");
         return scrapService.postScrap(scrapTable);
     }
+
     @GetMapping("/scrapgetall")
-    public List<ScrapEntity> getScrap(){
-       // logger.info("debug");
+    public List<ScrapEntity> getScrap() {
+        // logger.info("debug");
         return scrapService.getScrap();
     }
+
     @GetMapping("/scrapget/{scrapId}")
-    public Object getScrapById(@PathVariable int scrapId){
+    public Object getScrapById(@PathVariable int scrapId) {
         //logger.info("debug");
-      return scrapService.getScrapById(scrapId);
+        return scrapService.getScrapById(scrapId);
     }
+
     @PutMapping("/scrapput/{scrapId}")
-    public Object ScrapPut(@RequestBody ScrapEntity scrapTable,@PathVariable int scrapId){
-       // logger.info("debug");
-        return scrapService.ScrapPut(scrapTable,scrapId);
+    public Object ScrapPut(@RequestBody ScrapEntity scrapTable, @PathVariable int scrapId) {
+        // logger.info("debug");
+        return scrapService.ScrapPut(scrapTable, scrapId);
     }
 }

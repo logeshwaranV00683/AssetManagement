@@ -11,7 +11,7 @@ public interface AdminRegistrationRepository extends JpaRepository<AdminRegistra
     AdminRegistrationEntity findBymail(String email);
 
     AdminRegistrationEntity findByEmpId(String empId);
-    
+
     boolean existsByEmpId(String empId);
 
     void deleteByEmpId(String empId);

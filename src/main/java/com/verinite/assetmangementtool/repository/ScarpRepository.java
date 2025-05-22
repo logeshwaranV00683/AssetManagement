@@ -7,7 +7,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface ScarpRepository extends JpaRepository<ScrapEntity,Integer> {
+public interface ScarpRepository extends JpaRepository<ScrapEntity, Integer> {
 
     @Query("SELECT s FROM ScrapEntity s WHERE "
             + "LOWER(s.Assetname) LIKE LOWER(:filter) "
