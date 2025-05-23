@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Container, Box, Button, ButtonGroup } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
@@ -14,8 +14,8 @@ import {IconButton, Tooltip } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-
-
+import HistoryIcon from '@mui/icons-material/History';
+import { getAssetList } from '../Services/AssetService';
 
 const useStyles = makeStyles((theme) => ({
     content: {
@@ -32,34 +32,75 @@ const useStyles = makeStyles((theme) => ({
 
 function Assets() {
     const classes = useStyles();
-    const [openModal, setOpenModal] = useState(false);
+    const [openAddModal, setOpenAddModal] = useState(false);
+    const [openEditModal, setOpenEditModal] = useState(false);
+    const [viewOnly, setViewOnly] = useState(false);
+    const [selectedAsset, setSelectedAsset] = useState(null);
     const [exportType, setExportType] = useState('all');
+    const [filterValue, setFilterValue] = useState('');
+    const [assets, setAssets] = useState([]);
+    const [filteredRows, setFilteredRows] = useState(assets);
+
+    const fetchAssets = async () => {
+            try {
+                const data = await getAssetList();
+                setAssets(data);
+                setFilteredRows(data);
+            } catch (error) {
+                console.error('Error fetching assets:', error);
+            }
+        };
+
+    useEffect(() => {
+            fetchAssets();
+        }, []);
 
     const handleOpenModal = () => {
-        setOpenModal(true);
+        setOpenAddModal(true);
     };
-    const rows = [
-        { id: 1, name: 'Laptop', serialNumber: 'SN001', location: 'Room A', assignedTo: 'User A' },
-        { id: 2, name: 'Desktop', serialNumber: 'SN002', location: 'Room B', assignedTo: 'User B' },
-        { id: 3, name: 'Laptop', serialNumber: 'SN003', location: 'Room C', assignedTo: 'User B' },
-        { id: 4, name: 'Laptop', serialNumber: 'SN001', location: 'Room A', assignedTo: 'User A' },
-        { id: 5, name: 'Desktop', serialNumber: 'SN002', location: 'Room B', assignedTo: 'User B' },
-        { id: 6, name: 'Laptop', serialNumber: 'SN003', location: 'Room C', assignedTo: 'User B' },
-        { id: 7, name: 'Laptop', serialNumber: 'SN001', location: 'Room A', assignedTo: 'User A' },
+     const handleSearch = (event) => {
+        const value = event.target.value.toLowerCase();
+        setFilterValue(value);
 
+        const filtered = assets.filter(asset =>
+            Object.values(asset).some(val =>
+                String(val).toLowerCase().includes(value)
+            )
+        );
+        setFilteredRows(filtered);
 
-        // Add more rows as needed
-    ];
+    };
+
+    const resetFilters = () => {
+        setFilterValue('');
+        setFilteredRows(assets);
+        setExportType('all');
+    };
+    const handleClose = () => {
+        setOpenAddModal(false);
+        setOpenEditModal(false);
+        setSelectedAsset(null);
+        setViewOnly(false);
+    }
+
+    const filterByAssetStatus = (status) => {
+    setExportType(status);
+    setFilteredRows(assets.filter(a => a.status?.toLowerCase() === status.toLowerCase()));
+};
+
 
     const columns = [
-        { field: 'name',headerName: 'Name', width: 200, sortable: true},
-        { field: 'serialNumber', headerName: 'Serial Number', width: 200, sortable: true},
-        { field: 'assignedTo', headerName: 'Assigned To', width: 200, sortable: true},
-        { field: 'location', headerName: 'Location', width: 200, sortable: true},
+        { field: 'serialNumber', headerName: 'Serial Number', width: 150, sortable: true},
+        { field: 'assetName',headerName: 'Name', width: 100, sortable: true},
+        { field: 'type', headerName: 'Type', width: 100, sortable: true},
+        { field: 'status', headerName: 'Status', width: 120, sortable: true},
+        { field: 'empId', headerName: 'Assigned To', width: 120, sortable: true},
+        { field: 'location', headerName: 'Location', width: 100, sortable: true},
+        { field: 'assertSourcedBy', headerName: 'Assert Sourced By', width: 170, sortable: true},
         {
             field: 'actions',
             headerName: 'Actions',
-            width: 150,
+            width: 200,
             sortable: false,
             renderCell: (params) => (
                 <Box display="flex" alignItems="center">
@@ -110,54 +151,25 @@ function Assets() {
                             <DeleteIcon />
                         </IconButton>
                     </Tooltip>
+                     <Tooltip title="History">
+                        <IconButton
+                            color="inherit"
+                            sx={{
+                                transition: 'transform 0.2s',
+                                '&:hover': {
+                                    transform: 'scale(1.3)',
+                                    color: 'secondary.main',
+                                    filter: 'drop-shadow(0 0 4px rgba(0, 224, 240, 0.8))',
+                                },
+                            }}
+                        >
+                            <HistoryIcon />
+                        </IconButton>
+                    </Tooltip>
                 </Box>
             ),
         },
     ];
-
-    const [filterValue, setFilterValue] = useState('');
-    const [filteredRows, setFilteredRows] = useState(rows);
-
-    const handleSearch = (event) => {
-        const { value } = event.target;
-        const lowercaseValue = value.toLowerCase();
-        setFilterValue(lowercaseValue);
-
-        const filteredRows = rows.filter(row =>
-            row.name.toLowerCase().includes(lowercaseValue) ||
-            row.serialNumber.toLowerCase().includes(lowercaseValue) ||
-            row.location.toLowerCase().includes(lowercaseValue) ||
-            row.assignedTo.toLowerCase().includes(lowercaseValue)
-        );
-
-        setFilteredRows(filteredRows);
-    };
-
-    const resetFilters = () => {
-        setFilterValue('');
-        setFilteredRows(rows);
-        setExportType('all');
-    };
-    const handleClose = () => {
-        setOpenModal(false)
-    }
-
-    const filterAssigned = () => {
-        const assignedRows = rows.filter(row => row.assignedTo !== 'Unassigned');
-        setFilteredRows(assignedRows);
-        setExportType('assigned');
-    };
-
-    const filterScrap = () => {// this is not added in the old one Logeshwaran added for export, still it doesn't fetch data from scrap table and it has to.
-        setFilteredRows(rows.filter(row => row.assignedTo === 'Scrap'));
-        setExportType('scrap');
-      };
-
-    const filterUnassigned = () => {
-        const unassignedRows = rows.filter(row => row.assignedTo === 'Unassigned');
-        setFilteredRows(unassignedRows);
-        setExportType('unassigned');
-    };
 
     return (
         <div style={{width:'185vh'}}>
@@ -175,12 +187,12 @@ function Assets() {
 
                             {/* Sidebar only shown on /assets */}
                             <SidebarAssets
-                                onAddAsset={handleOpenModal}
-                                onFilterAssigned={filterAssigned}
-                                onFilterUnassigned={filterUnassigned}
-                                onFilterScrap={filterScrap}
-                                onResetFilters={resetFilters}
+                              onAddAsset={handleOpenModal}
+                              onFilter={filterByAssetStatus}
+                              onResetFilters={resetFilters}
                             />
+
+
 
                         </div>
                         
@@ -227,7 +239,7 @@ function Assets() {
                         />
 
 
-                        
+
                     </div>
                     <div style={{ height: '65vh', width: '85vw', display: 'flex', flexDirection: 'column', alignItems: 'center', }}>
                         <div style={{ height: 350, marginLeft: '2%', width: '95%', flexGrow: 1 }}>
@@ -272,7 +284,6 @@ function Assets() {
                                 }}
                             />
 
-                            
                         </div>
                         <div style={{ display: 'flex', justifyContent: 'center', gap: '20px', width: '95%', marginTop: '40px' }}>
                             <div className="export-button">
@@ -310,7 +321,7 @@ function Assets() {
                     
                 </Container>
                 
-                <AddAssetModal open={openModal} handleClose={handleClose} />
+                <AddAssetModal open={openAddModal} handleClose={handleClose} refreshAssetList={fetchAssets}/>
                 
             </main>
         </div>

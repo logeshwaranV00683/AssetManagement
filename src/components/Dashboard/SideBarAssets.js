@@ -12,13 +12,7 @@ import '../Style/font.css';
 
 const drawerWidth = 80;
 
-const SidebarAssets = ({
-  onAddAsset,
-  onFilterAssigned,
-  onFilterUnassigned,
-  onFilterScrap,
-  onResetFilters,
-}) => {
+const SidebarAssets = ({ onAddAsset, onFilter, onResetFilters }) => {
   const buttons = [
     {
       label: 'Add Asset',
@@ -28,17 +22,17 @@ const SidebarAssets = ({
     {
       label: 'Assigned',
       icon: <AssignmentTurnedInIcon fontSize="large" />,
-      onClick: onFilterAssigned,
+      onClick: () => onFilter('assigned'),
     },
     {
       label: 'Unassigned',
       icon: <RemoveCircleOutlineIcon fontSize="large" />,
-      onClick: onFilterUnassigned,
+      onClick: () => onFilter('unassigned'),
     },
     {
       label: 'Scrap',
       icon: <DeleteSweepIcon fontSize="large" />,
-      onClick: onFilterScrap,
+      onClick: () => onFilter('scrap'),
     },
     {
       label: 'Reset',
@@ -122,5 +116,6 @@ const SidebarAssets = ({
     </Drawer>
   );
 };
+
 
 export default SidebarAssets;

@@ -41,8 +41,7 @@ function Employee() {
     const [filterValue, setFilterValue] = useState('');
     const [filteredRows, setFilteredRows] = useState([]);
     const [viewOnly, setViewOnly] = useState(false);
-    const [exportType, setExportType] = useState('all');  // renamed here
-
+    const [exportType, setExportType] = useState('all');
     const fetchEmployees = async () => {
         try {
             const data = await getEmployeeList();

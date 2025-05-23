@@ -9,35 +9,58 @@ import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
+import { saveAsset } from '../Services/AssetService';
 
-function AddAssetModal({ open, handleClose }) {
+function AddAssetModal({ open, handleClose, refreshAssetList }) {
+
+  const user = JSON.parse(localStorage.getItem('user'));
+
+
   const [assetName, setAssetName] = useState('');
   const [serialNumber, setSerialNumber] = useState('');
   const [location, setLocation] = useState('');
+  const [locCode, setLocCode] = useState('');
+  const [operatingSystem, setOperatingSystem] = useState('');
+  const [modelName, setModelName] = useState('');
   const [purchaseDate, setPurchaseDate] = useState('');
   const [warrantyDate, setWarrantyDate] = useState('');
-  const user = JSON.parse(localStorage.getItem('user'));
   const [addedBy, setAddedBy] = useState(user.empId);
+  const [type, setType] = useState('');
   const [assertSourcedBy, setAssertSourcedBy] = useState('Verinite');
 
-  const handleAddAsset = () => {
-    console.log('Asset added:', {
+  const handleAddAsset = async () => {
+    const newAsset = {
       assetName,
       serialNumber,
       location,
+      locCode,
+      type,
+      operatingSystem,
+      modelName,
       purchaseDate,
       warrantyDate,
       addedBy,
       assertSourcedBy,
-    });
-    resetForm();
-    handleClose();
+    };
+    console.log('Asset added:', newAsset);
+           try {
+             await saveAsset(newAsset);
+             console.log('Asset added:', newAsset);
+             refreshAssetList();
+             handleClose();
+           } catch (error) {
+             console.error('Error adding Asset:', error);
+           }
   };
 
   const resetForm = () => {
     setAssetName('');
     setSerialNumber('');
     setLocation('');
+    setLocCode('');
+    setOperatingSystem('');
+    setModelName('');
+    setType('');
     setPurchaseDate('');
     setWarrantyDate('');
     setAddedBy(user.empId);
@@ -111,14 +134,37 @@ function AddAssetModal({ open, handleClose }) {
             onChange={(e) => setSerialNumber(e.target.value)}
             fullWidth
           />
-
           <TextField
-            label="Location"
-            value={location}
-            onChange={(e) => setLocation(e.target.value)}
-            fullWidth
-          />
+                                label="Location"
+                                value={location}
+                                onChange={(e) => setLocation(e.target.value)}
+                                fullWidth
+                    />
 
+                    <TextField
+                                label="Location Code"
+                                value={locCode}
+                                onChange={(e) => setLocCode(e.target.value)}
+                                fullWidth
+                    />
+                    <TextField
+                                          label="Operating System"
+                                          value={operatingSystem}
+                                          onChange={(e) => setOperatingSystem(e.target.value)}
+                                          fullWidth
+                    />
+                    <TextField
+                                          label="Variant"
+                                          value={modelName}
+                                          onChange={(e) => setModelName(e.target.value)}
+                                          fullWidth
+                    />
+                    <TextField
+                                                    label="Type"
+                                                    value={type}
+                                                    onChange={(e) => setType(e.target.value)}
+                                                    fullWidth
+                    />
           <TextField
             label="Purchase Date"
             type="date"

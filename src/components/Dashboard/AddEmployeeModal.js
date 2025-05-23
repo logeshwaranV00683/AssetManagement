@@ -56,7 +56,7 @@ function AddEmployeeModal({ open, handleClose, refreshEmployeeList }) {
   const [empId, setEmpId] = useState('');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
-  const [role, setRole] = useState('');
+  const [role] = useState('User');
   const [mail, setMail] = useState('');
   const [mobile, setMobile] = useState('');
   const [location, setLocation] = useState('');
@@ -69,7 +69,7 @@ function AddEmployeeModal({ open, handleClose, refreshEmployeeList }) {
       empId,
       firstName,
       lastName,
-      role: 'User',
+      role,
       mail,
       mobile,
       location,
