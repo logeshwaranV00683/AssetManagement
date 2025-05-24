@@ -16,7 +16,7 @@ import { toast } from 'react-hot-toast';
 function AddAssetModal({ open, handleClose, refreshAssetList }) {
 
   const user = JSON.parse(localStorage.getItem('user'));
-
+  const [isAdding, setIsAdding] = useState(false);
 
   const [assetName, setAssetName] = useState('');
   const [serialNumber, setSerialNumber] = useState('');
@@ -45,6 +45,7 @@ function AddAssetModal({ open, handleClose, refreshAssetList }) {
       assertSourcedBy,
     };
     console.log('Asset added:', newAsset);
+    setIsAdding(true);
            try {
              await saveAsset(newAsset);
              console.log('Asset added:', newAsset);
@@ -54,6 +55,8 @@ function AddAssetModal({ open, handleClose, refreshAssetList }) {
            } catch (error) {
              console.error('Error adding Asset:', error);
              toast.error(`Adding ${newAsset.serialNumber} Asset Failed`); 
+           } finally {
+              setIsAdding(false);
            }
   };
 
@@ -239,9 +242,10 @@ function AddAssetModal({ open, handleClose, refreshAssetList }) {
           <Button
             variant="contained"
             onClick={handleAddAsset}
+            disabled={isAdding}
             sx={{ backgroundColor: 'success.main', color: 'success.contrastText' }}
           >
-            Add
+            {isAdding ? 'Adding...' : 'Add'}
           </Button>
         </Box>
       </Box>

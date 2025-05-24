@@ -13,7 +13,7 @@ import {
 import CloseIcon from '@mui/icons-material/Close';
 import { updateAsset } from '../Services/AssetService';
 import { toast } from 'react-hot-toast';
-
+import { showErrorAlert } from '../Utils/alerts';
 
 function EditAssetModal({ open, handleClose, refreshAssetList, asset, viewOnly }) {
   const [fields, setFields] = useState({
@@ -34,6 +34,7 @@ function EditAssetModal({ open, handleClose, refreshAssetList, asset, viewOnly }
     empId: '',
     status: '',
   });
+  const [isUpdating, setIsUpdating] = useState(false);
 
   useEffect(() => {
     if (asset) {
@@ -105,18 +106,22 @@ function EditAssetModal({ open, handleClose, refreshAssetList, asset, viewOnly }
     }
 
     if (Object.keys(updatedFields).length === 0) {
-      toast('No changes detected');
+      handleClose();
+      await showErrorAlert('No changes detected', 'Please update some fields before submitting.');
       return;
     }
 
+    setIsUpdating(true);
     try {
       await updateAsset(updatedFields, fields.serialNumber);
-      toast.success(`${fields.serialNumber} Updated Successfully`);
+     toast.success(`${fields.serialNumber} Updated Successfully`);
       await refreshAssetList();
       handleClose();
     } catch (error) {
       console.error('Error updating Asset:', error);
-      toast.error(`${fields.serialNumber} Update Failed`);
+      await showErrorAlert('Update Failed', `${fields.serialNumber} Update Failed`);
+    } finally {
+      setIsUpdating(false);
     }
   };
 
@@ -162,6 +167,7 @@ function EditAssetModal({ open, handleClose, refreshAssetList, asset, viewOnly }
             gap: 2,
           }}
         >
+          {/* Fields as you had them */}
           <TextField
             label="Asset Name"
             value={fields.assetName}
@@ -344,9 +350,10 @@ function EditAssetModal({ open, handleClose, refreshAssetList, asset, viewOnly }
             <Button
               variant="contained"
               onClick={handleUpdateAsset}
+              disabled={isUpdating}
               sx={{ backgroundColor: 'success.main', color: 'success.contrastText' }}
             >
-              Update
+              {isUpdating ? 'Updating...' : 'Update'}
             </Button>
           </Box>
         )}

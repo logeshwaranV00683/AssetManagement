@@ -18,6 +18,7 @@ import HistoryIcon from '@mui/icons-material/History';
 import { getAssetList, scrapAsset } from '../Services/AssetService';
 import  EditAssetModal  from './EditAssetModal';
 import { toast } from 'react-hot-toast';
+import { showConfirmAlert } from '../Utils/alerts';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -55,7 +56,7 @@ function Assets() {
         };
 
 const handleDelete = async (asset) => {
-  const confirmDelete = window.confirm("Are you sure you want to scrape this asset?");
+  const confirmDelete = await showConfirmAlert('Are you sure?', 'Do you want to Scrap this asset?');
   if (!confirmDelete) return;
 
   try {

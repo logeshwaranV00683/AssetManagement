@@ -26,6 +26,7 @@ const Login = () => {
     employeeId: '',
     password: '',
   });
+  const [isLogin, setIsLogin] = useState(false);
 
   useEffect(() => {
     localStorage.removeItem('isLogin');
@@ -46,6 +47,7 @@ const Login = () => {
     e.preventDefault();
 
     try {
+      setIsLogin(true);
       const data = await logIn({
         empId: formData.employeeId,
         password: formData.password
@@ -68,6 +70,9 @@ const Login = () => {
     } catch (error) {
       console.error('Error during Sign In:', error);
       toast.error('Login Failed');
+    }
+    finally{
+      setIsLogin(false);
     }
   };
 
@@ -94,8 +99,8 @@ const Login = () => {
               onChange={handleChange}
               icon={passwordIcon}
             />
-            <button type="submit" className="submit-btn">
-              <span><b>LOGIN</b></span>
+            <button type="submit" className="submit-btn" disabled={isLogin}>
+              <span><b>{isLogin ? 'Logging...' : 'Login'}</b></span>
             </button>
 
             <div className="text-label">

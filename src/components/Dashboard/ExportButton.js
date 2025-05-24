@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { Button } from '@mui/material';
-import '../Style/ExportButton.css'
+import '../Style/ExportButton.css';
+import { toast } from 'react-hot-toast';
 const ExportButton = ({
-  type,        // 'employees' or 'assets' or anything your backend supports
-  status = '', // 'assigned', 'unassigned', 'scrap', etc. Optional
-  filter = '', // optional filter string
-  buttonLabel, // button text override
-  filePrefix,  // optional prefix for filename
+  type,
+  status = '',
+  filter = '',
+  buttonLabel,
+  filePrefix,
 }) => {
   const [loading, setLoading] = useState(false);
 
@@ -15,7 +16,6 @@ const ExportButton = ({
     setLoading(true);
     try {
       const token = localStorage.getItem('authToken');
-      // Build endpoint dynamically
       const endpoint = status
         ? `/assetManager/v1/export/${type}/${status}`
         : `/assetManager/v1/export/${type}`;
@@ -38,9 +38,8 @@ const ExportButton = ({
       const a = document.createElement('a');
       a.href = url;
 
-      // Build filename dynamically
       const prefix = filePrefix ? `${filePrefix}_` : '';
-      const statusPart = status && status !== 'all' ? `${status}_` : '';  // note underscore after status
+      const statusPart = status && status !== 'all' ? `${status}_` : '';
       const filterPart = filter ? `_${filter}` : '';
       const fileName = `${prefix}${statusPart}${type}${filterPart}.xlsx`;
 
@@ -48,7 +47,7 @@ const ExportButton = ({
       a.click();
       window.URL.revokeObjectURL(url);
     } catch (error) {
-      alert('Failed to export data. Please try again.');
+      toast.error('Failed to export data. Please try again.');
     } finally {
       setLoading(false);
     }
