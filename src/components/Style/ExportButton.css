@@ -5,11 +5,11 @@
   max-width: 240px;
   padding: 12px 16px;
   margin-top: 24px;
-  background: rgba(241, 43, 43, 0.9); /* Red base */
+  background: rgba(43, 241, 63, 0.9); /* Red base */
   color: white;
   border: none;
   border-radius: 16px;
-  box-shadow: 0 10px 30px rgba(246, 25, 25, 0.7), 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 10px 30px rgba(84, 246, 25, 0.7), 0 4px 12px rgba(0, 0, 0, 0.15);
   display: inline-flex;
   align-items: center;
   justify-content: center;

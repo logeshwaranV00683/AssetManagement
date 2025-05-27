@@ -225,6 +225,22 @@ const handleDelete = async (asset) => {
 
                         </div>
                         
+                        <div className="import-button">
+                                <ImportButton
+                                type="asset"
+                                status={exportType}
+                                filter={filterValue}
+                                filePrefix="Verinite"
+                                filteredRows={filteredRows}
+                                buttonLabel={
+                                    <span>
+                                    <UploadFileIcon style={{ fontSize: 20 }} />
+                                    Import Assets
+                                    </span>
+                                }
+                                />
+                        </div>
+
                         <TextField
                             label="Search"
                             variant="outlined"
@@ -266,12 +282,26 @@ const handleDelete = async (asset) => {
                                 color: '#083A40',
                                 },
                             }}
-                            />
+                        />
 
-
-
-
+                        <div className="export-button">
+                                <ExportButton
+                                type="asset"
+                                status={exportType}
+                                filter={filterValue}
+                                filePrefix="Verinite"
+                                buttonLabel={
+                                    <span>
+                                    <FileDownloadIcon style={{ fontSize: 20 }} />
+                                    {`Export ${exportType} Assets`}
+                                    </span>
+                                }
+                                filteredRows={filteredRows}
+                                />
+                            </div>
                     </div>
+
+                    
                     <div style={{ height: '65vh', width: '85vw', display: 'flex', flexDirection: 'column', alignItems: 'center', }}>
                         <div style={{ height: 350, marginLeft: '2%', width: '95%', flexGrow: 1 }}>
                             <DataGrid
