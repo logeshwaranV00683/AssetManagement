@@ -24,5 +24,4 @@ public class AssetExportDto {
     private String assignedDate;
     private String assignedBy;
     private String assetSourcedBy;
-            ;
 }

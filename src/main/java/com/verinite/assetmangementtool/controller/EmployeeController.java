@@ -4,9 +4,15 @@ import com.verinite.assetmangementtool.dto.EmployeeDto;
 import com.verinite.assetmangementtool.dto.EmployeeExportDto;
 import com.verinite.assetmangementtool.entity.EmployeeEntity;
 import com.verinite.assetmangementtool.service.EmployeeServiceImpl;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.ByteArrayOutputStream;
@@ -96,6 +102,21 @@ public class EmployeeController {
         }
     }
 
+    @Operation(summary = "Import Excel")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successful import")
+    })
+    @PostMapping(value = "employee/import", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<String> importExcel(
+            @Parameter(description = "Excel file", content = @Content(mediaType = MediaType.MULTIPART_FORM_DATA_VALUE))
+            @RequestParam("file") MultipartFile file) {
+        try {
+            employeeService.importEmployeeFromExcel(file.getInputStream());
+            return ResponseEntity.ok("Data imported successfully!");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error: " + e.getMessage());
+        }
+    }
 
 
     @PutMapping("/updateEmp/{empId}")

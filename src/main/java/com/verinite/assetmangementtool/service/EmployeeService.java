@@ -1,8 +1,12 @@
 package com.verinite.assetmangementtool.service;
 
 import com.verinite.assetmangementtool.dto.EmployeeDto;
+import com.verinite.assetmangementtool.dto.EmployeeExportDto;
 import com.verinite.assetmangementtool.entity.EmployeeEntity;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.List;
 
 public interface EmployeeService {
@@ -24,4 +28,7 @@ public interface EmployeeService {
 
     void deleteEmployeeById(String empId);
 
+    void importEmployeeFromExcel(InputStream inputStream) throws IOException;
+
+    void exportEmployeesToExcel(List<EmployeeExportDto> data, OutputStream outputStream) throws IOException;
 }

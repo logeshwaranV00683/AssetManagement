@@ -14,7 +14,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -133,6 +135,36 @@ public class EmployeeServiceImpl implements EmployeeService {
         employeeRepo.deleteById(empId);
     }
 
+    @Override
+    public void importEmployeeFromExcel(InputStream inputStream) throws IOException {
+        Workbook workbook = new XSSFWorkbook(inputStream);
+        Sheet sheet = workbook.getSheet("Active");
+        Iterator<Row> rows = sheet.iterator();
+
+        if (rows.hasNext()) rows.next();
+
+        while (rows.hasNext()) {
+            Row row = rows.next();
+            EmployeeDto employee = new EmployeeDto();
+
+            employee.setEmpId(getCellValue(row, 0));
+            employee.setFirstName(getCellValue(row,1));
+            employee.setLastName(getCellValue(row,2));
+            employee.setMail(getCellValue(row,4));
+            employee.setMobile(getCellValue(row,5));
+            employee.setLocation(getCellValue(row,6));
+            employee.setDepartment(getCellValue(row,8));
+            employee.setDesignation(getCellValue(row,9));
+            saveEmployee(employee);
+        }
+        workbook.close();
+
+    }
+    private String getCellValue(Row row, int colIndex) {
+        Cell cell = row.getCell(colIndex);
+        return (cell != null) ? cell.toString().trim() : null;
+    }
+
 
     public Object updateEmp(String empId, EmployeeEntity employee) {
         try {
@@ -219,6 +251,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     }
 
+    @Override
     public void exportEmployeesToExcel(List<EmployeeExportDto> data, OutputStream outputStream) throws IOException {
 
         List<EmployeeExportDto> activeEmployees = data.stream()

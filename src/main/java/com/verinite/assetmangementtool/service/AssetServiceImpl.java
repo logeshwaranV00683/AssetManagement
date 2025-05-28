@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -656,6 +657,7 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
                 .collect(Collectors.toList()); // Collect the results as a list of DTOs
     }
 
+    @Override
     public void exportAssetsToExcel(List<AssetExportDto> allAssets, OutputStream outputStream) throws IOException {
         Workbook workbook = new XSSFWorkbook();
 
@@ -837,4 +839,40 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
         style.setBorderRight(BorderStyle.THIN);
         return style;
     }
+    @Override
+    public void importAssetsFromExcel(InputStream inputStream) throws IOException {
+        Workbook workbook = new XSSFWorkbook(inputStream);
+        Sheet sheet = workbook.getSheet("Unassigned Assets");
+        Iterator<Row> rows = sheet.iterator();
+
+        if (rows.hasNext()) rows.next();
+
+        while (rows.hasNext()) {
+            Row row = rows.next();
+            AssetsDto asset = new AssetsDto();
+
+            asset.setAssetName(getCellValue(row, 0));
+            asset.setSerialNumber(getCellValue(row, 1));
+            asset.setStatus(getCellValue(row, 2));
+            asset.setType(getCellValue(row, 3));
+            asset.setPurchaseDate(getCellValue(row, 4));
+            asset.setWarrantyDate(getCellValue(row, 5));
+            asset.setLocation(getCellValue(row, 6));
+            asset.setLocCode(Integer.valueOf(Objects.requireNonNull(getCellValue(row, 7))));
+            asset.setModelName(getCellValue(row, 8));
+            asset.setOperatingSystem(getCellValue(row, 9));
+            asset.setAddedBy(getCellValue(row, 10));
+            asset.setAssetSourcedBy(getCellValue(row, 11));
+
+            saveAsset(asset);
+        }
+
+        workbook.close();
+    }
+
+    private String getCellValue(Row row, int colIndex) {
+        Cell cell = row.getCell(colIndex);
+        return (cell != null) ? cell.toString().trim() : null;
+    }
+
 }

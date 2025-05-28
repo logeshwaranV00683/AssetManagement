@@ -6,6 +6,11 @@ import com.verinite.assetmangementtool.response.SaveAssetResponse;
 import com.verinite.assetmangementtool.service.AssetNameServiceImpl;
 import com.verinite.assetmangementtool.service.AssetService;
 import com.verinite.assetmangementtool.service.AssetServiceImpl;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -16,6 +21,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
@@ -118,6 +124,22 @@ public class AssetsController implements ApplicationRunner {
             e.printStackTrace();
             return ResponseEntity.internalServerError()
                     .body(("Error generating Excel file: " + e.getMessage()).getBytes());
+        }
+    }
+
+    @Operation(summary = "Import Excel")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successful import")
+    })
+    @PostMapping(value = "asset/import", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<String> importExcel(
+            @Parameter(description = "Excel file", content = @Content(mediaType = MediaType.MULTIPART_FORM_DATA_VALUE))
+            @RequestParam("file") MultipartFile file) {
+        try {
+            assetService.importAssetsFromExcel(file.getInputStream());
+            return ResponseEntity.ok("Data imported successfully!");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error: " + e.getMessage());
         }
     }
 

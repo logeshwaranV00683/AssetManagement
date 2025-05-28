@@ -1,10 +1,14 @@
 package com.verinite.assetmangementtool.service;
 
 import com.verinite.assetmangementtool.dto.AssetCounterDto;
+import com.verinite.assetmangementtool.dto.AssetExportDto;
 import com.verinite.assetmangementtool.dto.AssetsDto;
 import com.verinite.assetmangementtool.entity.AssetsEntity;
 import com.verinite.assetmangementtool.response.SaveAssetResponse;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.List;
 
 public interface AssetService {
@@ -48,4 +52,7 @@ public interface AssetService {
 
     List<AssetsDto> listOfAllAsset();
 
+    void exportAssetsToExcel(List<AssetExportDto> allAssets, OutputStream outputStream) throws IOException;
+
+    void importAssetsFromExcel(InputStream inputStream) throws IOException;
 }
