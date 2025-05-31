@@ -43,7 +43,7 @@ const Login = () => {
   const [formData, setFormData] = useState({ employeeId: '', password: '' });
   const [showPassword, setShowPassword] = useState(false);
   const [otpSentTime, setOtpSentTime] = useState(null);
-  const [timeLeft, setTimeLeft] = useState(60);
+  const [timeLeft, setTimeLeft] = useState(90);
   const [otpExpired, setOtpExpired] = useState(false);
 
   useEffect(() => {
@@ -55,7 +55,7 @@ const Login = () => {
 
     const interval = setInterval(() => {
       const elapsed = Math.floor((Date.now() - otpSentTime) / 1000);
-      const remaining = 60 - elapsed;
+      const remaining = 90 - elapsed;
 
       if (remaining <= 0) {
         clearInterval(interval);
@@ -163,7 +163,7 @@ const Login = () => {
                       onClick={handleForgotPassword}
                       style={{ color: 'blue', cursor: 'pointer', display: 'inline-block' }}
                     >
-                      Forgot Password
+                      Forgot Password?
                     </h5>
                   </div>
                 </motion.div>
@@ -185,7 +185,7 @@ const Login = () => {
                       ResetPassword(empId, setShowResetPassword, setShowForgotPassword, setShowLogin);
                       const now = Date.now();
                       setOtpSentTime(now);
-                      setTimeLeft(60);
+                      setTimeLeft(90);
                       setOtpExpired(false);
                     }}
                   >

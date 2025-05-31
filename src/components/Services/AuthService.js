@@ -1,6 +1,4 @@
 import toast from "react-hot-toast";
-
-const token = localStorage.getItem('authToken');
 const apiUrl = process.env.REACT_APP_API_URL;
 
 export const logIn = (formData) => {
@@ -20,7 +18,7 @@ export const logIn = (formData) => {
 };
 
 export const ResetPassword = async (empId, setShowResetPassword, setShowForgotPassword, setShowLogin) => {
-  const url = `${apiUrl}/forget_password/validation?empId=${encodeURIComponent(empId)}`;
+  const url = `${apiUrl}/reset-password/send-otp?empId=${encodeURIComponent(empId)}`;
   try {
     const response = await fetch(url, {
       method: 'POST',
@@ -48,7 +46,7 @@ export const handleResetPassword = async (mail,otp, newPassword, confirmPassword
   }
 
   try {
-    const response = await fetch(`${apiUrl}/forget_password/saveNewPassword`, {
+    const response = await fetch(`${apiUrl}/reset-password/verify-otp`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({mail, otp, newPassword }),
