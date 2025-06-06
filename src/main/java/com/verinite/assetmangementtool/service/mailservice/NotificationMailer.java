@@ -15,6 +15,7 @@ import java.util.List;
 
 @Service
 public class NotificationMailer {
+
     @Autowired
     private JavaMailSender mailSender;
 
@@ -23,20 +24,22 @@ public class NotificationMailer {
         MimeMessageHelper helper = new MimeMessageHelper(message);
         helper.setTo(mail);
 
-        String subject = "Warranty Notification";
-
+        String subject = "Warranty Notification Mail";
         helper.setSubject(subject);
 
         String tableRow = "";
-        for (AssetsEntity item : list) {
-            tableRow = tableRow + "  <tr>\n" +
-                    "    <td>" + item.getAssetName() + "</td>\n" +
-                    "    <td>" + item.getSerialNumber() + "</td>\n" +
-                    "    <td>" + item.getWarrantyDate() + "</td>\n" +
-                    "  </tr>";
-
-
+        if (list.isEmpty()) {
+            tableRow = "<tr><td colspan=\"3\" style=\"text-align: center; padding: 10px;\">No assets available for warranty notification</td></tr>";
+        } else {
+            for (AssetsEntity item : list) {
+                tableRow += "  <tr>\n" +
+                        "    <td>" + item.getAssetName() + "</td>\n" +
+                        "    <td>" + item.getSerialNumber() + "</td>\n" +
+                        "    <td>" + item.getWarrantyDate() + "</td>\n" +
+                        "  </tr>";
+            }
         }
+
         String content = "<!DOCTYPE html>\n" +
                 "<html lang=\"en\" style=\"margin: 0; box-sizing: border-box;\">\n" +
                 "<head>\n" +
@@ -72,6 +75,7 @@ public class NotificationMailer {
                 "    </div>\n" +
                 "</body>\n" +
                 "</html>";
+
         helper.setText(content, true);
 
         mailSender.send(message);

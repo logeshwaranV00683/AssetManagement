@@ -202,7 +202,7 @@ public class AckMailer {
                 "          <table class=\"table-main\" style=\"margin: 0; box-sizing: border-box; -webkit-print-color-adjust: exact; width: 100%; border-collapse: collapse;\" width=\"100%\">\n" +
                 "            <thead style=\"margin: 0; box-sizing: border-box; -webkit-print-color-adjust: exact;\">    \n" +
                 "                <tr class=\"tabletitle\" style=\"margin: 0; box-sizing: border-box; -webkit-print-color-adjust: exact;\">\n" +
-                "                  <th style=\"margin: 0; box-sizing: border-box; -webkit-print-color-adjust: exact; font-size: 0.85em; padding: 5px 10px; border-bottom: 2px solid #ddd; text-align: right;\" align=\"right\"># No</th>\n" +
+                "                  <th style=\"margin: 0; box-sizing: border-box; -webkit-print-color-adjust: exact; font-size: 0.85em; padding: 5px 10px; border-bottom: 2px solid #ddd; text-align: right;\" align=\"right\">SNo</th>\n" +
                 "                  <th style=\"margin: 0; box-sizing: border-box; -webkit-print-color-adjust: exact; font-size: 0.85em; padding: 5px 10px; border-bottom: 2px solid #ddd; text-align: left;\" align=\"left\">Asset Name</th>\n" +
                 "                  <th style=\"margin: 0; box-sizing: border-box; -webkit-print-color-adjust: exact; font-size: 0.85em; padding: 5px 10px; border-bottom: 2px solid #ddd; text-align: right;\" align=\"right\">Serial Number</th>\n" +
                 "                  <th style=\"margin: 0; box-sizing: border-box; -webkit-print-color-adjust: exact; font-size: 0.85em; padding: 5px 10px; border-bottom: 2px solid #ddd; text-align: right;\" align=\"right\">Assigned By</th>\n" +

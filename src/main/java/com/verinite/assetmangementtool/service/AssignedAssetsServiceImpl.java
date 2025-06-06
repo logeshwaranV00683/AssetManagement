@@ -166,10 +166,10 @@ public class AssignedAssetsServiceImpl implements AssignedAssetsService {
                         }).start();
                     } else if (asset.getStatus().equalsIgnoreCase("Scrap")) {
 
-                        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Asset was in Scrap");
+                        return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Asset was in Scrap");
                     }
                     else
-                        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Asset Already In Assigned");
+                        return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Asset Already In Assigned");
                 }
                 return ResponseEntity.ok("Asset Assigned To " + employeeEntity.getEmpId());
             } catch (Exception e) {
