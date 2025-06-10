@@ -166,7 +166,7 @@ public class AssignedAssetsServiceImpl implements AssignedAssetsService {
                         }).start();
                     } else if (asset.getStatus().equalsIgnoreCase("Scrap")) {
 
-                        return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Asset was in Scrap");
+                        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Asset was in Scrap");
                     }
                     else
                         return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Asset Already In Assigned");
