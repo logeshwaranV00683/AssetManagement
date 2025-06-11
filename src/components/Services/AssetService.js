@@ -123,3 +123,28 @@ export const assignAsset = async (assetData) => {
     throw error;
   }
 };
+
+export const unassignAsset = async (serialNumbers) => {
+  try {
+    const response = await fetch(`${apiUrl}/assetManager/v1/admin/asset/un-assign`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify(serialNumbers)
+    });
+
+    if (!response.ok) {
+      throw new Error(`Unassign failed: ${response.statusText}`);
+    }
+    if (response.status === 200) {
+      return { message: 'Asset(s) unassigned successfully' };
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error unassigning asset:", error);
+    throw error;
+  }
+};

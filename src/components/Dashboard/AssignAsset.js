@@ -2,13 +2,11 @@ import React, { useEffect, useState } from "react";
 import { assignAsset } from "../Services/AssetService";
 import { getEmployeeList } from "../Services/EmployeeService";
 import "animate.css";
-import { showErrorAlert, showSuccessAlert , showWarningAlert} from "../Utils/alerts";
+import { showErrorAlert, showSuccessAlert, showWarningAlert } from "../Utils/alerts";
 
 function AssignAsset({ open, handleClose, asset, fetchAssets }) {
   const assetId = asset?.assetId || asset?.id;
   const [employeeList, setEmployeeList] = useState([]);
-  const [filteredEmployees, setFilteredEmployees] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
   const [selectedEmp, setSelectedEmp] = useState("");
   const user = JSON.parse(localStorage.getItem("user"));
 
@@ -17,62 +15,55 @@ function AssignAsset({ open, handleClose, asset, fetchAssets }) {
       getEmployeeList()
         .then((employees) => {
           setEmployeeList(employees || []);
-          setFilteredEmployees(employees || []);
         })
         .catch(() => {
-         return showErrorAlert("Ooopss...!","Failed to load employee list!");
+          return showErrorAlert("Ooopss...!", "Failed to load employee list!");
         });
     }
   }, [open]);
 
-  useEffect(() => {
-    const filtered = employeeList.filter((emp) => {
-      const search = searchTerm.toLowerCase();
-      return (
-        emp.empId?.toLowerCase().includes(search) ||
-        emp.firstName?.toLowerCase().includes(search) ||
-        emp.designation?.toLowerCase().includes(search)
-      );
-    });
-    setFilteredEmployees(filtered);
-  }, [searchTerm, employeeList]);
-
   const handleSubmit = async () => {
-    if (!selectedEmp) {
-    return  showWarningAlert("Select an employee","You must choose someone to assign this asset.");
+    const foundEmp = employeeList.find(
+      (emp) =>
+        `${emp.empId} - ${emp.firstName} (${emp.designation})` === selectedEmp
+    );
+
+    if (!foundEmp) {
+      return showWarningAlert("Select a valid employee", "Please choose from the list.");
     }
 
     if (!assetId) {
-    return  showErrorAlert("Asset not found!","Missing asset information.");
+      return showErrorAlert("Asset not found!", "Missing asset information.");
     }
 
     const assetData = {
-      empId: selectedEmp,
+      empId: foundEmp.empId,
       serialNumber: asset?.assetSerialNumber || asset?.serialNumber,
       assignedDate: new Date().toISOString(),
       assetName: asset?.assetName || "",
       assignedBy: user?.empId || "admin",
     };
 
-    try {
-      const result = await assignAsset([assetData]);
-      showSuccessAlert("Asset Assigned!",result);
-      fetchAssets();
-      handleCloseDialog();
-    } catch (error) {
-      if (error.status === 406) {
-       return showWarningAlert("Already Assigned","This asset has already been assigned.");
-      } else {
-       return showErrorAlert("Assigning Failed", "An error occurred.");
-      }
-    }
+   try {
+  const result = await assignAsset([assetData]);
+  showSuccessAlert("Asset Assigned!", result);
+  fetchAssets();
+  handleCloseDialog();
+} catch (error) {
+  if (error.status === 406) {
+    return showWarningAlert("Already Assigned", "This asset has already been assigned.");
+  } else if (error.status === 400) {
+    return showWarningAlert("Asset Was In Scrap", "Please check the asset data and try again.");
+  } else {
+    return showErrorAlert("Assigning Failed", "An error occurred.");
+  }
+}
+
   };
 
   const handleCloseDialog = () => {
     setSelectedEmp("");
-    setSearchTerm("");
     setEmployeeList([]);
-    setFilteredEmployees([]);
     handleClose();
   };
 
@@ -87,32 +78,20 @@ function AssignAsset({ open, handleClose, asset, fetchAssets }) {
         <div className="import-3d-title">Assign Asset</div>
         <div className="import-3d-file-wrapper">
           <input
-            type="text"
-            placeholder="🔍 Search Employee by ID"
+            list="employee-options"
             className="import-3d-search"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-
-
-          <select
-            className="import-3d-file-button"
+            placeholder="🔍 Search and Select Employee"
             value={selectedEmp}
             onChange={(e) => setSelectedEmp(e.target.value)}
-          >
-            <option value="" disabled>
-              Select Employee
-            </option>
-            {filteredEmployees.length > 0 ? (
-              filteredEmployees.map((emp) => (
-                <option key={emp.empId} value={emp.empId}>
-                  {emp.empId} - {emp.firstName} ({emp.designation})
-                </option>
-              ))
-            ) : (
-              <option disabled>No employees found</option>
-            )}
-          </select>
+          />
+          <datalist id="employee-options">
+            {employeeList.map((emp) => (
+              <option
+                key={emp.empId}
+                value={`${emp.empId} - ${emp.firstName} (${emp.designation})`}
+              />
+            ))}
+          </datalist>
 
           <button className="import-3d-button" onClick={handleSubmit}>
             Assign Asset

@@ -1,7 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { showErrorAlert, showSuccessAlert, showWarningAlert } from "../Utils/alerts"; 
-import { getAssetList, assignAsset } from "../Services/AssetService";
-import "animate.css"; 
 import {
   FormControl,
   InputLabel,
@@ -10,34 +7,60 @@ import {
   Checkbox,
   ListItemText,
   OutlinedInput,
+  Menu,
+  Button,
+  Box,
 } from "@mui/material";
+import { getAssetList, assignAsset } from "../Services/AssetService";
+import {
+  showErrorAlert,
+  showSuccessAlert,
+  showWarningAlert,
+} from "../Utils/alerts";
 
 function AssignAssetToEmployee({ open, onClose, employee, refresh }) {
   const [assets, setAssets] = useState([]);
   const [selectedAssets, setSelectedAssets] = useState([]);
+  const [confirmedAssets, setConfirmedAssets] = useState([]);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [anchorEl, setAnchorEl] = useState(null);
 
   useEffect(() => {
     if (open) {
       getAssetList()
-        .then((filteredData) => {
-          setAssets(filteredData.filter(asset => asset.status.toLowerCase() === 'unassigned'));
+        .then((data) => {
+          const unassigned = data.filter(
+            (asset) => asset.status.toLowerCase() === "unassigned"
+          );
+          setAssets(unassigned);
         })
-        .catch(() => {
-          showErrorAlert("Failed to fetch assets", "An error occurred while loading assets.");
-        });
+        .catch(() =>
+          showErrorAlert(
+            "Failed to fetch assets",
+            "An error occurred while loading assets."
+          )
+        );
     }
   }, [open]);
 
-  const handleAssign = async () => {
+  const handleSelectClick = (event) => {
+    setAnchorEl(event.currentTarget);
+    setMenuOpen(true);
+  };
+
+  const handleOkClick = () => {
     if (selectedAssets.length === 0) {
-      showWarningAlert("Select an Asset", "You must select at least one asset to assign.");
+      showWarningAlert("No assets selected", "Please select at least one.");
       return;
     }
+    setConfirmedAssets([...selectedAssets]);
+    setMenuOpen(false);
+  };
 
-    const user = JSON.parse(localStorage.getItem('user'));
-
-    const assetData = selectedAssets.map((serialNumber) => {
-      const asset = assets.find(a => a.serialNumber === serialNumber);
+  const handleAssign = async () => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    const assetData = confirmedAssets.map((serialNumber) => {
+      const asset = assets.find((a) => a.serialNumber === serialNumber);
       return {
         empId: employee.empId,
         serialNumber,
@@ -49,15 +72,16 @@ function AssignAssetToEmployee({ open, onClose, employee, refresh }) {
 
     try {
       const result = await assignAsset(assetData);
-      showSuccessAlert("Assets Assigned!", result || "The assets have been successfully assigned.");
+      showSuccessAlert("Assets Assigned!", result || "Success");
       setSelectedAssets([]);
+      setConfirmedAssets([]);
       onClose();
       refresh();
     } catch (error) {
       if (error.status === 406) {
-        showWarningAlert("Asset Already Assigned", "This asset has already been assigned.");
+        showWarningAlert("Asset Already Assigned", "Some assets are already assigned.");
       } else {
-        showErrorAlert("Assignment Failed", "An error occurred while assigning the assets.");
+        showErrorAlert("Assignment Failed", "Could not assign assets.");
       }
     }
   };
@@ -66,35 +90,63 @@ function AssignAssetToEmployee({ open, onClose, employee, refresh }) {
     open && (
       <div className="import-3d-overlay animate__animated animate__fadeIn">
         <div className="import-3d-modal animate__animated animate__zoomIn">
-          <button 
-            className="import-3d-close" 
-            onClick={onClose}
-          >
+          <button className="import-3d-close" onClick={onClose}>
             &times;
           </button>
-          
-          <div className="import-3d-title">Assign Assets to {employee?.name}</div>
+
+          <div className="import-3d-title">
+            Assign Assets to {employee?.name}
+          </div>
+
           <div className="import-3d-file-wrapper">
             <FormControl fullWidth>
               <InputLabel>Select Assets</InputLabel>
-              <Select
-                multiple
-                value={selectedAssets}
-                onChange={(e) => setSelectedAssets(e.target.value)}
-                input={<OutlinedInput label="Select Assets" />}
-                renderValue={(selected) => selected.join(", ")}
-              >
-                {assets.map((asset) => (
-                  <MenuItem key={asset.serialNumber} value={asset.serialNumber}>
-                    <Checkbox checked={selectedAssets.includes(asset.serialNumber)} />
-                    <ListItemText primary={`${asset.serialNumber} - ${asset.assetName}`} />
-                  </MenuItem>
-                ))}
-              </Select>
+              <OutlinedInput
+                readOnly
+                value={selectedAssets.join(", ")}
+                onClick={handleSelectClick}
+              />
             </FormControl>
-            <button className="import-3d-button" onClick={handleAssign}>
-              Assign Assets
-            </button>
+
+            <Menu
+              anchorEl={anchorEl}
+              open={menuOpen}
+              onClose={() => setMenuOpen(false)}
+              PaperProps={{
+                style: { width: anchorEl?.clientWidth || 300 },
+              }}
+            >
+              {assets.map((asset) => (
+                <MenuItem key={asset.serialNumber}>
+                  <Checkbox
+                    checked={selectedAssets.includes(asset.serialNumber)}
+                    onChange={(e) => {
+                      const value = asset.serialNumber;
+                      setSelectedAssets((prev) =>
+                        e.target.checked
+                          ? [...prev, value]
+                          : prev.filter((v) => v !== value)
+                      );
+                    }}
+                  />
+                  <ListItemText
+                    primary={`${asset.serialNumber} - ${asset.assetName}`}
+                  />
+                </MenuItem>
+              ))}
+
+              <Box textAlign="center" p={1}>
+                <Button variant="contained" size="small" onClick={handleOkClick}>
+                  OK
+                </Button>
+              </Box>
+            </Menu>
+
+            {confirmedAssets.length > 0 && (
+              <button className="import-3d-button" onClick={handleAssign}>
+                Confirm Assigning
+              </button>
+            )}
           </div>
         </div>
       </div>
