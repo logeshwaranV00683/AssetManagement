@@ -1,10 +1,14 @@
 package com.verinite.assetmangementtool.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.Date;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class AssetsDto {
 
     private int assetId;
@@ -24,4 +28,27 @@ public class AssetsDto {
     private Date assignedDate;
     private String assignedBy;
     private String assetSourcedBy;
+
+    @Override
+    public String toString() {
+        return "AssetsDto{" +
+                "assetId=" + assetId +
+                ", assetName='" + assetName + '\'' +
+                ", serialNumber='" + serialNumber + '\'' +
+                ", empId='" + empId + '\'' +
+                ", status='" + status + '\'' +
+                ", type='" + type + '\'' +
+                ", purchaseDate='" + purchaseDate + '\'' +
+                ", warrantyDate='" + warrantyDate + '\'' +
+                ", location='" + location + '\'' +
+                ", locCode=" + locCode +
+                ", modelName='" + modelName + '\'' +
+                ", operatingSystem='" + operatingSystem + '\'' +
+                ", returnDate=" + returnDate +
+                ", addedBy='" + addedBy + '\'' +
+                ", assignedDate=" + assignedDate +
+                ", assignedBy='" + assignedBy + '\'' +
+                ", assetSourcedBy='" + assetSourcedBy + '\'' +
+                '}';
+    }
 }

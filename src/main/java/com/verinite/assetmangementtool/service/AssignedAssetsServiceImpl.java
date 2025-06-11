@@ -37,14 +37,13 @@ public class AssignedAssetsServiceImpl implements AssignedAssetsService {
     @Autowired
     AssetCountRepository assetCountRepository;
     @Autowired
-    private AssignedAssetsRepository assignedAssetsRepository;
-    @Autowired
-    private AckMailer ackMailer;
-    @Autowired
     AssetsHistoryServices assetsHistoryServices;
     @Autowired
     AssetsHistoryServiceImpl assetsHistoryService;
-
+    @Autowired
+    private AssignedAssetsRepository assignedAssetsRepository;
+    @Autowired
+    private AckMailer ackMailer;
 
     @Override
     public AssignedAssetsEntity getAssignedAssetsById(int assignedId) {
@@ -125,17 +124,12 @@ public class AssignedAssetsServiceImpl implements AssignedAssetsService {
                     }
 
                     if (asset.getStatus().equalsIgnoreCase("UnAssigned")) {
-                        AssignedAssetsEntity assignedAssetsEntity = new AssignedAssetsEntity();
-                        assignedAssetsEntity.setAssetName(asset.getAssetName());
-                        assignedAssetsEntity.setEmpId(empId);
-                        assignedAssetsEntity.setAssignedBy(assignableAssetDto.getAssignedBy());
-                        assignedAssetsEntity.setAssignedDate(assignableAssetDto.getAssignedDate());
-                        assignedAssetsEntity.setStatus("Assigned");
-                        assignedAssetsEntity.setSerialNumber(asset.getSerialNumber());
+                        asset.setEmpId(empId);
                         asset.setStatus("Assigned");
+                        AssignedAssetsEntity assignedAssetsEntity = getAssignedAssetsEntity(assignableAssetDto, asset);
                         asset.setAssignedDate(assignableAssetDto.getAssignedDate());
                         asset.setAssignedBy(assignableAssetDto.getAssignedBy());
-                        asset.setEmpId(empId);
+
 
                         for (CountOfAssets i : countOfAssets) {
                             if (asset.getLocation().equalsIgnoreCase(i.getLocation())) {
@@ -155,7 +149,7 @@ public class AssignedAssetsServiceImpl implements AssignedAssetsService {
                                 assetsEntity.setAssignedBy(data.getAssignedBy());
                                 assetsEntity.setAssignedDate(data.getAssignedDate());
                                 return assetsEntity;
-                            }) .collect(Collectors.toList());
+                            }).collect(Collectors.toList());
 
                             assetsHistoryServices.saveHistory(assignedAssetsEntity);
                             try {
@@ -181,7 +175,18 @@ public class AssignedAssetsServiceImpl implements AssignedAssetsService {
         }
     }
 
-    private void updateUnassignedCount(AssetsEntity asset, CountOfAssets i) {
+    AssignedAssetsEntity getAssignedAssetsEntity(AssignableAssetDto assignableAssetDto, AssetsEntity asset) {
+        AssignedAssetsEntity assignedAssetsEntity = new AssignedAssetsEntity();
+        assignedAssetsEntity.setAssetName(asset.getAssetName());
+        assignedAssetsEntity.setEmpId(asset.getEmpId());
+        assignedAssetsEntity.setAssignedBy(assignableAssetDto.getAssignedBy());
+        assignedAssetsEntity.setAssignedDate(assignableAssetDto.getAssignedDate());
+        assignedAssetsEntity.setStatus("Assigned");
+        assignedAssetsEntity.setSerialNumber(asset.getSerialNumber());
+        return assignedAssetsEntity;
+    }
+
+    void updateUnassignedCount(AssetsEntity asset, CountOfAssets i) {
         String assetName = asset.getAssetName().toLowerCase();
         switch (assetName) {
             case "laptop":
@@ -271,7 +276,5 @@ public class AssignedAssetsServiceImpl implements AssignedAssetsService {
     public List<AssignedAssetsEntity> getAllAssetsAssignedToParticularEmployee(String empId) {
         return assignedAssetsRepository.findByEmpId(empId);
     }
-
-
 
 }
