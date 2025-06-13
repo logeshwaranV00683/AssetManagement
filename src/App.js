@@ -8,6 +8,9 @@ import Assets from './components/Dashboard/Assets';
 import Header from './components/Header/Header';
 import Sidebar from './components/Dashboard/SideBar';
 import Employee from './components/Dashboard/Employee';
+import AssetsToEmployee from './components/Dashboard/AssetsToEmployee';
+import SidebarAssets from './components/Dashboard/SideBarAssets';
+import SidebarEmployee from './components/Dashboard/SideBarEmployee';
 
 function App() {
 
@@ -26,15 +29,25 @@ function App() {
           <Route path="/assets"  element={
           <div className='dashboard-config'>
             <Sidebar/>
+            <SidebarAssets/>
             <Header/>
             <Assets />
           </div>
           } />
-           <Route path="/employee"  element={
+          <Route path="/employee"  element={
+          <div className='dashboard-config'>
+            <Sidebar/>
+            <SidebarEmployee/>
+            <Header/>
+            <Employee/>
+          </div>
+          } />
+
+          <Route path="/assetstoemployee"  element={
           <div className='dashboard-config'>
             <Sidebar/>
             <Header/>
-            <Employee/>
+            <AssetsToEmployee />
           </div>
           } />
           <Route path="/" element={<Navigate to="/login" />} />

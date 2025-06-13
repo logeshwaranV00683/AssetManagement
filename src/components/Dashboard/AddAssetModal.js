@@ -136,58 +136,58 @@ function AddAssetModal({ open, handleClose, refreshAssetList }) {
           </FormControl>
 
           <TextField
-            label="Serial Number"
-            value={serialNumber}
-            onChange={(e) => setSerialNumber(e.target.value)}
-            fullWidth
+              label="Serial Number"
+              value={serialNumber}
+              onChange={(e) => setSerialNumber(e.target.value)}
+              fullWidth
           />
           <TextField
-                                label="Location"
-                                value={location}
-                                onChange={(e) => setLocation(e.target.value)}
-                                fullWidth
-                    />
-
-                    <TextField
-                                label="Location Code"
-                                value={locCode}
-                                onChange={(e) => setLocCode(e.target.value)}
-                                fullWidth
-                    />
-                    <TextField
-                                          label="Operating System"
-                                          value={operatingSystem}
-                                          onChange={(e) => setOperatingSystem(e.target.value)}
-                                          fullWidth
-                    />
-                    <TextField
-                                          label="Variant"
-                                          value={modelName}
-                                          onChange={(e) => setModelName(e.target.value)}
-                                          fullWidth
-                    />
-                    <TextField
-                                                    label="Type"
-                                                    value={type}
-                                                    onChange={(e) => setType(e.target.value)}
-                                                    fullWidth
-                    />
-          <TextField
-            label="Purchase Date"
-            type="date"
-            value={purchaseDate}
-            onChange={(e) => setPurchaseDate(e.target.value)}
-            InputLabelProps={{ shrink: true }}
-            fullWidth
+              label="Location"
+              value={location}
+              onChange={(e) => setLocation(e.target.value)}
+              fullWidth
           />
 
           <TextField
-            label="Warranty Date"
-            type="date"
-            value={warrantyDate}
-            onChange={(e) => setWarrantyDate(e.target.value)}
-            InputLabelProps={{ shrink: true }}
-            fullWidth
+              label="Location Code"
+              value={locCode}
+              onChange={(e) => setLocCode(e.target.value)}
+              fullWidth
+          />
+          <TextField
+              label="Operating System"
+              value={operatingSystem}
+              onChange={(e) => setOperatingSystem(e.target.value)}
+              fullWidth
+          />
+          <TextField
+              label="Variant"
+              value={modelName}
+              onChange={(e) => setModelName(e.target.value)}
+              fullWidth
+          />
+          <TextField
+              label="Type"
+              value={type}
+              onChange={(e) => setType(e.target.value)}
+              fullWidth
+          />
+          <TextField
+              label="Purchase Date"
+              type="date"
+              value={purchaseDate}
+              onChange={(e) => setPurchaseDate(e.target.value)}
+              InputLabelProps={{ shrink: true }}
+              fullWidth
+          />
+
+          <TextField
+              label="Warranty Date"
+              type="date"
+              value={warrantyDate}
+              onChange={(e) => setWarrantyDate(e.target.value)}
+              InputLabelProps={{ shrink: true }}
+              fullWidth
           />
 
           <FormControl fullWidth>

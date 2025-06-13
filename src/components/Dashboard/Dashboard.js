@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect  } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import {  PieChart,  Pie,  Cell,  ResponsiveContainer,  Tooltip,  Legend,} from 'recharts';
 import {  Container,  Card,  CardContent,  Typography,  Box,  TextField,  MenuItem,  Select,  FormControl,  InputLabel,} from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import '../Style/font.css';
+import { getAssetsByLocation, getUnassignedAssetsByLocation ,getAssignedAssetsByLocation, getCountsByLocation, getAssignedCountByLocation, getUnassignedCountByLocation } from '../Services/DashboardService'; // adjust path if needed
 
 const useStyles = makeStyles((theme) => ({
   content: {
@@ -34,16 +35,66 @@ const useStyles = makeStyles((theme) => ({
 
 function Dashboard() {
   const classes = useStyles();
+  const COLORS = ['#00e0ff', '#f72585'];
+
+
+  const locationOptions = ['chennai', 'pune']; // or whatever locations you want
+  const [selectedLocation, setSelectedLocation] = useState('chennai');
 
   const [selectedDevice, setSelectedDevice] = useState('Laptop');
   const [filterValue, setFilterValue] = useState('');
-  const [filteredRows, setFilteredRows] = useState([
-    { id: 1, assetName: 'Laptop', serialNumber: 'SN001', location: 'Room A', model: 'Model X', assign: 'Assign X' },
-    { id: 2, assetName: 'Desktop', serialNumber: 'SN002', location: 'Room B', model: 'Model Y', assign: 'Assign Y' },
-    { id: 3, assetName: 'Printer', serialNumber: 'SN003', location: 'Room C', model: 'Model Z', assign: 'Assign Z' },
-  ]);
 
-  const rows = filteredRows;
+  {/* New Update */}
+  
+  const [allAssetRows, setAllAssetRows] = useState([]);
+  const [assignedAssetRows, setAssignedAssetRows] = useState([]);
+  const [unassignedAssetRows, setUnassignedAssetRows] = useState([]);
+
+
+    useEffect(() => {
+      const fetchCounts = async () => {
+        const data = await getAssetsByLocation(selectedLocation);
+        const formatted = Object.entries(data).map(([key, val], i) => ({
+          id: i + 1,
+          assetName: key.replace(/_/g, ' ').toUpperCase(),
+          quantity: val
+        }));
+        setAllAssetRows(formatted);
+      };
+      fetchCounts();
+    }, [selectedLocation]);
+
+    useEffect(() => {
+      const fetchCounts = async () => {
+        const data = await getUnassignedAssetsByLocation(selectedLocation);
+        const formatted = Object.entries(data).map(([key, val], i) => ({
+          id: i + 1,
+          unassignedAsset: key.replace(/_/g, ' ').toUpperCase(),
+          unassignedQuantity: val
+        }));
+        setUnassignedAssetRows(formatted);
+      };
+      fetchCounts();
+    }, [selectedLocation]);
+
+    useEffect(() => {
+      const fetchCounts = async () => {
+        const data = await getAssignedAssetsByLocation(selectedLocation);
+        const formatted = Object.entries(data).map(([key, val], i) => ({
+          id: i + 1,
+          assignedAsset: key.replace(/_/g, ' ').toUpperCase(),
+          assignedQuantity: val
+        }));
+        setAssignedAssetRows(formatted);
+      };
+      fetchCounts();
+    }, [selectedLocation]);
+
+
+  {/* New Update */}
+
+
+ 
 
   const deviceData = {
     Laptop: {
@@ -66,30 +117,61 @@ function Dashboard() {
 
   const data = deviceData[selectedDevice].chennai;
   const data2 = deviceData[selectedDevice].pune;
-  const COLORS = ['#00e0ff', '#f72585'];
+  
+
+  const countTableColumns = [
+  { field: 'id', headerName: 'ID', width: 50 },
+  { field: 'assetName', headerName: 'Asset Name', width: 200 },
+  { field: 'quantity', headerName: 'Count', width: 130 },
+];
+
+  const unassignedTableColumns = [
+  { field: 'id', headerName: 'ID', width: 50 },
+  { field: 'unassignedAsset', headerName: 'UnAssigned Asset', width: 220 },
+  { field: 'unassignedQuantity', headerName: 'Count', width: 130 },
+  
+];
+
+
+const assignedTableColumns = [
+  { field: 'id', headerName: 'ID', width: 50 },
+  { field: 'assignedAsset', headerName: 'Assigned Asset', width: 200 },
+  { field: 'assignedQuantity', headerName: 'Count', width: 130 },
+];
+
+{/*
+  const assignUnassignColumns = [
+  { field: 'id', headerName: 'ID', width: 90 },
+  { field: 'assigned', headerName: 'Assigned', width: 150 },
+  { field: 'unassigned', headerName: 'Unassigned', width: 150 },
+];
+
+const [assignUnassignData, setAssignUnassignData] = useState([]);
+
+useEffect(() => {
+  const fetchCounts = async () => {
+    const assigned = await getAssignedCountByLocation(selectedLocation);
+    const unassigned = await getUnassignedCountByLocation(selectedLocation);
+    setAssignedCount(assigned);
+    setUnassignedCount(unassigned);
+  };
+
+  fetchCounts();
+}, [selectedLocation]);
+
+ */}
+
+  
+
+
+  const [countRows, setCountRows] = useState([]);
 
   const columns = [
-    { field: 'id', headerName: 'ID', width: 90, headerClassName: 'racing-font' },
-    { field: 'assetName', headerName: 'Asset name', width: 200, headerClassName: 'racing-font' },
-    { field: 'serialNumber', headerName: 'Serial Number', width: 200, headerClassName: 'racing-font' },
-    { field: 'location', headerName: 'Location', width: 150, headerClassName: 'racing-font' },
-    { field: 'model', headerName: 'MODL', width: 150, headerClassName: 'racing-font' },
-    { field: 'assign', headerName: 'ASSIGN', width: 150, headerClassName: 'racing-font' },
+    { field: 'id', headerName: 'ID', width: 80 },
+    { field: 'assetType', headerName: 'Asset Type', width: 200 },
+    { field: 'count', headerName: 'Count', width: 130 },
   ];
 
-  const handleSearch = (event) => {
-    const value = event.target.value.toLowerCase();
-    setFilterValue(value);
-    const filtered = rows.filter(
-      (row) =>
-        row.assetName.toLowerCase().includes(value) ||
-        row.serialNumber.toLowerCase().includes(value) ||
-        row.location.toLowerCase().includes(value) ||
-        row.model.toLowerCase().includes(value) ||
-        row.assign.toLowerCase().includes(value)
-    );
-    setFilteredRows(filtered);
-  };
 
   return (
     <div>
@@ -98,13 +180,13 @@ function Dashboard() {
           <div className={classes.pieContainer}>
 
 
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '30px', marginTop: '10px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '30px',  }}>
               {/* Pie Chart - Chennai */}
               <Card className={classes.pieCard} style={{ flex: 1, minWidth: '280px', background: 'transparent', boxShadow: 'none' }}>
                 <CardContent>
                   <div className={classes.label} style={{margin: '20px',  }}>
                     <Typography variant="h6" style={{ color: '#00f0ff', textShadow: '0 0 6px #2BC4F3', letterSpacing: '1.5px' }}>
-                      {selectedDevice}: {data[0].value}/{data[1].value}
+                      {selectedDevice}: {data2[0].value}/{data2[1].value}
                     </Typography>
                     <Typography variant="h6" style={{ color: '#00f0ff', textShadow: '0 0 6px #2BC4F3', letterSpacing: '1.5px' }}>
                       CHENNAI
@@ -113,7 +195,7 @@ function Dashboard() {
                   <div style={{ height: 250, width: '100%' }}>
                     <ResponsiveContainer width="100%" height={260}>
                       <PieChart>
-                        <Pie dataKey="value" data={data} cx="50%" cy="50%" outerRadius={100} label>
+                        <Pie dataKey="value" data={data} cx="50%" cy="50%" outerRadius={90} label>
                           {data.map((entry, index) => (
                             <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} style={{ filter: 'drop-shadow(0 0 10px rgba(0, 240, 255, 0.8))' }} />
                           ))}
@@ -157,7 +239,7 @@ function Dashboard() {
                 <CardContent>
                   <div className={classes.label} style={{margin: '20px', }}>
                     <Typography variant="h6" style={{ color: '#00f0ff', textShadow: '0 0 6px #2BC4F3', letterSpacing: '1.5px' }}>
-                      {selectedDevice}: {data2[0].value}/{data2[1].value}
+                      {selectedDevice}: {data[0].value}/{data[1].value}
                     </Typography>
                     <Typography variant="h6" style={{ color: '#00f0ff', textShadow: '0 0 6px #2BC4F3', letterSpacing: '1.5px' }}>
                       PUNE
@@ -166,7 +248,7 @@ function Dashboard() {
                   <div style={{ height: 250, width: '100%' }}>
                     <ResponsiveContainer width="100%" height={260}>
                       <PieChart>
-                        <Pie dataKey="value" data={data2} cx="50%" cy="50%" outerRadius={100} label>
+                        <Pie dataKey="value" data={data2} cx="50%" cy="50%" outerRadius={90} label>
                           {data2.map((entry, index) => (
                             <Cell key={`cell2-${index}`} fill={COLORS[index % COLORS.length]} style={{ filter: 'drop-shadow(0 0 5px rgba(0, 240, 255, 0.9))' }} />
                           ))}
@@ -188,7 +270,6 @@ function Dashboard() {
               <TextField
                 label="Search"
                 variant="outlined"
-                onChange={handleSearch}
                 value={filterValue}
                 sx={{
                   width: { xs: '100%', md: '85vw' },
@@ -223,11 +304,223 @@ function Dashboard() {
               />
             </Box>
 
-            <div style={{ height: '65vh', width: '85vw', display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '50px' }}>
-              <div style={{ height: 350, marginLeft: '2%', width: '95%', flexGrow: 1 }}>
+            {/* Location Switch */}
+            <div>
+              <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', margin: '20px' }}>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    backgroundColor: '#fff',
+                    borderRadius: '10px 20px',
+                    padding: '2px 0px',
+                    boxShadow: '0 0 5px rgba(0,0,0,0.2)',
+                  }}
+                >
+                  {locationOptions.map((loc) => (
+                    <Box
+                      key={loc}
+                      onClick={() => setSelectedLocation(loc)}
+                      sx={{
+                        flex: 1,
+                        minWidth: 100,
+                        padding: '8px 18px',
+                        margin: '0 3px',
+                        borderRadius: '10px 20px',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        fontFamily: "'Racing Sans One', sans-serif",
+                        fontWeight: 600,
+                        letterSpacing: '1.2px',
+                        color: selectedLocation === loc ? '#fff' : '#083A40',
+                        backgroundColor: selectedLocation === loc ? '#2196f3' : '#e0f7fa',
+                        cursor: 'pointer',
+                        transition: 'all 0.3s ease',
+                        '&:hover': {
+                          backgroundColor: selectedLocation === loc ? '#1976d2' : '#b2ebf2',
+                        },
+                      }}
+                    >
+                      {loc.toUpperCase()}
+                    </Box>
+                  ))}
+                </Box>
+              </Box>
+
+            </div>
+
+            {/* DataGrid */}   
+            <div
+              style={{
+                height: '65vh',
+                display: 'flex',
+                flexDirection: 'row', // 👈 Important for side-by-side
+                alignItems: 'flex-start',
+                justifyContent: 'center',
+                gap: 50,
+                marginTop: '50px',
+                width: '110%',
+              }}
+            >
+              {/* First Table */}
+              <div style={{ height: 450, width: '32%' }}>
+                <button 
+                  style={{
+                      width: 150 ,
+                      height: 40,
+                      border: 'none',
+                      display: 'flex',
+                      backgroundColor: '#fff',
+                      borderRadius: '10px',
+                      padding: '2px 0px',
+                      margin: '10px 3px',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      fontFamily: "'Racing Sans One', sans-serif",
+                      fontWeight: 50,
+                      fontSize: 16,
+                      letterSpacing: '1.2px',
+                      boxShadow: '0 0 6px rgba(255, 255, 255, 0.8), 0 0 12px rgba(109, 224, 255, 0.6)',
+                        }}>
+                    Total Assets
+
+                </button>
+
                 <DataGrid
-                  rows={filteredRows}
-                  columns={columns}
+                  rows={allAssetRows}
+                  columns={countTableColumns}
+                  pageSize={5}
+                  rowsPerPageOptions={[5, 10, 20]}
+                  sx={{
+                    borderRadius: '16px',
+                    overflow: 'hidden',
+                    border: '2px solid #1FCBEA',
+                    boxShadow: '0 0 3px #6DE0FF, 0 0 4px #2BC4F3',
+                    fontFamily: "'Racing Sans One', sans-serif",
+                    color: '#083A40',
+                    '& .MuiDataGrid-columnHeaders': {
+                      background: 'linear-gradient(45deg, #6DE0FF, #2BC4F3)',
+                      color: '#083A40',
+                      fontSize: '16px',
+                      fontWeight: 700,
+                    },
+                    '& .MuiDataGrid-cell': {
+                      background: '#F0FBFF',
+                      color: '#083A40',
+                      fontSize: '15px',
+                      borderBottom: '1px solid #D0F0FF',
+                    },
+                    '& .MuiDataGrid-footerContainer': {
+                      background: 'linear-gradient(45deg, #6DE0FF, #2BC4F3)',
+                      color: '#083A40',
+                      fontWeight: 600,
+                    },
+                    '& .MuiDataGrid-row:hover': {
+                      backgroundColor: '#E0F9FF',
+                    },
+                    '& .MuiDataGrid-selectedRowCount': {
+                      color: '#083A40',
+                    },
+                    '& .MuiCheckbox-root': {
+                      color: '#083A40',
+                    },
+                  }}
+                />
+              </div>
+
+              {/* Second Table */}
+              <div style={{ height: 450, width: '33%' }}>
+                <button 
+                style={{
+                      width: 240 ,
+                      height: 40,
+                      border: 'none',
+                      display: 'flex',
+                      backgroundColor: '#fff',
+                      borderRadius: '10px',
+                      padding: '2px 0px',
+                      margin: '10px 3px',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      fontFamily: "'Racing Sans One', sans-serif",
+                      fontSize: 16,
+                      fontWeight: 100,
+                      letterSpacing: '1.2px',
+                      boxShadow: '0 0 6px rgba(255, 255, 255, 0.8), 0 0 12px rgba(109, 224, 255, 0.6)',
+
+                      }}>
+
+                   Unassigned Assets
+                </button>
+                <DataGrid
+                  rows={unassignedAssetRows}
+                  columns={unassignedTableColumns}
+                  pageSize={5}
+                  rowsPerPageOptions={[5, 10, 20]}
+                  sx={{
+                    borderRadius: '16px',
+                    overflow: 'hidden',
+                    border: '2px solid #1FCBEA',
+                    boxShadow: '0 0 3px #6DE0FF, 0 0 4px #2BC4F3',
+                    fontFamily: "'Racing Sans One', sans-serif",
+                    color: '#083A40',
+                    '& .MuiDataGrid-columnHeaders': {
+                      background: 'linear-gradient(45deg, #6DE0FF, #2BC4F3)',
+                      color: '#083A40',
+                      fontSize: '16px',
+                      fontWeight: 700,
+                    },
+                    '& .MuiDataGrid-cell': {
+                      background: '#F0FBFF',
+                      color: '#083A40',
+                      fontSize: '15px',
+                      borderBottom: '1px solid #D0F0FF',
+                    },
+                    '& .MuiDataGrid-footerContainer': {
+                      background: 'linear-gradient(45deg, #6DE0FF, #2BC4F3)',
+                      color: '#083A40',
+                      fontWeight: 600,
+                    },
+                    '& .MuiDataGrid-row:hover': {
+                      backgroundColor: '#E0F9FF',
+                    },
+                    '& .MuiDataGrid-selectedRowCount': {
+                      color: '#083A40',
+                    },
+                    '& .MuiCheckbox-root': {
+                      color: '#083A40',
+                    },
+                  }}
+                />
+              </div>
+
+              {/* Third Table */}
+              <div style={{ height: 450, width: '32%' }}>
+                <button 
+                style={{
+                      width: 280 ,
+                      height: 40,
+                      border: 'none',
+                      display: 'flex',
+                      backgroundColor: '#fff',
+                      borderRadius: '10px',
+                      padding: '2px 0px',
+                      margin: '10px 3px',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      fontFamily: "'Racing Sans One', sans-serif",
+                      fontSize: 16,
+                      fontWeight: 100,
+                      letterSpacing: '1.2px',
+                      boxShadow: '0 0 6px rgba(255, 255, 255, 0.8), 0 0 12px rgba(109, 224, 255, 0.6)',
+
+                      }}>
+
+                      Assigned Assets
+                </button>
+                <DataGrid
+                  rows={assignedAssetRows}
+                  columns={assignedTableColumns}
                   pageSize={5}
                   rowsPerPageOptions={[5, 10, 20]}
                   sx={{
@@ -267,6 +560,7 @@ function Dashboard() {
                 />
               </div>
             </div>
+
           </div>
         </Container>
       </main>
