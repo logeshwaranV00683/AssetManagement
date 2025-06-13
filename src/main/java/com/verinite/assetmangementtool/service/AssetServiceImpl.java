@@ -23,7 +23,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -520,7 +522,7 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
             if (!asset.getStatus().equalsIgnoreCase("scrap")) {
 
                 assetsHistoryEntity.setEmpId(asset.getEmpId());
-                assetsHistoryEntity.setReturnDate(new Date());
+                assetsHistoryEntity.setReturnDate(LocalDate.now());
                 assetsHistoryEntity.setEmpId(asset.getEmpId());
                 assetsHistoryEntity.setSerialNumber(asset.getSerialNumber());
                 assetsHistoryEntity.setAssignedBy(asset.getAssignedBy());
@@ -685,7 +687,7 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
         String[] headers = {
                 "Asset Name", "Serial Number", "Assigned To (Emp ID)", "Status", "Type", "Purchase Date",
                 "Warranty Date", "Location", "Loc Code", "Model Name", "Operating System",
-                "Return Date", "Added By", "Assigned Date", "Assigned By", "Sourced By"
+                /*"Return Date",*/ "Added By", "Assigned Date", "Assigned By", "Sourced By"
         };
 
         Row headerRow = sheet.createRow(0);
@@ -710,11 +712,11 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
             createDataCell(row, col++, dto.getLocCode(), dataStyle);
             createDataCell(row, col++, dto.getModelName(), dataStyle);
             createDataCell(row, col++, dto.getOperatingSystem(), dataStyle);
-            createDataCell(row, col++, String.valueOf(dto.getReturnDate()), dataStyle);
+//            createDataCell(row, col++, String.valueOf(dto.getReturnDate()), dataStyle);
             createDataCell(row, col++, dto.getAddedBy(), dataStyle);
             createDataCell(row, col++, String.valueOf(dto.getAssignedDate()), dataStyle);
             createDataCell(row, col++, dto.getAssignedBy(), dataStyle);
-            createDataCell(row, col++, dto.getAssetSourcedBy(), dataStyle);
+            createDataCell(row, col, dto.getAssetSourcedBy(), dataStyle);
         }
 
         for (int i = 0; i < headers.length; i++) sheet.autoSizeColumn(i);
@@ -750,7 +752,7 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
             createDataCell(row, col++, dto.getModelName(), dataStyle);
             createDataCell(row, col++, dto.getOperatingSystem(), dataStyle);
             createDataCell(row, col++, dto.getAddedBy(), dataStyle);
-            createDataCell(row, col++, dto.getAssetSourcedBy(), dataStyle);
+            createDataCell(row, col, dto.getAssetSourcedBy(), dataStyle);
         }
 
         for (int i = 0; i < headers.length; i++) sheet.autoSizeColumn(i);
@@ -781,7 +783,7 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
             createDataCell(row, col++, String.valueOf(dto.getAssignedDate()), dataStyle);
             createDataCell(row, col++, dto.getAssignedBy(), dataStyle);
             createDataCell(row, col++, dto.getOperatingSystem(), dataStyle);
-            //    createDataCell(row, col++, dto.getAssignedTo(), dataStyle); // Users
+            //    createDataCell(row, col++, dto.EmpId(), dataStyle); // Users
             createDataCell(row, col++, dto.getStatus(), dataStyle);
             createDataCell(row, col++, dto.getType(), dataStyle);
             createDataCell(row, col++, dto.getLocation(), dataStyle);
@@ -852,7 +854,7 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
         }
 
         Iterator<Row> rows = sheet.iterator();
-        if (rows.hasNext()) rows.next(); // skip header
+        if (rows.hasNext()) rows.next();
 
         while (rows.hasNext()) {
             Row row = rows.next();
@@ -899,13 +901,13 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
                 asset.setLocCode(parseIntSafe(getCellValue(row, 8)));
                 asset.setModelName(getCellValue(row, 9));
                 asset.setOperatingSystem(getCellValue(row, 10));
-                asset.setAddedBy(getCellValue(row, 12));
-                asset.setAssignedBy(getCellValue(row, 14));
-                asset.setAssetSourcedBy(getCellValue(row, 15));
+                asset.setAddedBy(getCellValue(row, 11));
+                asset.setAssignedBy(getCellValue(row, 13));
+                asset.setAssetSourcedBy(getCellValue(row, 14));
                 asset.setStatus("Assigned");
 
-                asset.setAssignedDate(parseDateSafe(getCellValue(row, 13)));
-                asset.setReturnDate(parseDateSafe(getCellValue(row, 11)));
+                asset.setAssignedDate(parseDateSafe(getCellValue(row, 12)));
+           //     asset.setReturnDate(parseDateSafe(getCellValue(row, )));
                 assetRepo.save(modelMapper.map(asset,AssetsEntity.class));
                 AssignableAssetDto assignableAssetDto =new AssignableAssetDto();
                 assignableAssetDto.setAssignedBy(asset.getAssignedBy());
@@ -981,14 +983,23 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
         }
     }
 
-    private Date parseDateSafe(String dateStr) {
+    private LocalDate parseDateSafe(String dateStr) {
+        if (dateStr == null || dateStr.isBlank()) return null;
+
         try {
-            return (dateStr != null && !dateStr.isBlank())
-                    ? new SimpleDateFormat("dd/MM/yyyy").parse(dateStr)
-                    : null;
+            Date parsed = new SimpleDateFormat("yyyy-MM-dd").parse(dateStr);
+            return parsed.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         } catch (ParseException e) {
-            log.warn("Invalid date: {}", dateStr);
-            return null;
+            try {
+                double excelDate = Double.parseDouble(dateStr);
+                Date parsed = DateUtil.getJavaDate(excelDate);
+                return parsed.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            } catch (NumberFormatException ne) {
+                log.warn("Invalid date: {}", dateStr);
+                return null;
+            }
         }
     }
+
+
 }

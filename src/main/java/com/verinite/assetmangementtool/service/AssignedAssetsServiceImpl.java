@@ -45,6 +45,8 @@ public class AssignedAssetsServiceImpl implements AssignedAssetsService {
     @Autowired
     private AckMailer ackMailer;
 
+   static List<AssetsEntity> assetsEntityList;
+
     @Override
     public AssignedAssetsEntity getAssignedAssetsById(int assignedId) {
         return assignedAssetsRepository.findByAssignedAssetsId(assignedId);
@@ -112,7 +114,7 @@ public class AssignedAssetsServiceImpl implements AssignedAssetsService {
     }
 
     public ResponseEntity<String> save(List<AssignableAssetDto> assignableAssetDtos) {
-        String empId = assignableAssetDtos.get(0).getEmpId(); // Assuming all assets belong to the same employee
+        String empId = assignableAssetDtos.get(0).getEmpId();
         EmployeeEntity employeeEntity = employeeRepository.findByEmpId(empId);
         if (employeeEntity != null) {
             try {
@@ -140,30 +142,30 @@ public class AssignedAssetsServiceImpl implements AssignedAssetsService {
 
                         assignedAssetsRepository.save(assignedAssetsEntity);
                         assetsRepo.save(asset);
-                        new Thread(() -> {
-                            List<AssetsEntity> assetsEntityList = assignableAssetDtos.stream().map((data) -> {
-                                AssetsEntity assetsEntity = new AssetsEntity();
-                                assetsEntity.setEmpId(data.getEmpId());
-                                assetsEntity.setAssetName(data.getAssetName());
-                                assetsEntity.setSerialNumber(data.getSerialNumber());
-                                assetsEntity.setAssignedBy(data.getAssignedBy());
-                                assetsEntity.setAssignedDate(data.getAssignedDate());
-                                return assetsEntity;
-                            }).collect(Collectors.toList());
-
-                            assetsHistoryServices.saveHistory(assignedAssetsEntity);
-                            try {
-                                ackMailer.sendAckMail(empId, assetsEntityList);
-                            } catch (MessagingException | UnsupportedEncodingException e) {
-                                throw new RuntimeException(e);
-                            }
-                        }).start();
+                        assetsEntityList= assignableAssetDtos.stream().map((data)->{
+                            AssetsEntity assetsEntity= new AssetsEntity();
+                            assetsEntity.setEmpId(data.getEmpId());
+                            assetsEntity.setAssetName(data.getAssetName());
+                            assetsEntity.setSerialNumber(data.getSerialNumber());
+                            assetsEntity.setAssignedBy(data.getAssignedBy());
+                            assetsEntity.setAssignedDate(data.getAssignedDate());
+                            return assetsEntity;
+                        }).collect(Collectors.toList());
+                        assetsHistoryServices.saveHistory(assignedAssetsEntity);
                     } else if (asset.getStatus().equalsIgnoreCase("Scrap")) {
 
-                        return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Asset was in Scrap");
-                    } else
+                        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Asset was in Scrap");
+                    }
+                    else
                         return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Asset Already In Assigned");
                 }
+                new Thread(()->{
+                    try {
+                        ackMailer.sendAckMail(empId,assetsEntityList);
+                    } catch (MessagingException | UnsupportedEncodingException e) {
+                        throw new RuntimeException(e);
+                    }
+                }).start();
                 return ResponseEntity.ok("Asset Assigned To " + employeeEntity.getEmpId());
             } catch (Exception e) {
                 e.printStackTrace();
@@ -253,9 +255,9 @@ public class AssignedAssetsServiceImpl implements AssignedAssetsService {
     }
 
     @Override
-    public String unAssignAsset(List<String> serialNumber) {
-        AssignedAssetsEntity assignedAssets = null;
-        for (String serialNo : serialNumber) {
+    public String unAssignAsset(List<String> serialNumber){
+        AssignedAssetsEntity assignedAssets=null;
+        for(String serialNo :serialNumber) {
             assignedAssets = assignedAssetsRepository.findBySerialNumber(serialNo);
             if (assignedAssets == null) return "assert Not found";
             assetsHistoryService.updateHistory(assignedAssets, serialNo);
@@ -275,6 +277,5 @@ public class AssignedAssetsServiceImpl implements AssignedAssetsService {
     public List<AssignedAssetsEntity> getAllAssetsAssignedToParticularEmployee(String empId) {
         return assignedAssetsRepository.findByEmpId(empId);
     }
-
 
 }
