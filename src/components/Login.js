@@ -47,6 +47,8 @@ const Login = () => {
   const [otpExpired, setOtpExpired] = useState(false);
   const [passwordStrength, setPasswordStrength] = useState({ level: '', color: '' });
   const [isTypingConfirmPassword, setIsTypingConfirmPassword] = useState(false);
+  const [isSendingOtp, setIsSendingOtp] = useState(false);
+
 
 
   useEffect(() => {
@@ -210,16 +212,28 @@ const Login = () => {
                   <button
                     type="button"
                     className="submit-btn"
-                    onClick={() => {
-                      ResetPassword(empId, setShowResetPassword, setShowForgotPassword, setShowLogin);
-                      const now = Date.now();
-                      setOtpSentTime(now);
-                      setTimeLeft(90);
-                      setOtpExpired(false);
+                    disabled={isSendingOtp} 
+                    onClick={async () => {
+                      setIsSendingOtp(true); 
+                      try {
+                        if(!empId||empId.trim()==="")
+                         { toast.error("Employee Id Required");
+                          return;}
+                        await ResetPassword(empId, setShowResetPassword, setShowForgotPassword, setShowLogin);
+                        const now = Date.now();
+                        setOtpSentTime(now);
+                        setTimeLeft(90);
+                        setOtpExpired(false);
+                      } catch (error) {
+                        console.error("Error sending OTP:", error);
+                      } finally {
+                        setIsSendingOtp(false); 
+                      }
                     }}
                   >
-                    Send OTP
+                    {isSendingOtp ? 'Sending OTP...' : 'Send OTP'}
                   </button>
+
                   <button type="button" style={{ marginTop: '15px' }} onClick={handleCancel}>
                     Cancel
                   </button>
@@ -276,7 +290,6 @@ const Login = () => {
                   type="button"
                   className="submit-btn"
                   onClick={() => {
-                    const strength = checkPasswordStrength(newPassword);
                     if (passwordStrength.level.startsWith('WeakPassword')) {
                        toast.error('The password is weak.It cannot be resetted.');
                        return;
