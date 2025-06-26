@@ -20,9 +20,15 @@ pipeline {
 
         stage('Build') {
             steps {
-                sh './mvnw clean package -DskipTests'
+                script {
+                    sh """
+                        chmod +x ./mvnw
+                        ./mvnw clean package -DskipTests
+                    """
+                }
             }
         }
+
 
         stage('Docker Build') {
             steps {
