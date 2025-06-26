@@ -10,25 +10,17 @@ pipeline {
     }
 
     stages {
-       stage('Clone') {
-           steps {
-               git credentialsId: 'github-creds',
-                   branch: 'feature',
-                   url: 'https://github.com/logeshwaranV00683/AssetManagement_v0.1.git'
-           }
-       }
+        stage('Clone') {
+            steps {
+        git branch: 'feature', url: 'https://github.com/logeshwaranV00683/AssetManagement_v0.1.git'
+    }
+        }
 
         stage('Build') {
             steps {
-                script {
-                    sh """
-                        chmod +x ./mvnw
-                        ./mvnw clean package -DskipTests
-                    """
-                }
+                sh './mvnw clean package -DskipTests'
             }
         }
-
 
         stage('Docker Build') {
             steps {
