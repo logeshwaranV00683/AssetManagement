@@ -4,7 +4,11 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.NumberFormat;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import java.time.LocalDate;
 
 @Data
@@ -13,23 +17,37 @@ import java.time.LocalDate;
 public class AssetsDto {
 
     private int assetId;
+    @NotBlank
     private String assetName;
+    @NotBlank
     private String serialNumber;
+    @Pattern(regexp = "^(V\\d{5})?$", message = "Must be V followed by 5 digits or empty")
     private String empId;
     private String status;
+    @NotBlank
     private String type;
+    @NotBlank(message = "Purchase date is required")
+    @Pattern(regexp = "^\\d{4}-\\d{2}-\\d{2}$", message = "Date must be in format yyyy-MM-dd")
     private String purchaseDate;
+    @NotBlank(message = "Warranty date is required")
+    @Pattern(regexp = "^\\d{4}-\\d{2}-\\d{2}$", message = "Date must be in format yyyy-MM-dd")
     private String warrantyDate;
+    @NotBlank
     private String location;
+    @Pattern(regexp = "^(\\d+)?$", message = "locCode Must be a Number")
     private Integer locCode;
+    @NotBlank
     private String modelName;
     private String operatingSystem;
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate returnDate;
+    @Pattern(regexp = "^(V\\d{5})?$", message = "Must be V followed by 5 digits or empty")
     private String addedBy;
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate assignedDate;
+    @Pattern(regexp = "^(V\\d{5})?$", message = "Must be V followed by 5 digits or empty")
     private String assignedBy;
+    @NotBlank
     private String assetSourcedBy;
 
     @Override

@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -24,7 +25,7 @@ public class AssignedAssetsController {
 
 
     @PostMapping("Asset/assign")
-    public ResponseEntity<?> assignMultipleAssets(@RequestBody List<AssignableAssetDto> assignableAssetDtos) {
+    public ResponseEntity<?> assignMultipleAssets(@RequestBody List<@Valid AssignableAssetDto> assignableAssetDtos) {
         if (assignableAssetDtos == null || assignableAssetDtos.isEmpty()) {
             return ResponseEntity.badRequest().body("Asset list is empty");
         }
@@ -55,10 +56,10 @@ public class AssignedAssetsController {
         return ResponseEntity.ok(assignedAssets); // Returns HTTP 200 with the list of assigned assets
     }
 
-    @PutMapping("update-assigned-assets/{assignedId}")
+    @PutMapping("update-assigned-assets/{assignedId}/{empId}")
     public AssignedAssetsEntity updateAssignedAssets(@PathVariable("assignedId") Integer assignedId,
-                                                     @RequestBody AssignedAssetsEntity assignedAssetsEntity) {
-        return assignedAssetsService.updateAssignedAssets(assignedId, assignedAssetsEntity);
+                                                     @PathVariable("empId") String empId) {
+        return assignedAssetsService.updateAssignedAssets(assignedId, empId);
     }
 
     @DeleteMapping("update-assigned-assets/{assignedId}")

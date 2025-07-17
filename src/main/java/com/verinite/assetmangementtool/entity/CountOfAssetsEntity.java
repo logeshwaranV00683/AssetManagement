@@ -6,6 +6,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
 
 
 @Entity
@@ -15,6 +16,7 @@ public class CountOfAssetsEntity {
 
     @Id
     @Column(name = "location")
+    @NotBlank
     private String location;
 
     private int laptopCount;

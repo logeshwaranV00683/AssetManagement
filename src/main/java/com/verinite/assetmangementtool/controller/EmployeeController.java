@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URLEncoder;
@@ -36,7 +38,7 @@ public class EmployeeController {
 //		return employeeService.saveEmployee(null);
 //	}
     @PostMapping("employee/saveemployee")
-    public ResponseEntity<EmployeeDto> saveEmployee(@RequestBody EmployeeDto employeeDTO) {
+    public ResponseEntity<EmployeeDto> saveEmployee(@RequestBody @Valid EmployeeDto employeeDTO) {
         try {
             EmployeeDto savedEmployee = employeeService.saveEmployee(employeeDTO);
             return ResponseEntity.status(HttpStatus.CREATED).body(savedEmployee);
@@ -46,7 +48,7 @@ public class EmployeeController {
     }
 
     @PostMapping("employee/save/bulk")
-    public ResponseEntity<List<EmployeeDto>> saveEmployees(@RequestBody List<EmployeeDto> employeeDTOs) {
+    public ResponseEntity<List<EmployeeDto>> saveEmployees(@RequestBody  @NotEmpty(message = "Employee list cannot be empty") List<@Valid EmployeeDto> employeeDTOs) {
         try {
             List<EmployeeDto> savedEmployees = employeeService.saveBulkEmployee(employeeDTOs);
             return new ResponseEntity<>(savedEmployees, HttpStatus.CREATED);
@@ -120,7 +122,7 @@ public class EmployeeController {
 
 
     @PutMapping("/updateEmp/{empId}")
-    public ResponseEntity<?> updateEmployee(@PathVariable String empId, @RequestBody EmployeeEntity employee) {
+    public ResponseEntity<?> updateEmployee(@PathVariable String empId, @RequestBody @Valid EmployeeDto employee) {
         try {
             Object result = employeeService.updateEmp(empId, employee);
             if (result instanceof EmployeeEntity) {

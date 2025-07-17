@@ -175,7 +175,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
 
-    public Object updateEmp(String empId, EmployeeEntity employee) {
+    public Object updateEmp(String empId, EmployeeDto employee) {
         try {
             EmployeeEntity existingEmployee = employeeRepo.findByEmpId(empId);
             if (existingEmployee == null) {

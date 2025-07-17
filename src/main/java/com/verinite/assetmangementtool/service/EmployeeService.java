@@ -24,7 +24,7 @@ public interface EmployeeService {
 
     List<EmployeeEntity> getAllByLocation(String str);
 
-    Object updateEmp(String empId, EmployeeEntity employee);
+    Object updateEmp(String empId, EmployeeDto employee);
 
     void deleteEmployeeById(String empId);
 

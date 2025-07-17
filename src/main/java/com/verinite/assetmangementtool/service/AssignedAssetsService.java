@@ -16,7 +16,7 @@ public interface AssignedAssetsService {
 
     List<AssignedAssetDtoList> getAllassignedAssets();
 
-    AssignedAssetsEntity updateAssignedAssets(int assignedId, AssignedAssetsEntity assignedAssetsEntity);
+    AssignedAssetsEntity updateAssignedAssets(int assignedId, String empId);
 
     String deleteAssignedAssets(int assignedId);
 

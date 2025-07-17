@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
 import java.util.List;
@@ -62,7 +63,7 @@ public class AssetsController implements ApplicationRunner {
     }
 
     @PostMapping("asset/saveAsset")
-    public ResponseEntity<AssetsDto> saveAsset(@RequestBody AssetsDto assetDto) {
+    public ResponseEntity<AssetsDto> saveAsset(@RequestBody @Valid AssetsDto assetDto) {
         AssetsDto savedAsset = assetService.saveAsset(assetDto);
         return new ResponseEntity<>(savedAsset, HttpStatus.CREATED);
     }
@@ -75,7 +76,7 @@ public class AssetsController implements ApplicationRunner {
 
     @PutMapping("asset/updateAsset/{serialNumber}")
     public ResponseEntity<SaveAssetResponse> updateEmployee(@PathVariable String serialNumber,
-                                                            @RequestBody SaveAssetResponse saveAssetResponse) {
+                                                            @RequestBody @Valid SaveAssetResponse saveAssetResponse) {
 
         saveAssetResponse.setSerialNumber(serialNumber);
 
@@ -87,20 +88,9 @@ public class AssetsController implements ApplicationRunner {
     @DeleteMapping("asset/delete/{id}")
     public String delete(@PathVariable int id) {
         assetService.deleteAsset(id);
-        return "Asset delete successfully. ";
+        return "Asset Scrapped successfully. ";
     }
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public Map<String, String> handleValidationExceptions(MethodArgumentNotValidException ex) {
-        Map<String, String> errors = new HashMap<>();
-        ex.getBindingResult().getAllErrors().forEach((error) -> {
-            String fieldName = ((FieldError) error).getField();
-            String errorMessage = error.getDefaultMessage();
-            errors.put(fieldName, errorMessage);
-        });
-        return errors;
-    }
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
@@ -128,7 +118,7 @@ public class AssetsController implements ApplicationRunner {
         }
     }
 
-    @Operation(summary = "Import Excel")
+    @Operation(summary = "Import Excel Data")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful import")
     })

@@ -7,6 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 //@CrossOrigin(origins = "https://asset-tool.netlify.app", allowedHeaders = "*", allowCredentials = "true")
@@ -18,7 +20,7 @@ public class JwtAuthenticationController {
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public ResponseEntity<?> adminLogin(@RequestBody AdminLoginDto login) throws Exception {
+    public ResponseEntity<?> adminLogin(@RequestBody @Valid AdminLoginDto login) throws Exception {
         //LOGGER.info("inside method!!!: login method", login.getEmpId());
         return service.checkLogin(login);
     }

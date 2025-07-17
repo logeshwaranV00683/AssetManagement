@@ -90,7 +90,7 @@ public class AssignedAssetsServiceImpl implements AssignedAssetsService {
     }
 
     @Override
-    public AssignedAssetsEntity updateAssignedAssets(int assignedId, AssignedAssetsEntity assignedAssetsEntity) {
+    public AssignedAssetsEntity updateAssignedAssets(int assignedId, String empId) {
         AssignedAssetsEntity assignedAssetsEntitys = new AssignedAssetsEntity();
         String assetName = assignedAssetsEntitys.getAssetName();
         try {
@@ -99,7 +99,7 @@ public class AssignedAssetsServiceImpl implements AssignedAssetsService {
             System.out.println("Given id not found");
         }
         assignedCount(assetName);
-        assignedAssetsEntitys.setEmpId(assignedAssetsEntity.getEmpId());
+        assignedAssetsEntitys.setEmpId(empId);
 
         return assignedAssetsRepository.save(assignedAssetsEntitys);
     }
