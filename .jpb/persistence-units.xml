@@ -4,7 +4,7 @@
         <persistence-units>
             <persistence-unit name="Default">
                 <packages>
-                    <package value="com.verinite.assetmangementtool"/>
+                    <package value="com.verinite.assetmanagementtool"/>
                 </packages>
             </persistence-unit>
         </persistence-units>

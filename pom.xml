@@ -151,7 +151,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <mainClass>com.verinite.assetmangementtool.AssetmanagementtoolApplication</mainClass>
+                    <mainClass>com.verinite.assetmanagementtool.AssetManagementToolApplication</mainClass>
                     <excludes>
                         <exclude>
                             <groupId>org.projectlombok</groupId>
