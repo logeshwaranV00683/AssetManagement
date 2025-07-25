@@ -1,16 +1,16 @@
-package com.verinite.assetmanagementtool.model;
+package com.verinite.assetmanagementtool.response;
 
 import lombok.Getter;
 
 import java.io.Serial;
 import java.io.Serializable;
 
+@Getter
 public class JwtResponse<T> implements Serializable {
 
     @Serial
     private static final long serialVersionUID = -8091879091924046844L;
     private final String jwtToken;
-    @Getter
     private final T data;
 
     public JwtResponse(String jwtToken) {

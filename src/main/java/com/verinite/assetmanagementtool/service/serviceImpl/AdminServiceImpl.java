@@ -5,7 +5,7 @@ import com.verinite.assetmanagementtool.dto.AdminLoginDto;
 import com.verinite.assetmanagementtool.dto.AdminRegistrationDto;
 import com.verinite.assetmanagementtool.entity.AdminRegistrationEntity;
 import com.verinite.assetmanagementtool.entity.EmployeeEntity;
-import com.verinite.assetmanagementtool.model.JwtResponse;
+import com.verinite.assetmanagementtool.response.JwtResponse;
 import com.verinite.assetmanagementtool.repository.AdminRegistrationRepository;
 import com.verinite.assetmanagementtool.repository.EmployeeRepository;
 import com.verinite.assetmanagementtool.service.AdminService;
