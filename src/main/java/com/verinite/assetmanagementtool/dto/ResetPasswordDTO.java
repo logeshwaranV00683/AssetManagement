@@ -2,7 +2,6 @@ package com.verinite.assetmanagementtool.dto;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.format.annotation.NumberFormat;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;

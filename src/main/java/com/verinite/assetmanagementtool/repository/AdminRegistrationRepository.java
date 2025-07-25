@@ -12,9 +12,6 @@ import java.util.Optional;
 @Repository
 public interface AdminRegistrationRepository extends JpaRepository<AdminRegistrationEntity, Long> {
 
-//    @Query(value = "select mail from tbl_admin", nativeQuery = true)
-//    AdminRegistrationEntity findBymail(String email);
-
     @Query(value = "SELECT * FROM tbl_admin WHERE mail = :mail", nativeQuery = true)
     Optional<AdminRegistrationEntity> findByMail(@Param("mail") String mail);
 

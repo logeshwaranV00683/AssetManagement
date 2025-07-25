@@ -52,19 +52,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     }
 
-//	@Override
-//	protected void configure(HttpSecurity httpSecurity) throws Exception {
-//		httpSecurity.csrf(crfc -> crfc.disable()).authorizeRequests()
-//				.antMatchers("/login", "/assetManager/v1/admin/add/admin", "/swagger-ui/**", "/v2/api-docs",
-//						"/v3/api-docs/**", "/swagger-resources/**", "/configuration/**", "/webjars/**",
-//						"/generate/bcrypt")
-//				.permitAll().anyRequest().authenticated().and().exceptionHandling()
-//				.authenticationEntryPoint(jwtAuthenticationEntryPoint).and().sessionManagement()
-//				.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-//		httpSecurity.addFilterBefore(jwtRequestFilter(), UsernamePasswordAuthenticationFilter.class);
-//		httpSecurity.cors(cors -> cors.configurationSource(configurationSource()));
-//	}
-
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.csrf(csrf -> csrf.disable())
@@ -77,33 +64,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .exceptionHandling(ex -> ex.authenticationEntryPoint(jwtAuthenticationEntryPoint))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
-        // Add JWT filter
         httpSecurity.addFilterBefore(jwtRequestFilter(), UsernamePasswordAuthenticationFilter.class);
 
-        // CORS configuration
         httpSecurity.cors(cors -> cors.configurationSource(configurationSource()));
     }
 
-    //	private CorsConfigurationSource configurationSource() {
-//
-//		return new CorsConfigurationSource() {
-//
-//			@Override
-//			public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
-//
-//				CorsConfiguration cfg = new CorsConfiguration();
-//
-//				cfg.setAllowedOrigins(Arrays.asList("http://localhost:3000/", "http://localhost:4200/"));
-//				cfg.setAllowedMethods(Collections.singletonList("*"));
-//				cfg.setAllowCredentials(true);
-//				cfg.setAllowedHeaders(Collections.singletonList("*"));
-//				cfg.setExposedHeaders(Arrays.asList("Authorization"));
-//				cfg.setMaxAge(3600L);
-//				return cfg;
-//			}
-//		};
-//
-//	}
     private CorsConfigurationSource configurationSource() {
 
         return new CorsConfigurationSource() {
@@ -113,17 +78,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
                 CorsConfiguration cfg = new CorsConfiguration();
 
-                // Allow all origins without credentials
                 cfg.setAllowedOrigins(Collections.singletonList("*"));
                 cfg.setAllowCredentials(false);
 
-                // Allow all HTTP methods (GET, POST, etc.)
                 cfg.setAllowedMethods(Collections.singletonList("*"));
 
-                // Allow all headers
                 cfg.setAllowedHeaders(Collections.singletonList("*"));
 
-                // Expose Authorization header
                 cfg.setExposedHeaders(Arrays.asList("Authorization"));
 
                 // Cache CORS settings for 1 hour

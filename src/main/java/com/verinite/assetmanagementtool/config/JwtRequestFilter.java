@@ -45,8 +45,6 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 response.setContentType("application/json");
                 response.getWriter().write("{\"error\":\"Token expired\"}");
             }
-        } else {
-            //logger.warn("JWT Token does not begin with Bearer String");
         }
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = this.jwtUserDetailsServie.loadUserByUsername(username);

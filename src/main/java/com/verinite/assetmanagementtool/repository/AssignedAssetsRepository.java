@@ -11,8 +11,7 @@ import java.util.List;
 
 public interface AssignedAssetsRepository extends JpaRepository<AssignedAssetsEntity, Integer> {
 
-    //	@Query(value = "select from tbl_assigned_assets where assigned_assets_id =?", nativeQuery = true)
-//	AssignedAssetsEntity getAssignedAssetsById(int assignedId);
+
     List<AssignedAssetsEntity> findAllByOrderByAssignedAssetsIdDesc();
 
     AssignedAssetsEntity findByAssignedAssetsId(int assignedAssetsId);
@@ -33,6 +32,5 @@ public interface AssignedAssetsRepository extends JpaRepository<AssignedAssetsEn
     List<AssignedAssetsEntity> findByEmpId(String empId);
 
     List<AssignedAssetsEntity> findByEmpIdNotNull();
-
 
 }

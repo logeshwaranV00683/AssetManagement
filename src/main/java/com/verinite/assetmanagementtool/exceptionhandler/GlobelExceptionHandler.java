@@ -1,4 +1,4 @@
-package com.verinite.assetmanagementtool.util;
+package com.verinite.assetmanagementtool.exceptionhandler;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;

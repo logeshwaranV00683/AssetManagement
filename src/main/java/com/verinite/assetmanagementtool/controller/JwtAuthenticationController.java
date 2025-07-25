@@ -21,7 +21,6 @@ public class JwtAuthenticationController {
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ResponseEntity<?> adminLogin(@RequestBody @Valid AdminLoginDto login) throws Exception {
-        //LOGGER.info("inside method!!!: login method", login.getEmpId());
         return service.checkLogin(login);
     }
 

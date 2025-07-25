@@ -192,7 +192,6 @@ public class AssignedAssetsServiceImpl implements AssignedAssetsService {
     }
 
 
-
     @Override
     @Async
     public ResponseEntity<?> getRecentAssigned() {
@@ -216,368 +215,368 @@ public class AssignedAssetsServiceImpl implements AssignedAssetsService {
     @Override
     public String unAssignAsset(List<String> serialNumber) {
         AssignedAssetsEntity assignedAssets = null;
-                List<CountOfAssetsEntity> countOfAssetsEntities = countOfAssetsRepository.findAll();
-                for(String serialNo :serialNumber) {
-                    assignedAssets = assignedAssetsRepository.findBySerialNumber(serialNo);
-                    if (assignedAssets == null) return "assert Not found";
-                    deleteAssignedAssets(assignedAssets.getAssignedAssetsId());
-                    int i = assetsRepo.updateUnassignStatus("UnAssigned", null, null, null, serialNumber);
+        List<CountOfAssetsEntity> countOfAssetsEntities = countOfAssetsRepository.findAll();
+        for (String serialNo : serialNumber) {
+            assignedAssets = assignedAssetsRepository.findBySerialNumber(serialNo);
+            if (assignedAssets == null) return "assert Not found";
+            deleteAssignedAssets(assignedAssets.getAssignedAssetsId());
+            int i = assetsRepo.updateUnassignStatus("UnAssigned", null, null, null, serialNumber);
 
 
-                    Optional<AssetsEntity> assets = assetsRepo.findByAssetId(i);
-                    if (assets.isPresent()) {
-                        AssetsEntity assetsEntity = assetsRepo.findBySerialNumber(serialNo);
-                        for(CountOfAssetsEntity entity : countOfAssetsEntities) {
-                            updateUnassignedCount(assetsEntity, entity);
-                            countOfAssetsRepository.save(entity);
-                        }
-
-                        assetsRepo.save(assets.get());
-                        assetsHistoryService.updateHistory(assignedAssets, serialNo);
-                        return "Asset is UnAssigned for " + assignedAssets.getEmpId();
-                    }
+            Optional<AssetsEntity> assets = assetsRepo.findByAssetId(i);
+            if (assets.isPresent()) {
+                AssetsEntity assetsEntity = assetsRepo.findBySerialNumber(serialNo);
+                for (CountOfAssetsEntity entity : countOfAssetsEntities) {
+                    updateUnassignedCount(assetsEntity, entity);
+                    countOfAssetsRepository.save(entity);
                 }
-                return " Asset is Not UnAssigned for " + assignedAssets.getEmpId();
+
+                assetsRepo.save(assets.get());
+                assetsHistoryService.updateHistory(assignedAssets, serialNo);
+                return "Asset is UnAssigned for " + assignedAssets.getEmpId();
             }
+        }
+        return " Asset is Not UnAssigned for " + assignedAssets.getEmpId();
+    }
 
-            public List<AssignedAssetsEntity> getAllAssetsAssignedToParticularEmployee(String empId) {
-                return assignedAssetsRepository.findByEmpId(empId);
-            }
-
-
-            public void assignedCount(String assetName) {
-
-            }
-                void updateTotalCount(AssetsEntity asset, CountOfAssetsEntity i) {
-                    String assetType = asset.getType().toLowerCase();
-                    switch (assetType) {
-                        case "laptop":
-                            i.setLaptopCount(i.getLaptopCount() + 1);
-                            break;
-                        case "mouse":
-                            i.setMouseCount(i.getMouseCount() + 1);
-                            break;
-                        case "laptopcharger":
-                            i.setLaptopChargerCount(i.getLaptopChargerCount() + 1);
-                            break;
-                        case "headphone":
-                            i.setHeadPhonesCount(i.getHeadPhonesCount() + 1);
-                            break;
-                        case "bag":
-                            i.setBagCount(i.getBagCount() + 1);
-                            break;
-                        case "datacard":
-                            i.setDataCardCount(i.getDataCardCount() + 1);
-                            break;
-                        case "mobile":
-                            i.setMobileCount(i.getMobileCount() + 1);
-                            break;
-                        case "camera":
-                            i.setCameraCount(i.getCameraCount() + 1);
-                            break;
-                        case "projector":
-                            i.setProjectorCount(i.getProjectorCount() + 1);
-                            break;
-                        case "firewall":
-                            i.setFireWallCount(i.getFireWallCount() + 1);
-                            break;
-                        case "switch":
-                            i.setSwitchCount(i.getSwitchCount() + 1);
-                            break;
-                        case "dvr":
-                            i.setDvrCount(i.getDvrCount() + 1);
-                            break;
-                        case "speaker":
-                            i.setSpeakerCount(i.getSpeakerCount() + 1);
-                            break;
-                        default:
-                            break;
-                    }
-                }
+    public List<AssignedAssetsEntity> getAllAssetsAssignedToParticularEmployee(String empId) {
+        return assignedAssetsRepository.findByEmpId(empId);
+    }
 
 
-                void deleteTotalCount(AssetsEntity asset, CountOfAssetsEntity i) {
-                    String assetType = asset.getType().toLowerCase();
-                    switch (assetType) {
-                        case "laptop":
-                            i.setLaptopCount(i.getLaptopCount() - 1);
-                            break;
-                        case "mouse":
-                            i.setMouseCount(i.getMouseCount() - 1);
-                            break;
-                        case "laptopcharger":
-                            i.setLaptopChargerCount(i.getLaptopChargerCount() - 1);
-                            break;
-                        case "headphone":
-                            i.setHeadPhonesCount(i.getHeadPhonesCount() - 1);
-                            break;
-                        case "bag":
-                            i.setBagCount(i.getBagCount() - 1);
-                            break;
-                        case "datacard":
-                            i.setDataCardCount(i.getDataCardCount() - 1);
-                            break;
-                        case "mobile":
-                            i.setMobileCount(i.getMobileCount() - 1);
-                            break;
-                        case "camera":
-                            i.setCameraCount(i.getCameraCount() - 1);
-                            break;
-                        case "projector":
-                            i.setProjectorCount(i.getProjectorCount() - 1);
-                            break;
-                        case "firewall":
-                            i.setFireWallCount(i.getFireWallCount() - 1);
-                            break;
-                        case "switch":
-                            i.setSwitchCount(i.getSwitchCount() - 1);
-                            break;
-                        case "dvr":
-                            i.setDvrCount(i.getDvrCount() - 1);
-                            break;
-                        case "speaker":
-                            i.setSpeakerCount(i.getSpeakerCount() - 1);
-                            break;
-                        default:
-                            break;
-                    }
-                }
+    public void assignedCount(String assetName) {
+
+    }
+
+    void updateTotalCount(AssetsEntity asset, CountOfAssetsEntity i) {
+        String assetType = asset.getType().toLowerCase();
+        switch (assetType) {
+            case "laptop":
+                i.setLaptopCount(i.getLaptopCount() + 1);
+                break;
+            case "mouse":
+                i.setMouseCount(i.getMouseCount() + 1);
+                break;
+            case "laptopcharger":
+                i.setLaptopChargerCount(i.getLaptopChargerCount() + 1);
+                break;
+            case "headphone":
+                i.setHeadPhonesCount(i.getHeadPhonesCount() + 1);
+                break;
+            case "bag":
+                i.setBagCount(i.getBagCount() + 1);
+                break;
+            case "datacard":
+                i.setDataCardCount(i.getDataCardCount() + 1);
+                break;
+            case "mobile":
+                i.setMobileCount(i.getMobileCount() + 1);
+                break;
+            case "camera":
+                i.setCameraCount(i.getCameraCount() + 1);
+                break;
+            case "projector":
+                i.setProjectorCount(i.getProjectorCount() + 1);
+                break;
+            case "firewall":
+                i.setFireWallCount(i.getFireWallCount() + 1);
+                break;
+            case "switch":
+                i.setSwitchCount(i.getSwitchCount() + 1);
+                break;
+            case "dvr":
+                i.setDvrCount(i.getDvrCount() + 1);
+                break;
+            case "speaker":
+                i.setSpeakerCount(i.getSpeakerCount() + 1);
+                break;
+            default:
+                break;
+        }
+    }
 
 
-
-                void updateImportUnassignedCount(AssetsEntity asset, CountOfAssetsEntity i) {
-                    String assetType = asset.getType().toLowerCase();
-                    switch (assetType) {
-                        case "laptop":
-                            i.setUnAssignedLaptopCount(i.getUnAssignedLaptopCount() + 1);
-                            break;
-                        case "mouse":
-                            i.setUnAssignedMouseCount(i.getUnAssignedMouseCount() + 1);
-                            break;
-                        case "laptopcharger":
-                            i.setUnAssignedLaptopChargerCount(i.getUnAssignedLaptopChargerCount() + 1);
-                            break;
-                        case "headphone":
-                            i.setUnAssignedHeadphonesCount(i.getUnAssignedHeadphonesCount() + 1);
-                            break;
-                        case "bag":
-                            i.setUnAssignedBagCount(i.getUnAssignedBagCount() + 1);
-                            break;
-                        case "datacard":
-                            i.setUnAssignedDataCardCount(i.getUnAssignedDataCardCount() + 1);
-                            break;
-                        case "mobile":
-                            i.setUnAssignedMobileCount(i.getUnAssignedMobileCount() + 1);
-                            break;
-                        case "camera":
-                            i.setUnAssignedCameraCount(i.getUnAssignedCameraCount() + 1);
-                            break;
-                        case "projector":
-                            i.setUnAssignedProjectorCount(i.getUnAssignedProjectorCount() + 1);
-                            break;
-                        case "firewall":
-                            i.setUnAssignedFireWallCount(i.getUnAssignedFireWallCount() + 1);
-                            break;
-                        case "switch":
-                            i.setUnAssignedSwitchCount(i.getUnAssignedSwitchCount() + 1);
-                            break;
-                        case "dvr":
-                            i.setUnAssignedDvrCount(i.getUnAssignedDvrCount() + 1);
-                            break;
-                        case "speaker":
-                            i.setUnAssignedSpeakerCount(i.getUnAssignedSpeakerCount() + 1);
-                            break;
-                        default:
-                            break;
-                    }
-                }
-
-
-                void updateAssignedCount(AssetsEntity asset, CountOfAssetsEntity i) {
-                    String assetType = asset.getType().toLowerCase();
-                    switch (assetType) {
-                        case "laptop":
-                            i.setUnAssignedLaptopCount(i.getUnAssignedLaptopCount() - 1);
-                            i.setAssignedLaptopCount(i.getAssignedLaptopCount() + 1);
-                            break;
-                        case "mouse":
-                            i.setUnAssignedMouseCount(i.getUnAssignedMouseCount() - 1);
-                            i.setAssignedMouseCount(i.getAssignedMouseCount() + 1);
-                            break;
-                        case "laptopcharger":
-                            i.setUnAssignedLaptopChargerCount(i.getUnAssignedLaptopChargerCount() - 1);
-                            i.setAssignedLaptopChargerCount(i.getAssignedLaptopChargerCount() + 1);
-                            break;
-                        case "headphone":
-                            i.setUnAssignedHeadphonesCount(i.getUnAssignedHeadphonesCount() - 1);
-                            i.setAssignedHeadphonesCount(i.getAssignedHeadphonesCount() + 1);
-                            break;
-                        case "bag":
-                            i.setUnAssignedBagCount(i.getUnAssignedBagCount() - 1);
-                            i.setAssignedBagCount(i.getAssignedBagCount() + 1);
-                            break;
-                        case "datacard":
-                            i.setUnAssignedDataCardCount(i.getUnAssignedDataCardCount() - 1);
-                            i.setAssignedDataCardCount(i.getAssignedDataCardCount() + 1);
-                            break;
-                        case "mobile":
-                            i.setUnAssignedMobileCount(i.getUnAssignedMobileCount() - 1);
-                            i.setAssignedMobileCount(i.getAssignedMobileCount() + 1);
-                            break;
-                        case "camera":
-                            i.setUnAssignedCameraCount(i.getUnAssignedCameraCount() - 1);
-                            i.setAssignedCameraCount(i.getAssignedCameraCount() - 1);
-                            break;
-                        case "projector":
-                            i.setUnAssignedProjectorCount(i.getUnAssignedProjectorCount() - 1);
-                            i.setAssignedProjectorCount(i.getAssignedProjectorCount() + 1);
-                            break;
-                        case "firewall":
-                            i.setUnAssignedFireWallCount(i.getUnAssignedFireWallCount() - 1);
-                            i.setAssignedFireWallCount(i.getAssignedFireWallCount() + 1);
-                            break;
-                        case "switch":
-                            i.setUnAssignedSwitchCount(i.getUnAssignedSwitchCount() - 1);
-                            i.setAssignedSwitchCount(i.getAssignedSwitchCount() + 1);
-                            break;
-                        case "dvr":
-                            i.setUnAssignedDvrCount(i.getUnAssignedDvrCount() - 1);
-                            i.setAssignedDvrCount(i.getAssignedDvrCount() + 1);
-                            break;
-                        case "speaker":
-                            i.setUnAssignedSpeakerCount(i.getUnAssignedSpeakerCount() - 1);
-                            i.setAssignedSpeakerCount(i.getAssignedSpeakerCount() + 1);
-                            break;
-                        default:
-                            break;
-                    }
-                }
+    void deleteTotalCount(AssetsEntity asset, CountOfAssetsEntity i) {
+        String assetType = asset.getType().toLowerCase();
+        switch (assetType) {
+            case "laptop":
+                i.setLaptopCount(i.getLaptopCount() - 1);
+                break;
+            case "mouse":
+                i.setMouseCount(i.getMouseCount() - 1);
+                break;
+            case "laptopcharger":
+                i.setLaptopChargerCount(i.getLaptopChargerCount() - 1);
+                break;
+            case "headphone":
+                i.setHeadPhonesCount(i.getHeadPhonesCount() - 1);
+                break;
+            case "bag":
+                i.setBagCount(i.getBagCount() - 1);
+                break;
+            case "datacard":
+                i.setDataCardCount(i.getDataCardCount() - 1);
+                break;
+            case "mobile":
+                i.setMobileCount(i.getMobileCount() - 1);
+                break;
+            case "camera":
+                i.setCameraCount(i.getCameraCount() - 1);
+                break;
+            case "projector":
+                i.setProjectorCount(i.getProjectorCount() - 1);
+                break;
+            case "firewall":
+                i.setFireWallCount(i.getFireWallCount() - 1);
+                break;
+            case "switch":
+                i.setSwitchCount(i.getSwitchCount() - 1);
+                break;
+            case "dvr":
+                i.setDvrCount(i.getDvrCount() - 1);
+                break;
+            case "speaker":
+                i.setSpeakerCount(i.getSpeakerCount() - 1);
+                break;
+            default:
+                break;
+        }
+    }
 
 
-                void updateUnassignedCount(AssetsEntity asset, CountOfAssetsEntity i) {
-                    String assetType = asset.getType().toLowerCase();
-                    switch (assetType) {
-                        case "laptop":
-                            i.setUnAssignedLaptopCount(i.getUnAssignedLaptopCount() + 1);
-                            i.setAssignedLaptopCount(i.getAssignedLaptopCount() - 1);
-                            break;
-                        case "mouse":
-                            i.setUnAssignedMouseCount(i.getUnAssignedMouseCount() + 1);
-                            i.setAssignedMouseCount(i.getAssignedMouseCount() - 1);
-                            break;
-                        case "laptopcharger":
-                            i.setUnAssignedLaptopChargerCount(i.getUnAssignedLaptopChargerCount() + 1);
-                            i.setAssignedLaptopChargerCount(i.getAssignedLaptopChargerCount() - 1);
-                            break;
-                        case "headphone":
-                            i.setUnAssignedHeadphonesCount(i.getUnAssignedHeadphonesCount() + 1);
-                            i.setAssignedHeadphonesCount(i.getAssignedHeadphonesCount() - 1);
-                            break;
-                        case "bag":
-                            i.setUnAssignedBagCount(i.getUnAssignedBagCount() + 1);
-                            i.setAssignedBagCount(i.getAssignedBagCount() - 1);
-                            break;
-                        case "datacard":
-                            i.setUnAssignedDataCardCount(i.getUnAssignedDataCardCount() + 1);
-                            i.setAssignedDataCardCount(i.getAssignedDataCardCount() - 1);
-                            break;
-                        case "mobile":
-                            i.setUnAssignedMobileCount(i.getUnAssignedMobileCount() + 1);
-                            i.setAssignedMobileCount(i.getAssignedMobileCount() - 1);
-                            break;
-                        case "camera":
-                            i.setUnAssignedCameraCount(i.getUnAssignedCameraCount() + 1);
-                            i.setAssignedCameraCount(i.getAssignedCameraCount() - 1);
-                            break;
-                        case "projector":
-                            i.setUnAssignedProjectorCount(i.getUnAssignedProjectorCount() + 1);
-                            i.setAssignedProjectorCount(i.getAssignedProjectorCount() - 1);
-                            break;
-                        case "firewall":
-                            i.setUnAssignedFireWallCount(i.getUnAssignedFireWallCount() + 1);
-                            i.setAssignedFireWallCount(i.getAssignedFireWallCount() - 1);
-                            break;
-                        case "switch":
-                            i.setUnAssignedSwitchCount(i.getUnAssignedSwitchCount() + 1);
-                            i.setAssignedSwitchCount(i.getAssignedSwitchCount() - 1);
-                            break;
-                        case "dvr":
-                            i.setUnAssignedDvrCount(i.getUnAssignedDvrCount() + 1);
-                            i.setAssignedDvrCount(i.getAssignedDvrCount() - 1);
-                            break;
-                        case "speaker":
-                            i.setUnAssignedSpeakerCount(i.getUnAssignedSpeakerCount() + 1);
-                            i.setAssignedSpeakerCount(i.getAssignedSpeakerCount() - 1);
-                            break;
-                        default:
-                            break;
-                    }
-                }
+    void updateImportUnassignedCount(AssetsEntity asset, CountOfAssetsEntity i) {
+        String assetType = asset.getType().toLowerCase();
+        switch (assetType) {
+            case "laptop":
+                i.setUnAssignedLaptopCount(i.getUnAssignedLaptopCount() + 1);
+                break;
+            case "mouse":
+                i.setUnAssignedMouseCount(i.getUnAssignedMouseCount() + 1);
+                break;
+            case "laptopcharger":
+                i.setUnAssignedLaptopChargerCount(i.getUnAssignedLaptopChargerCount() + 1);
+                break;
+            case "headphone":
+                i.setUnAssignedHeadphonesCount(i.getUnAssignedHeadphonesCount() + 1);
+                break;
+            case "bag":
+                i.setUnAssignedBagCount(i.getUnAssignedBagCount() + 1);
+                break;
+            case "datacard":
+                i.setUnAssignedDataCardCount(i.getUnAssignedDataCardCount() + 1);
+                break;
+            case "mobile":
+                i.setUnAssignedMobileCount(i.getUnAssignedMobileCount() + 1);
+                break;
+            case "camera":
+                i.setUnAssignedCameraCount(i.getUnAssignedCameraCount() + 1);
+                break;
+            case "projector":
+                i.setUnAssignedProjectorCount(i.getUnAssignedProjectorCount() + 1);
+                break;
+            case "firewall":
+                i.setUnAssignedFireWallCount(i.getUnAssignedFireWallCount() + 1);
+                break;
+            case "switch":
+                i.setUnAssignedSwitchCount(i.getUnAssignedSwitchCount() + 1);
+                break;
+            case "dvr":
+                i.setUnAssignedDvrCount(i.getUnAssignedDvrCount() + 1);
+                break;
+            case "speaker":
+                i.setUnAssignedSpeakerCount(i.getUnAssignedSpeakerCount() + 1);
+                break;
+            default:
+                break;
+        }
+    }
 
 
-                public void unassignedToAssignedCount(String assetType){
-                    CountOfAssetsEntity countOfAssetsEntity = new CountOfAssetsEntity();
+    void updateAssignedCount(AssetsEntity asset, CountOfAssetsEntity i) {
+        String assetType = asset.getType().toLowerCase();
+        switch (assetType) {
+            case "laptop":
+                i.setUnAssignedLaptopCount(i.getUnAssignedLaptopCount() - 1);
+                i.setAssignedLaptopCount(i.getAssignedLaptopCount() + 1);
+                break;
+            case "mouse":
+                i.setUnAssignedMouseCount(i.getUnAssignedMouseCount() - 1);
+                i.setAssignedMouseCount(i.getAssignedMouseCount() + 1);
+                break;
+            case "laptopcharger":
+                i.setUnAssignedLaptopChargerCount(i.getUnAssignedLaptopChargerCount() - 1);
+                i.setAssignedLaptopChargerCount(i.getAssignedLaptopChargerCount() + 1);
+                break;
+            case "headphone":
+                i.setUnAssignedHeadphonesCount(i.getUnAssignedHeadphonesCount() - 1);
+                i.setAssignedHeadphonesCount(i.getAssignedHeadphonesCount() + 1);
+                break;
+            case "bag":
+                i.setUnAssignedBagCount(i.getUnAssignedBagCount() - 1);
+                i.setAssignedBagCount(i.getAssignedBagCount() + 1);
+                break;
+            case "datacard":
+                i.setUnAssignedDataCardCount(i.getUnAssignedDataCardCount() - 1);
+                i.setAssignedDataCardCount(i.getAssignedDataCardCount() + 1);
+                break;
+            case "mobile":
+                i.setUnAssignedMobileCount(i.getUnAssignedMobileCount() - 1);
+                i.setAssignedMobileCount(i.getAssignedMobileCount() + 1);
+                break;
+            case "camera":
+                i.setUnAssignedCameraCount(i.getUnAssignedCameraCount() - 1);
+                i.setAssignedCameraCount(i.getAssignedCameraCount() - 1);
+                break;
+            case "projector":
+                i.setUnAssignedProjectorCount(i.getUnAssignedProjectorCount() - 1);
+                i.setAssignedProjectorCount(i.getAssignedProjectorCount() + 1);
+                break;
+            case "firewall":
+                i.setUnAssignedFireWallCount(i.getUnAssignedFireWallCount() - 1);
+                i.setAssignedFireWallCount(i.getAssignedFireWallCount() + 1);
+                break;
+            case "switch":
+                i.setUnAssignedSwitchCount(i.getUnAssignedSwitchCount() - 1);
+                i.setAssignedSwitchCount(i.getAssignedSwitchCount() + 1);
+                break;
+            case "dvr":
+                i.setUnAssignedDvrCount(i.getUnAssignedDvrCount() - 1);
+                i.setAssignedDvrCount(i.getAssignedDvrCount() + 1);
+                break;
+            case "speaker":
+                i.setUnAssignedSpeakerCount(i.getUnAssignedSpeakerCount() - 1);
+                i.setAssignedSpeakerCount(i.getAssignedSpeakerCount() + 1);
+                break;
+            default:
+                break;
+        }
+    }
 
-                    switch (assetType.toLowerCase()) {
-                        case "laptop":
-                            countOfAssetsEntity.setUnAssignedLaptopCount(countOfAssetsEntity.getUnAssignedLaptopCount() - 1);
-                            countOfAssetsEntity.setAssignedLaptopCount(countOfAssetsEntity.getAssignedLaptopCount() + 1);
-                            break;
-                        case "mouse":
-                            countOfAssetsEntity.setUnAssignedMouseCount(countOfAssetsEntity.getUnAssignedMouseCount() - 1);
-                            countOfAssetsEntity.setAssignedMouseCount(countOfAssetsEntity.getAssignedMouseCount() + 1);
-                            break;
-                        case "laptopcharger":
-                            countOfAssetsEntity.setUnAssignedLaptopChargerCount(countOfAssetsEntity.getUnAssignedLaptopChargerCount() - 1);
-                            countOfAssetsEntity.setAssignedLaptopChargerCount(countOfAssetsEntity.getAssignedLaptopChargerCount() + 1);
-                            break;
-                        case "headphone":
-                            countOfAssetsEntity.setUnAssignedHeadphonesCount(countOfAssetsEntity.getUnAssignedHeadphonesCount() - 1);
-                            countOfAssetsEntity.setAssignedHeadphonesCount(countOfAssetsEntity.getAssignedHeadphonesCount() + 1);
-                            break;
-                        case "bag":
-                            countOfAssetsEntity.setUnAssignedBagCount(countOfAssetsEntity.getUnAssignedBagCount() - 1);
-                            countOfAssetsEntity.setAssignedBagCount(countOfAssetsEntity.getAssignedBagCount() + 1);
-                            break;
-                        case "datacard":
-                            countOfAssetsEntity.setUnAssignedDataCardCount(countOfAssetsEntity.getUnAssignedDataCardCount() - 1);
-                            countOfAssetsEntity.setAssignedDataCardCount(countOfAssetsEntity.getAssignedDataCardCount() + 1);
-                            break;
-                        case "mobile":
-                            countOfAssetsEntity.setUnAssignedMobileCount(countOfAssetsEntity.getUnAssignedMobileCount() - 1);
-                            countOfAssetsEntity.setAssignedMobileCount(countOfAssetsEntity.getAssignedMobileCount() + 1);
-                            break;
-                        case "camera":
-                            countOfAssetsEntity.setUnAssignedCameraCount(countOfAssetsEntity.getUnAssignedCameraCount() - 1);
-                            countOfAssetsEntity.setAssignedCameraCount(countOfAssetsEntity.getAssignedCameraCount() + 1);
-                            break;
-                        case "projector":
-                            countOfAssetsEntity.setUnAssignedProjectorCount(countOfAssetsEntity.getUnAssignedProjectorCount() - 1);
-                            countOfAssetsEntity.setAssignedProjectorCount(countOfAssetsEntity.getAssignedProjectorCount() + 1);
-                            break;
-                        case "firewall":
-                            countOfAssetsEntity.setUnAssignedFireWallCount(countOfAssetsEntity.getUnAssignedFireWallCount() - 1);
-                            countOfAssetsEntity.setAssignedFireWallCount(countOfAssetsEntity.getAssignedFireWallCount() + 1);
-                            break;
-                        case "switch":
-                            countOfAssetsEntity.setUnAssignedSwitchCount(countOfAssetsEntity.getUnAssignedSwitchCount() - 1);
-                            countOfAssetsEntity.setAssignedSwitchCount(countOfAssetsEntity.getAssignedSwitchCount() + 1);
-                            break;
-                        case "dvr":
-                            countOfAssetsEntity.setUnAssignedDvrCount(countOfAssetsEntity.getUnAssignedDvrCount() - 1);
-                            countOfAssetsEntity.setAssignedDvrCount(countOfAssetsEntity.getAssignedDvrCount() + 1);
-                            break;
-                        case "speaker":
-                            countOfAssetsEntity.setUnAssignedSpeakerCount(countOfAssetsEntity.getUnAssignedSpeakerCount() - 1);
-                            countOfAssetsEntity.setAssignedSpeakerCount(countOfAssetsEntity.getAssignedSpeakerCount() + 1);
-                            break;
-                        default:
-                            // Handle unknown asset types
-                            break;
-                    }
-                    assetCountRepository.save(countOfAssetsEntity);
 
-                }
+    void updateUnassignedCount(AssetsEntity asset, CountOfAssetsEntity i) {
+        String assetType = asset.getType().toLowerCase();
+        switch (assetType) {
+            case "laptop":
+                i.setUnAssignedLaptopCount(i.getUnAssignedLaptopCount() + 1);
+                i.setAssignedLaptopCount(i.getAssignedLaptopCount() - 1);
+                break;
+            case "mouse":
+                i.setUnAssignedMouseCount(i.getUnAssignedMouseCount() + 1);
+                i.setAssignedMouseCount(i.getAssignedMouseCount() - 1);
+                break;
+            case "laptopcharger":
+                i.setUnAssignedLaptopChargerCount(i.getUnAssignedLaptopChargerCount() + 1);
+                i.setAssignedLaptopChargerCount(i.getAssignedLaptopChargerCount() - 1);
+                break;
+            case "headphone":
+                i.setUnAssignedHeadphonesCount(i.getUnAssignedHeadphonesCount() + 1);
+                i.setAssignedHeadphonesCount(i.getAssignedHeadphonesCount() - 1);
+                break;
+            case "bag":
+                i.setUnAssignedBagCount(i.getUnAssignedBagCount() + 1);
+                i.setAssignedBagCount(i.getAssignedBagCount() - 1);
+                break;
+            case "datacard":
+                i.setUnAssignedDataCardCount(i.getUnAssignedDataCardCount() + 1);
+                i.setAssignedDataCardCount(i.getAssignedDataCardCount() - 1);
+                break;
+            case "mobile":
+                i.setUnAssignedMobileCount(i.getUnAssignedMobileCount() + 1);
+                i.setAssignedMobileCount(i.getAssignedMobileCount() - 1);
+                break;
+            case "camera":
+                i.setUnAssignedCameraCount(i.getUnAssignedCameraCount() + 1);
+                i.setAssignedCameraCount(i.getAssignedCameraCount() - 1);
+                break;
+            case "projector":
+                i.setUnAssignedProjectorCount(i.getUnAssignedProjectorCount() + 1);
+                i.setAssignedProjectorCount(i.getAssignedProjectorCount() - 1);
+                break;
+            case "firewall":
+                i.setUnAssignedFireWallCount(i.getUnAssignedFireWallCount() + 1);
+                i.setAssignedFireWallCount(i.getAssignedFireWallCount() - 1);
+                break;
+            case "switch":
+                i.setUnAssignedSwitchCount(i.getUnAssignedSwitchCount() + 1);
+                i.setAssignedSwitchCount(i.getAssignedSwitchCount() - 1);
+                break;
+            case "dvr":
+                i.setUnAssignedDvrCount(i.getUnAssignedDvrCount() + 1);
+                i.setAssignedDvrCount(i.getAssignedDvrCount() - 1);
+                break;
+            case "speaker":
+                i.setUnAssignedSpeakerCount(i.getUnAssignedSpeakerCount() + 1);
+                i.setAssignedSpeakerCount(i.getAssignedSpeakerCount() - 1);
+                break;
+            default:
+                break;
+        }
+    }
+
+
+    public void unassignedToAssignedCount(String assetType) {
+        CountOfAssetsEntity countOfAssetsEntity = new CountOfAssetsEntity();
+
+        switch (assetType.toLowerCase()) {
+            case "laptop":
+                countOfAssetsEntity.setUnAssignedLaptopCount(countOfAssetsEntity.getUnAssignedLaptopCount() - 1);
+                countOfAssetsEntity.setAssignedLaptopCount(countOfAssetsEntity.getAssignedLaptopCount() + 1);
+                break;
+            case "mouse":
+                countOfAssetsEntity.setUnAssignedMouseCount(countOfAssetsEntity.getUnAssignedMouseCount() - 1);
+                countOfAssetsEntity.setAssignedMouseCount(countOfAssetsEntity.getAssignedMouseCount() + 1);
+                break;
+            case "laptopcharger":
+                countOfAssetsEntity.setUnAssignedLaptopChargerCount(countOfAssetsEntity.getUnAssignedLaptopChargerCount() - 1);
+                countOfAssetsEntity.setAssignedLaptopChargerCount(countOfAssetsEntity.getAssignedLaptopChargerCount() + 1);
+                break;
+            case "headphone":
+                countOfAssetsEntity.setUnAssignedHeadphonesCount(countOfAssetsEntity.getUnAssignedHeadphonesCount() - 1);
+                countOfAssetsEntity.setAssignedHeadphonesCount(countOfAssetsEntity.getAssignedHeadphonesCount() + 1);
+                break;
+            case "bag":
+                countOfAssetsEntity.setUnAssignedBagCount(countOfAssetsEntity.getUnAssignedBagCount() - 1);
+                countOfAssetsEntity.setAssignedBagCount(countOfAssetsEntity.getAssignedBagCount() + 1);
+                break;
+            case "datacard":
+                countOfAssetsEntity.setUnAssignedDataCardCount(countOfAssetsEntity.getUnAssignedDataCardCount() - 1);
+                countOfAssetsEntity.setAssignedDataCardCount(countOfAssetsEntity.getAssignedDataCardCount() + 1);
+                break;
+            case "mobile":
+                countOfAssetsEntity.setUnAssignedMobileCount(countOfAssetsEntity.getUnAssignedMobileCount() - 1);
+                countOfAssetsEntity.setAssignedMobileCount(countOfAssetsEntity.getAssignedMobileCount() + 1);
+                break;
+            case "camera":
+                countOfAssetsEntity.setUnAssignedCameraCount(countOfAssetsEntity.getUnAssignedCameraCount() - 1);
+                countOfAssetsEntity.setAssignedCameraCount(countOfAssetsEntity.getAssignedCameraCount() + 1);
+                break;
+            case "projector":
+                countOfAssetsEntity.setUnAssignedProjectorCount(countOfAssetsEntity.getUnAssignedProjectorCount() - 1);
+                countOfAssetsEntity.setAssignedProjectorCount(countOfAssetsEntity.getAssignedProjectorCount() + 1);
+                break;
+            case "firewall":
+                countOfAssetsEntity.setUnAssignedFireWallCount(countOfAssetsEntity.getUnAssignedFireWallCount() - 1);
+                countOfAssetsEntity.setAssignedFireWallCount(countOfAssetsEntity.getAssignedFireWallCount() + 1);
+                break;
+            case "switch":
+                countOfAssetsEntity.setUnAssignedSwitchCount(countOfAssetsEntity.getUnAssignedSwitchCount() - 1);
+                countOfAssetsEntity.setAssignedSwitchCount(countOfAssetsEntity.getAssignedSwitchCount() + 1);
+                break;
+            case "dvr":
+                countOfAssetsEntity.setUnAssignedDvrCount(countOfAssetsEntity.getUnAssignedDvrCount() - 1);
+                countOfAssetsEntity.setAssignedDvrCount(countOfAssetsEntity.getAssignedDvrCount() + 1);
+                break;
+            case "speaker":
+                countOfAssetsEntity.setUnAssignedSpeakerCount(countOfAssetsEntity.getUnAssignedSpeakerCount() - 1);
+                countOfAssetsEntity.setAssignedSpeakerCount(countOfAssetsEntity.getAssignedSpeakerCount() + 1);
+                break;
+            default:
+                // Handle unknown asset types
+                break;
+        }
+        assetCountRepository.save(countOfAssetsEntity);
+
+    }
 
 
 //    public void assignedToUnassignedCount(String assetType){
@@ -644,196 +643,192 @@ public class AssignedAssetsServiceImpl implements AssignedAssetsService {
 //    }
 
 
+    public void totalCountImport(String assetType, String location) {
+        Optional<CountOfAssetsEntity> optionalEntity = assetCountRepository.findById(location);
+
+        if (!optionalEntity.isPresent()) {
+            // log.warn("Location not found: {}", location);
+            return;
+        }
+
+        CountOfAssetsEntity entity = optionalEntity.get();
+
+        switch (assetType.toLowerCase()) {
+            case "laptop":
+                entity.setLaptopCount(entity.getLaptopCount() + 1);
+                break;
+            case "mouse":
+                entity.setMouseCount(entity.getMouseCount() + 1);
+                break;
+            case "laptop charger":
+                entity.setLaptopChargerCount(entity.getLaptopChargerCount() + 1);
+                break;
+            case "head phone":
+                entity.setHeadPhonesCount(entity.getHeadPhonesCount() + 1);
+                break;
+            case "bag":
+                entity.setBagCount(entity.getBagCount() + 1);
+                break;
+            case "data card":
+                entity.setDataCardCount(entity.getDataCardCount() + 1);
+                break;
+            case "mobile":
+                entity.setMobileCount(entity.getMobileCount() + 1);
+                break;
+            case "camera":
+                entity.setCameraCount(entity.getCameraCount() + 1);
+                break;
+            case "projector":
+                entity.setProjectorCount(entity.getProjectorCount() + 1);
+                break;
+            case "fire wall":
+                entity.setFireWallCount(entity.getFireWallCount() + 1);
+                break;
+            case "switch":
+                entity.setSwitchCount(entity.getSwitchCount() + 1);
+                break;
+            case "dvr":
+                entity.setDvrCount(entity.getDvrCount() + 1);
+                break;
+            case "speaker":
+                entity.setSpeakerCount(entity.getSpeakerCount() + 1);
+                break;
+            default:
+                // log.warn("Unknown asset type: {}", assetType);
+                return;
+        }
+        assetCountRepository.save(entity);
+    }
 
 
+    public void unAssignedCountImport(String assetType, String location) {
+        Optional<CountOfAssetsEntity> optionalEntity = assetCountRepository.findById(location);
+
+        if (!optionalEntity.isPresent()) {
+            // log.warn("Location not found: {}", location);
+            return;
+        }
+
+        CountOfAssetsEntity entity = optionalEntity.get();
+
+        switch (assetType.toLowerCase()) {
+            case "laptop":
+                entity.setUnAssignedLaptopCount(entity.getUnAssignedLaptopCount() + 1);
+                break;
+            case "mouse":
+                entity.setUnAssignedMouseCount(entity.getUnAssignedMouseCount() + 1);
+                break;
+            case "laptop charger":
+                entity.setUnAssignedLaptopChargerCount(entity.getUnAssignedLaptopChargerCount() + 1);
+                break;
+            case "head phone":
+                entity.setUnAssignedHeadphonesCount(entity.getUnAssignedHeadphonesCount() + 1);
+                break;
+            case "bag":
+                entity.setUnAssignedBagCount(entity.getUnAssignedBagCount() + 1);
+                break;
+            case "data card":
+                entity.setUnAssignedDataCardCount(entity.getUnAssignedDataCardCount() + 1);
+                break;
+            case "mobile":
+                entity.setUnAssignedMobileCount(entity.getUnAssignedMobileCount() + 1);
+                break;
+            case "camera":
+                entity.setUnAssignedCameraCount(entity.getUnAssignedCameraCount() + 1);
+                break;
+            case "projector":
+                entity.setUnAssignedProjectorCount(entity.getUnAssignedProjectorCount() + 1);
+                break;
+            case "firewall":
+                entity.setUnAssignedFireWallCount(entity.getUnAssignedFireWallCount() + 1);
+                break;
+            case "switch":
+                entity.setUnAssignedSwitchCount(entity.getUnAssignedSwitchCount() + 1);
+                break;
+            case "dvr":
+                entity.setUnAssignedDvrCount(entity.getUnAssignedDvrCount() + 1);
+                break;
+            case "speaker":
+                entity.setUnAssignedSpeakerCount(entity.getUnAssignedSpeakerCount() + 1);
+                break;
+            default:
+                // log.warn("Unknown asset type: {}", assetType);
+                return;
+        }
+        assetCountRepository.save(entity);
+    }
 
 
-                public void totalCountImport(String assetType, String location) {
-                    Optional<CountOfAssetsEntity> optionalEntity = assetCountRepository.findById(location);
+    public void assignedCountImport(String assetType, String location) {
+        Optional<CountOfAssetsEntity> optionalEntity = assetCountRepository.findById(location);
 
-                    if (!optionalEntity.isPresent()) {
-                        // log.warn("Location not found: {}", location);
-                        return;
-                    }
+        if (optionalEntity.isEmpty()) {
+            // log.warn("Location not found: {}", location);
+            return;
+        }
 
-                    CountOfAssetsEntity entity = optionalEntity.get();
+        CountOfAssetsEntity entity = optionalEntity.get();
 
-                    switch (assetType.toLowerCase()) {
-                        case "laptop":
-                            entity.setLaptopCount(entity.getLaptopCount() + 1);
-                            break;
-                        case "mouse":
-                            entity.setMouseCount(entity.getMouseCount() + 1);
-                            break;
-                        case "laptop charger":
-                            entity.setLaptopChargerCount(entity.getLaptopChargerCount() + 1);
-                            break;
-                        case "head phone":
-                            entity.setHeadPhonesCount(entity.getHeadPhonesCount() + 1);
-                            break;
-                        case "bag":
-                            entity.setBagCount(entity.getBagCount() + 1);
-                            break;
-                        case "data card":
-                            entity.setDataCardCount(entity.getDataCardCount() + 1);
-                            break;
-                        case "mobile":
-                            entity.setMobileCount(entity.getMobileCount() + 1);
-                            break;
-                        case "camera":
-                            entity.setCameraCount(entity.getCameraCount() + 1);
-                            break;
-                        case "projector":
-                            entity.setProjectorCount(entity.getProjectorCount() + 1);
-                            break;
-                        case "fire wall":
-                            entity.setFireWallCount(entity.getFireWallCount() + 1);
-                            break;
-                        case "switch":
-                            entity.setSwitchCount(entity.getSwitchCount() + 1);
-                            break;
-                        case "dvr":
-                            entity.setDvrCount(entity.getDvrCount() + 1);
-                            break;
-                        case "speaker":
-                            entity.setSpeakerCount(entity.getSpeakerCount() + 1);
-                            break;
-                        default:
-                            // log.warn("Unknown asset type: {}", assetType);
-                            return;
-                    }
-                    assetCountRepository.save(entity);
-                }
-
-
-                public void unAssignedCountImport(String assetType, String location) {
-                    Optional<CountOfAssetsEntity> optionalEntity = assetCountRepository.findById(location);
-
-                    if (!optionalEntity.isPresent()) {
-                        // log.warn("Location not found: {}", location);
-                        return;
-                    }
-
-                    CountOfAssetsEntity entity = optionalEntity.get();
-
-                    switch (assetType.toLowerCase()) {
-                        case "laptop":
-                            entity.setUnAssignedLaptopCount(entity.getUnAssignedLaptopCount() + 1);
-                            break;
-                        case "mouse":
-                            entity.setUnAssignedMouseCount(entity.getUnAssignedMouseCount() + 1);
-                            break;
-                        case "laptop charger":
-                            entity.setUnAssignedLaptopChargerCount(entity.getUnAssignedLaptopChargerCount() + 1);
-                            break;
-                        case "head phone":
-                            entity.setUnAssignedHeadphonesCount(entity.getUnAssignedHeadphonesCount() + 1);
-                            break;
-                        case "bag":
-                            entity.setUnAssignedBagCount(entity.getUnAssignedBagCount() + 1);
-                            break;
-                        case "data card":
-                            entity.setUnAssignedDataCardCount(entity.getUnAssignedDataCardCount() + 1);
-                            break;
-                        case "mobile":
-                            entity.setUnAssignedMobileCount(entity.getUnAssignedMobileCount() + 1);
-                            break;
-                        case "camera":
-                            entity.setUnAssignedCameraCount(entity.getUnAssignedCameraCount() + 1);
-                            break;
-                        case "projector":
-                            entity.setUnAssignedProjectorCount(entity.getUnAssignedProjectorCount() + 1);
-                            break;
-                        case "firewall":
-                            entity.setUnAssignedFireWallCount(entity.getUnAssignedFireWallCount() + 1);
-                            break;
-                        case "switch":
-                            entity.setUnAssignedSwitchCount(entity.getUnAssignedSwitchCount() + 1);
-                            break;
-                        case "dvr":
-                            entity.setUnAssignedDvrCount(entity.getUnAssignedDvrCount() + 1);
-                            break;
-                        case "speaker":
-                            entity.setUnAssignedSpeakerCount(entity.getUnAssignedSpeakerCount() + 1);
-                            break;
-                        default:
-                            // log.warn("Unknown asset type: {}", assetType);
-                            return;
-                    }
-                    assetCountRepository.save(entity);
-                }
+        switch (assetType.toLowerCase()) {
+            case "laptop":
+                entity.setAssignedLaptopCount(entity.getAssignedLaptopCount() + 1);
+                break;
+            case "mouse":
+                entity.setAssignedMouseCount(entity.getAssignedMouseCount() + 1);
+                break;
+            case "laptop charger":
+                entity.setAssignedLaptopChargerCount(entity.getAssignedLaptopChargerCount() + 1);
+                break;
+            case "head phone":
+                entity.setAssignedHeadphonesCount(entity.getAssignedHeadphonesCount() + 1);
+                break;
+            case "bag":
+                entity.setAssignedBagCount(entity.getAssignedBagCount() + 1);
+                break;
+            case "data card":
+                entity.setAssignedDataCardCount(entity.getAssignedDataCardCount() + 1);
+                break;
+            case "mobile":
+                entity.setAssignedMobileCount(entity.getAssignedMobileCount() + 1);
+                break;
+            case "camera":
+                entity.setAssignedCameraCount(entity.getAssignedCameraCount() + 1);
+                break;
+            case "projector":
+                entity.setAssignedProjectorCount(entity.getAssignedProjectorCount() + 1);
+                break;
+            case "fire wall":
+                entity.setAssignedFireWallCount(entity.getAssignedFireWallCount() + 1);
+                break;
+            case "switch":
+                entity.setAssignedSwitchCount(entity.getAssignedSwitchCount() + 1);
+                break;
+            case "dvr":
+                entity.setAssignedDvrCount(entity.getAssignedDvrCount() + 1);
+                break;
+            case "speaker":
+                entity.setAssignedSpeakerCount(entity.getAssignedSpeakerCount() + 1);
+                break;
+            default:
+                // log.warn("Unknown asset type: {}", assetType);
+                return;
+        }
+        assetCountRepository.save(entity);
+    }
 
 
-                public void assignedCountImport(String assetType, String location) {
-                    Optional<CountOfAssetsEntity> optionalEntity = assetCountRepository.findById(location);
+    public CountOfAssetsDTO convertToDTO(CountOfAssetsEntity entity) {
+        return modelMapper.map(entity, CountOfAssetsDTO.class);
+    }
 
-                    if (optionalEntity.isEmpty()) {
-                        // log.warn("Location not found: {}", location);
-                        return;
-                    }
+    public CountOfAssetsEntity convertToEntity(CountOfAssetsDTO dto) {
+        return modelMapper.map(dto, CountOfAssetsEntity.class);
+    }
 
-                    CountOfAssetsEntity entity = optionalEntity.get();
+    public List<CountOfAssetsDTO> convertEntityListToDTOList(List<CountOfAssetsEntity> entityList) {
+        return entityList.stream()
+                .map(entity -> modelMapper.map(entity, CountOfAssetsDTO.class))
+                .collect(Collectors.toList());
+    }
 
-                    switch (assetType.toLowerCase()) {
-                        case "laptop":
-                            entity.setAssignedLaptopCount(entity.getAssignedLaptopCount() + 1);
-                            break;
-                        case "mouse":
-                            entity.setAssignedMouseCount(entity.getAssignedMouseCount() + 1);
-                            break;
-                        case "laptop charger":
-                            entity.setAssignedLaptopChargerCount(entity.getAssignedLaptopChargerCount() + 1);
-                            break;
-                        case "head phone":
-                            entity.setAssignedHeadphonesCount(entity.getAssignedHeadphonesCount() + 1);
-                            break;
-                        case "bag":
-                            entity.setAssignedBagCount(entity.getAssignedBagCount() + 1);
-                            break;
-                        case "data card":
-                            entity.setAssignedDataCardCount(entity.getAssignedDataCardCount() + 1);
-                            break;
-                        case "mobile":
-                            entity.setAssignedMobileCount(entity.getAssignedMobileCount() + 1);
-                            break;
-                        case "camera":
-                            entity.setAssignedCameraCount(entity.getAssignedCameraCount() + 1);
-                            break;
-                        case "projector":
-                            entity.setAssignedProjectorCount(entity.getAssignedProjectorCount() + 1);
-                            break;
-                        case "fire wall":
-                            entity.setAssignedFireWallCount(entity.getAssignedFireWallCount() + 1);
-                            break;
-                        case "switch":
-                            entity.setAssignedSwitchCount(entity.getAssignedSwitchCount() + 1);
-                            break;
-                        case "dvr":
-                            entity.setAssignedDvrCount(entity.getAssignedDvrCount() + 1);
-                            break;
-                        case "speaker":
-                            entity.setAssignedSpeakerCount(entity.getAssignedSpeakerCount() + 1);
-                            break;
-                        default:
-                            // log.warn("Unknown asset type: {}", assetType);
-                            return;
-                    }
-                    assetCountRepository.save(entity);
-                }
-
-
-                public CountOfAssetsDTO convertToDTO(CountOfAssetsEntity entity) {
-                    return modelMapper.map(entity, CountOfAssetsDTO.class);
-                }
-
-                public CountOfAssetsEntity convertToEntity(CountOfAssetsDTO dto) {
-                    return modelMapper.map(dto, CountOfAssetsEntity.class);
-                }
-
-                public List<CountOfAssetsDTO> convertEntityListToDTOList(List<CountOfAssetsEntity> entityList) {
-                    return entityList.stream()
-                            .map(entity -> modelMapper.map(entity, CountOfAssetsDTO.class))
-                            .collect(Collectors.toList());
-                }
-
-            }
+}

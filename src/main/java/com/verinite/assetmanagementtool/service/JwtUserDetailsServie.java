@@ -19,14 +19,6 @@ public class JwtUserDetailsServie implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-//		if(username.equals("V00293")) {
-//			return new User("V00293", "$2a$10$slYQmyNdGzTn7ZLBXBChFOC9f6kFjAqPhccnP6DxlWXx2lPk1C3G6",new ArrayList<>());
-//		}else {
-//			throw new UsernameNotFoundException("User not found with username:" + username);
-//		}
-//		
-//		
-
 
         AdminRegistrationEntity adminRegistrationEntity = (AdminRegistrationEntity) registerRepository.findByEmpId(username);
         if (adminRegistrationEntity == null) {

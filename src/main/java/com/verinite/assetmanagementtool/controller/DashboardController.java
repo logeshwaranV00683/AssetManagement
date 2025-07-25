@@ -26,8 +26,7 @@ public class DashboardController {
     @GetMapping("/getAllAssets")
     public List<AssetsEntity> getAssetCountsWithLocation() {
 
-        List<AssetsEntity> countsWithLocation = dashboardServiceImpl.getAssetCountsWithLocation();
-        return countsWithLocation;
+        return dashboardServiceImpl.getAssetCountsWithLocation();
     }
 
     @GetMapping("/assets/countsByLocation")

@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface AssetNamesInterface {
 
-    public List<AssetNameDTO> getAll();
+    List<AssetNameDTO> getAll();
 
     AssetNameDTO save(AssetNameDTO assetNamesDto);
 }

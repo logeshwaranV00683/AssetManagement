@@ -6,7 +6,6 @@ import com.verinite.assetmanagementtool.entity.LocationEntity;
 import java.util.List;
 
 public class DashboardResponse {
-    // assetType+location+unassined
     List<AssetsEntity> assetsEntities;
     List<LocationEntity> locationEntities;
 

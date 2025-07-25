@@ -6,21 +6,17 @@ import java.util.List;
 
 
 public interface LocationService {
-    public LocationEntity saveLocation(LocationEntity location);
+    LocationEntity saveLocation(LocationEntity location);
 
-    public Object getLocatioById(int id);
+    Object getLocatioById(int id);
 
-    public List<Object> getByStateName(String locName);
+    List<Object> getByStateName(String locName);
 
-    public List<Object> getByCountry(String countryName);
+    List<Object> getByCountry(String countryName);
 
-    public List<LocationEntity> getAllLocations();
+    List<LocationEntity> getAllLocations();
 
-    //	public Object delteLocationByName(String locName);
-//	public Object deleteByState(String stateName);
-//	public Object deleteByCountry(String countryName);
-    public Object updateLocation(int id, LocationEntity location);
-//	public Object deleteByID(int id);
+    Object updateLocation(int id, LocationEntity location);
 
 
 }

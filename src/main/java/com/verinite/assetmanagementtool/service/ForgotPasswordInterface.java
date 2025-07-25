@@ -9,9 +9,9 @@ import java.io.UnsupportedEncodingException;
 
 public interface ForgotPasswordInterface {
 
-    public ResponseEntity<?> sendOTPMail(String empId) throws MessagingException, UnsupportedEncodingException;
+    ResponseEntity<?> sendOTPMail(String empId) throws MessagingException, UnsupportedEncodingException;
 
-    public ResponseEntity<?> checkOtp(ResetPasswordDTO resetPassword);
+    ResponseEntity<?> checkOtp(ResetPasswordDTO resetPassword);
 
     ResponseEntity<?> changePassword(ResetPasswordDTO changePassword);
 }

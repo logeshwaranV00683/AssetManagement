@@ -16,7 +16,6 @@ public interface AssetService {
 
     public Object getAssetBySerialNumber(String id);
 
-    // public Object updateAsset(AssetsEntity asset);
     public SaveAssetResponse updateAsset(SaveAssetResponse asset);
 
     public void deleteAsset(int id);
@@ -28,8 +27,6 @@ public interface AssetService {
     public int getCountOfUnassigned();
 
     public int getLaptopCountByLocation(String id);
-
-//    public int getLaptopCountByAssertSourced(String assertSourcedBy);
 
     public int totalLaptops();
 

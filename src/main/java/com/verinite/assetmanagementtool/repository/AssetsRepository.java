@@ -44,8 +44,6 @@ public interface AssetsRepository extends JpaRepository<AssetsEntity, Number> {
             + "GROUP BY LOWER(location), LOWER(asset_name)", nativeQuery = true)
     List<Object[]> findAggregatedAssetCountsByLocations(@Param("locations") List<String> locations);
 
-    //@Query("SELECT DISTINCT LOWER(a.location) FROM tbl_assets a")
-    //List<String> findDistinctLocations();
     @Transactional
     @Modifying
     @Query(value = "update tbl_assets set status =:status,emp_Id =:empId,assigned_By=:assignedBy,assigned_date = :assignedDate where serial_number IN (:serialNumber)", nativeQuery = true)

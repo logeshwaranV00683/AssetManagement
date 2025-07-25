@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
@@ -19,11 +20,10 @@ import java.util.function.Function;
 @Component
 public class JwtTokenUtil implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
     private static final long JWT_EXPIRATION_DURATION = 5 * 60 * 60;
-    /**
-     *
-     */
+
     @Autowired
     AdminRegistrationRepository adminRepo;
     @Value("${jwt.secret}")

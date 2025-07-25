@@ -20,7 +20,6 @@ public interface AssignedAssetsService {
 
     String deleteAssignedAssets(int assignedId);
 
-
     ResponseEntity<?> getRecentAssigned();
 
     ResponseEntity<String> save(List<AssignableAssetDto> assignableAssetDtos);

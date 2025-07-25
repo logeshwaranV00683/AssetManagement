@@ -29,7 +29,6 @@ public class AssignedAssetsController {
         if (assignableAssetDtos == null || assignableAssetDtos.isEmpty()) {
             return ResponseEntity.badRequest().body("Asset list is empty");
         }
-
         return assignedAssetsService.save(assignableAssetDtos);
     }
 
@@ -40,20 +39,20 @@ public class AssignedAssetsController {
         return ResponseEntity.ok(assignedAssets);
     }
 
-    @GetMapping("get-assigned-assets/{assignedId}")
-    public AssignedAssetsEntity getAssignedAssetsById(@PathVariable("assignedId") int assignedId) {
-        return assignedAssetsService.getAssignedAssetsById(assignedId);
-    }
-
-    @GetMapping("get-assigned-assets/{assetId}")
-    public AssignedAssetsEntity getAssignedAssetsByAssetId(@PathVariable("assetId") int assetId) {
-        return assignedAssetsService.getAssignedAssetsByAssetsId(assetId);
-    }
+//    @GetMapping("get-assigned-assets/{assignedId}")
+//    public AssignedAssetsEntity getAssignedAssetsById(@PathVariable("assignedId") int assignedId) {
+//        return assignedAssetsService.getAssignedAssetsById(assignedId);
+//    }
+//
+//    @GetMapping("get-assigned-assets/{assetId}")
+//    public AssignedAssetsEntity getAssignedAssetsByAssetId(@PathVariable("assetId") int assetId) {
+//        return assignedAssetsService.getAssignedAssetsByAssetsId(assetId);
+//    }
 
     @GetMapping("getall/assigned/assets")
     public ResponseEntity<List<AssignedAssetDtoList>> getAllAssignedAssets() {
         List<AssignedAssetDtoList> assignedAssets = assignedAssetsService.getAllassignedAssets();
-        return ResponseEntity.ok(assignedAssets); // Returns HTTP 200 with the list of assigned assets
+        return ResponseEntity.ok(assignedAssets);
     }
 
     @PutMapping("update-assigned-assets/{assignedId}/{empId}")

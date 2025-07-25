@@ -11,7 +11,6 @@ import java.io.OutputStream;
 import java.util.List;
 
 public interface EmployeeService {
-    // EmployeeEntity saveEmployee(EmployeeEntity employee);
 
     public EmployeeDto saveEmployee(EmployeeDto employeeDTO);
 

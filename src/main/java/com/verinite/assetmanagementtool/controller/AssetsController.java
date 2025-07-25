@@ -43,18 +43,13 @@ public class AssetsController implements ApplicationRunner {
         this.assetNameServiceImpl = assetNameServiceImpl;
     }
 
-    //	@GetMapping("/listOfAssets")
-//	public ResponseEntity<List<AssetsEntity>> getAllAssets() {
-//		List<AssetsEntity> assets = assetService.listOfAllAsset();
-//		return ResponseEntity.ok(assets); // Respond with the list of assets and HTTP 200 OK
-//	}
     @GetMapping("asset/listOfAssets")
     public ResponseEntity<List<AssetsDto>> getAllAssets() {
         List<AssetsDto> assetsList = assetService.listOfAllAsset();
         if (assetsList.isEmpty()) {
-            return ResponseEntity.noContent().build(); // Return 204 No Content if the list is empty
+            return ResponseEntity.noContent().build();
         }
-        return ResponseEntity.ok(assetsList); // Return 200 OK with the asset list
+        return ResponseEntity.ok(assetsList);
     }
 
     @PostMapping("asset/saveAsset")
@@ -85,7 +80,6 @@ public class AssetsController implements ApplicationRunner {
         assetService.deleteAsset(id);
         return "Asset Scrapped successfully. ";
     }
-
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
@@ -127,100 +121,5 @@ public class AssetsController implements ApplicationRunner {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error: " + e.getMessage());
         }
     }
-
-
-//	@GetMapping("/getAllAssetType/{names}")
-//	public List<AssetsEntity> getByAssetType(@PathVariable String names) {
-//
-//		List<AssetsEntity> byAssetNames = assetService.getByAssetNames(names);
-//		return byAssetNames;
-//
-//	}
-
-    // working
-//	@GetMapping("asset/get/by/status/{status}")
-//	public List<AssetsEntity> getThroughStatus(@PathVariable String status) {
-//		// LOGGER.debug("Hited getThroughState endPoint");
-//		return assetService.getThroughStatus(status);
-//	}
-
-//	@PostMapping("asset/save/bulk")
-//	public Object BulkSave(@RequestBody List<AssetsEntity> assetList) {
-//		assetList.forEach(asset -> assetService.saveAsset(asset));
-//		return "Saved Successfully";
-//	}
-
-//	@GetMapping("asset/assigned")
-//	public int getAssignedCount() {
-//		return assetService.getCountOfAssigned();
-//	}
-
-//	@GetMapping("asset/unassigned")
-//	public int getUnAssignedCount() {
-//		return assetService.getCountOfUnassigned();
-//	}
-//
-//	@GetMapping("asset/laptopcount/{id}")
-//	public int getLaptopCount(@PathVariable String id) {
-//		return assetService.getLaptopCountByLocation(id);
-//	}
-//
-//	@GetMapping("asset/total/laptop/count")
-//	public int getTptalLaptopCount() {
-//		return assetService.totalLaptops();
-//	}
-
-//	@GetMapping("asset/unassigned/{id}")
-//	public int getUnAssignedByLocation(@PathVariable String id) {
-//		return assetService.getCountOfUnassignedByLocation(id);
-//	}
-
-//	@GetMapping("asset/get/total/unassigned")
-//	public List<AssetCounterDto> getUnassignedAndLaptops() {
-//		return assetService.getUnassignedAndTotalLaptops();
-//	}
-
-//	@GetMapping("asset/get/under/warenty")
-//	public List<AssetsEntity> getLaptopsUnderWarenty() {
-//		assetService.getLaptopsUnderWarenty();
-//		return assetService.getLaptopsUnderWarenty();
-//	}
-
-//	@GetMapping("asset/get/over/warenty")
-//	public List<AssetsEntity> getLaptopsOverWarenty() {
-//		assetService.getLaptopsOverWarenty();
-//		return assetService.getLaptopsOverWarenty();
-//	}
-
-//	@GetMapping("asset/return/{serialNo}/{empId}")
-//	public String returned(@PathVariable String serialNo, @PathVariable String empId) {
-//		assetService.saveHistory(serialNo, empId);
-//		return "stored Successfully";
-//	}
-
-//	@PostMapping("assetname/save")
-//	public AssetNameDTO saveAssetName(@RequestBody AssetNameDTO assetNameDTO) {
-//		return assetNameServiceImpl.save(assetNameDTO);
-//	}
-
-//	@GetMapping("assetname/getall")
-//	public List<AssetNameDTO> getAllAssetNames() {
-//		return assetNameServiceImpl.getAll();
-//	}
-
-//	@GetMapping("asset/getUnassigned")
-//	public List<AssetsEntity> getUnAssigned() {
-//		return assetService.getUnAssigned();
-//	}
-
-//	@GetMapping("/v2/asset/{assetId}")
-//	public ResponseEntity<AssetsDto> getAssetsDetails(@PathVariable Integer assetId) {
-//		try {
-//			AssetsDto assetsDto = assetService.getAssetsDetails(assetId);
-//			return ResponseEntity.ok(assetsDto);
-//		} catch (RuntimeException e) {
-//			return ResponseEntity.status(404).body(null); // You might want to handle this more gracefully
-//		}
-//	}
 
 }

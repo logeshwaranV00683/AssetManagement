@@ -52,12 +52,6 @@ public class CountOfAssetsController {
         return countOFAssetsService.updateAssetCount(location, countOfAssetsEntity);
     }
 
-//    @GetMapping("count/totallaptops")
-//    public int getAllLaptopCount() {
-//        return countOFAssetsService.totalLaptops();
-//    }
-
-
     @GetMapping("/unassignedCount")
     public ResponseEntity<Integer> getCountOfUnassigned() {
         int unassignedCount = assetService.getCountOfUnassigned();

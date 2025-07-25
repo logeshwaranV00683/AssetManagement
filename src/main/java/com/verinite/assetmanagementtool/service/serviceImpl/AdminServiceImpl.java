@@ -113,7 +113,7 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public ResponseEntity<?> updateAdminEntity(EmployeeEntity employee) {
+    public void updateAdminEntity(EmployeeEntity employee) {
         AdminRegistrationEntity adminRegistrationEntity = registerRepo.findByEmpId(employee.getEmpId());
         adminRegistrationEntity.setMail(employee.getMail());
         adminRegistrationEntity.setFirstName(employee.getFirstName());
@@ -125,7 +125,7 @@ public class AdminServiceImpl implements AdminService {
         registerRepo.save(adminRegistrationEntity);
 
         // Return a success response
-        return ResponseEntity.status(HttpStatus.CREATED).body("Admin Updated successfully.");
+        ResponseEntity.status(HttpStatus.CREATED).body("Admin Updated successfully.");
 
     }
 

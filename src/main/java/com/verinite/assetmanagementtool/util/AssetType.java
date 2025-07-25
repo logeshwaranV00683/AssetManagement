@@ -1,4 +1,4 @@
-package com.verinite.assetmanagementtool.response;
+package com.verinite.assetmanagementtool.util;
 
 public enum AssetType {
 

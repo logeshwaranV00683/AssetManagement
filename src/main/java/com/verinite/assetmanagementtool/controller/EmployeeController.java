@@ -30,12 +30,6 @@ public class EmployeeController {
     @Autowired
     EmployeeServiceImpl employeeService;
 
-    //	@PostMapping("employee/saveemployee")
-//	public EmployeeDto saveEmployee(@RequestBody EmployeeEntity employee) {
-//		// logger.info("debug");
-//
-//		return employeeService.saveEmployee(null);
-//	}
     @PostMapping("employee/saveemployee")
     public ResponseEntity<?> saveEmployee(@RequestBody @Valid EmployeeDto employeeDTO) {
         try {
@@ -45,17 +39,6 @@ public class EmployeeController {
             return ResponseEntity.status(e.getStatus()).body(e.getMessage());
         }
     }
-
-//    @PostMapping("employee/save/bulk")
-//    public ResponseEntity<List<EmployeeDto>> saveEmployees(@RequestBody  @NotEmpty(message = "Employee list cannot be empty") List<@Valid EmployeeDto> employeeDTOs) {
-//        try {
-//            List<EmployeeDto> savedEmployees = employeeService.saveBulkEmployee(employeeDTOs);
-//            return new ResponseEntity<>(savedEmployees, HttpStatus.CREATED);
-//        } catch (Exception e) {
-//            // Handle exceptions (like if there is an error with saving the employees)
-//            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-//        }
-//    }
 
     @GetMapping("employee/employeelist")
     public List<EmployeeEntity> allEmployee() {
@@ -68,11 +51,6 @@ public class EmployeeController {
 
         return employeeService.getById(empId);
     }
-//    @DeleteMapping("deleteEmp/{empId}")
-//    public void deleteEmpById(@PathVariable String empId) {
-//
-//        return employeeService.deleteEmployeeById(empId);
-//    }
 
     @DeleteMapping("/deleteEmp/{empId}")
     public ResponseEntity<EmployeeEntity> deleteEmployeeById(@PathVariable String empId) {

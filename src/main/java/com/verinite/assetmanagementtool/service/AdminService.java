@@ -14,5 +14,5 @@ public interface AdminService {
 
     ResponseEntity<?> checkLogin(AdminLoginDto login) throws Exception;
 
-    ResponseEntity<?> updateAdminEntity(EmployeeEntity existingEmployee);
+    void updateAdminEntity(EmployeeEntity existingEmployee);
 }
