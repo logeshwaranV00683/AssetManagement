@@ -65,7 +65,7 @@ export const showConfirmAlert = async (title, text = '') => {
   return result.isConfirmed;
 };
 
-export const showDataPreviewAlert = async (filteredRows, type) => {
+export const showDataPreviewAlert = async (filteredRows, importType, customTitle = 'Preview Filtered Data!') => {
   if (!filteredRows || filteredRows.length === 0) {
     return false;
   }
@@ -74,8 +74,8 @@ export const showDataPreviewAlert = async (filteredRows, type) => {
   const toCapital = key =>
     key
       .replace(/([A-Z])/g, ' $1')
-      .replace(/_/g, ' ') 
-      .replace(/\b\w/g, c => c.toUpperCase()); 
+      .replace(/_/g, ' ')
+      .replace(/\b\w/g, c => c.toUpperCase());
 
   const htmlTable = `
     <div style="max-height: 300px; overflow-y: auto; text-align: center;">
@@ -110,7 +110,7 @@ export const showDataPreviewAlert = async (filteredRows, type) => {
   `;
 
   const result = await MySwal.fire({
-    title: 'Preview Filtered Data',
+    title: customTitle,
     html: htmlTable,
     icon: 'info',
     confirmButtonText: 'Export to Excel',
