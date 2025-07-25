@@ -22,6 +22,7 @@ public class AssetsDto {
     private String serialNumber;
     @Pattern(regexp = "^(V\\d{5})?$", message = "Must be V followed by 5 digits or empty")
     private String empId;
+    @NotBlank
     private String status;
     @NotBlank
     private String type;
@@ -37,9 +38,11 @@ public class AssetsDto {
     private Integer locCode;
     @NotBlank
     private String modelName;
+    @NotBlank
     private String operatingSystem;
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate returnDate;
+    @NotBlank
     @Pattern(regexp = "^(V\\d{5})?$", message = "Must be V followed by 5 digits or empty")
     private String addedBy;
     @JsonFormat(pattern = "yyyy-MM-dd")

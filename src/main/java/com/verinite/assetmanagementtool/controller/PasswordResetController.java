@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.mail.MessagingException;
+import javax.validation.Valid;
 import java.io.UnsupportedEncodingException;
 
 @RestController
@@ -23,12 +24,12 @@ public class PasswordResetController {
     }
 
     @PostMapping("/verify-otp")
-    public ResponseEntity<?> verifyOtpAndResetPassword(@RequestBody ResetPasswordDTO resetPassword) {
+    public ResponseEntity<?> verifyOtpAndResetPassword(@RequestBody @Valid ResetPasswordDTO resetPassword) {
         return forgotPasswordInterface.checkOtp(resetPassword);
     }
 
     @PostMapping("/change-password")
-    public ResponseEntity<?> changePasswordWithCurrent(@RequestBody ResetPasswordDTO changePassword) {
+    public ResponseEntity<?> changePasswordWithCurrent(@RequestBody @Valid ResetPasswordDTO changePassword) {
         return forgotPasswordInterface.changePassword(changePassword);
     }
 }
