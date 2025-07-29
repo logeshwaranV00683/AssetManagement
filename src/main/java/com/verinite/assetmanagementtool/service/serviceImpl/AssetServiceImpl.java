@@ -268,7 +268,7 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
                 existingAsset.setWarrantyDate(LocalDate.parse(asset.getWarrantyDate()));
             if (asset.getSerialNumber() != null)
                 existingAsset.setSerialNumber(asset.getSerialNumber());
-            if (asset.getStatus() != null)
+            if (asset.getStatus() != null && !(existingAsset.getStatus().equalsIgnoreCase("Assigned")))
                 existingAsset.setStatus(asset.getStatus());
             if (asset.getType() != null)
                 existingAsset.setType(asset.getType());
@@ -278,17 +278,17 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
                 existingAsset.setOperatingSystem(asset.getOperatingSystem());
             if (asset.getModelName() != null)
                 existingAsset.setModelName(asset.getModelName());
-            if (asset.getEmpId() != null)
+            if (asset.getEmpId() != null&& existingAsset.getEmpId()==null)
                 existingAsset.setEmpId(asset.getEmpId());
             if (asset.getLocation() != null)
                 existingAsset.setLocation(asset.getLocation());
             if (asset.getLocCode() != null)
                 existingAsset.setLocCode(asset.getLocCode());
-            if (asset.getReturnDate() != null)
+            if (asset.getReturnDate() != null&&existingAsset.getReturnDate()==null)
                 existingAsset.setReturnDate(asset.getReturnDate());
-            if (asset.getAssignedDate() != null)
+            if (asset.getAssignedDate() != null&&existingAsset.getAssignedDate()==null)
                 existingAsset.setAssignedDate(asset.getAssignedDate());
-            if (asset.getAssignedBy() != null)
+            if (asset.getAssignedBy() != null&&existingAsset.getAssignedBy()==null)
                 existingAsset.setAssignedBy(asset.getAssignedBy());
             if (asset.getAssertSourcedBy() != null)
                 existingAsset.setAssetSourcedBy(asset.getAssertSourcedBy());

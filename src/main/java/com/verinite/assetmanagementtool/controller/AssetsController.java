@@ -65,14 +65,14 @@ public class AssetsController implements ApplicationRunner {
     }
 
     @PutMapping("asset/updateAsset/{serialNumber}")
-    public ResponseEntity<SaveAssetResponse> updateEmployee(@PathVariable String serialNumber,
+    public ResponseEntity<?> updateAsset(@PathVariable String serialNumber,
                                                             @RequestBody @Valid SaveAssetResponse saveAssetResponse) {
 
         saveAssetResponse.setSerialNumber(serialNumber);
 
         SaveAssetResponse updateAsset = assetService.updateAsset(saveAssetResponse);
 
-        return new ResponseEntity<>(updateAsset, HttpStatus.OK);
+        return new ResponseEntity<>(updateAsset==null?"Cannot Update the given details":updateAsset, HttpStatus.OK);
     }
 
     @DeleteMapping("asset/delete/{id}")
