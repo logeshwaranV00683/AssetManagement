@@ -265,16 +265,22 @@ function Assets() {
 
           <div className={classes.filterContainer}>
             <div
-              style={{
-                display: 'flex',
-                flexWrap: 'wrap',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                width: '80%',
-                gap: '1%',
-                marginBottom: '2%',
-              }}
-            >
+  style={{
+    display: 'flex',
+    justifyContent: 'center',
+    width: '100%',
+  }}
+>
+  <div
+    style={{
+      display: 'flex',
+      flexWrap: 'wrap',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      gap: '1rem',
+      width: '80%', // or maxWidth: '1000px'
+    }}
+  >
               {/* Import Button */}
               <div style={{ width: '20%', minWidth: '150px', textAlign: 'center' }}>
                 <div
@@ -363,6 +369,8 @@ function Assets() {
               </div>
             </div>
           </div>
+          </div>
+
 
 
 
