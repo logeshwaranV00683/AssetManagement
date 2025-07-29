@@ -16,7 +16,7 @@ public interface EmployeeService {
 
     List<EmployeeEntity> allEmployees();
 
-    Object getById(String empId);
+    ResponseEntity<?> getById(String empId);
 
     List<EmployeeEntity> getActiveAccounts(String str);
 
@@ -24,7 +24,7 @@ public interface EmployeeService {
 
     Object updateEmp(String empId, EmployeeDto employee);
 
-    void deleteEmployeeById(String empId);
+    String deleteEmployeeById(String empId);
 
     ResponseEntity<?> importEmployeeFromExcel(InputStream inputStream) throws IOException;
 

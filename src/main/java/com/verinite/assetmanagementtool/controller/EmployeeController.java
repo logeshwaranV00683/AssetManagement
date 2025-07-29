@@ -47,16 +47,14 @@ public class EmployeeController {
     }
 
     @GetMapping("/getEmployee/{empId}")
-    public Object getById(@PathVariable String empId) {
-
+    public ResponseEntity<?> getById(@RequestParam String empId) {
         return employeeService.getById(empId);
     }
 
     @DeleteMapping("/deleteEmp/{empId}")
-    public ResponseEntity<EmployeeEntity> deleteEmployeeById(@PathVariable String empId) {
-        employeeService.deleteEmployeeById(empId);
-        return new ResponseEntity<>(HttpStatus.OK);
-
+    public ResponseEntity<String> deleteEmployee(@PathVariable String empId) {
+        String message = employeeService.deleteEmployeeById(empId);
+        return ResponseEntity.ok(message);
     }
 
     @PostMapping("employee/export")
