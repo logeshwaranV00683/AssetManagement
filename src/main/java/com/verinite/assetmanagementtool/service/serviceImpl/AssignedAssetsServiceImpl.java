@@ -23,6 +23,8 @@ import javax.mail.MessagingException;
 import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -146,14 +148,16 @@ public class AssignedAssetsServiceImpl implements AssignedAssetsService {
                 ignoredAsset.put(assignableAssetDto.getSerialNumber(),"Admin Id is not valid");
                 continue;
             }
+            if (assignableAssetDto.getAssignedDate().isAfter(LocalDate.now())) {
+                ignoredAsset.put(assignableAssetDto.getSerialNumber(), "AssignedDate should not be in the future date");
+                continue;
+            }
             if (asset.getStatus().equalsIgnoreCase("UnAssigned") && employeeEntity.getStatus().equalsIgnoreCase("Active")) {
                 asset.setEmpId(empId);
                 asset.setStatus("Assigned");
-
-                AssignedAssetsEntity assignedAssetsEntity = getAssignedAssetsEntity(assignableAssetDto, asset);
                 asset.setAssignedDate(assignableAssetDto.getAssignedDate());
                 asset.setAssignedBy(assignableAssetDto.getAssignedBy());
-
+                AssignedAssetsEntity assignedAssetsEntity = getAssignedAssetsEntity(assignableAssetDto, asset);
 
                 for (CountOfAssetsEntity i : countOfAssetEntities) {
                     if (asset.getLocation().equalsIgnoreCase(i.getLocation())) {
