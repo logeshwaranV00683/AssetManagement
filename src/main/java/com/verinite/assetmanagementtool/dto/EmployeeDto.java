@@ -41,6 +41,7 @@ public class EmployeeDto {
     @Pattern(regexp = "^(?i)[a-z]+(?:[ '-][a-z]+)*$", message = "Department must contain only letters, spaces, or hyphens")
     private String department;
     @NotBlank
+    @Pattern(regexp = "^(?i)[a-z]+(?:[ '-][a-z]+)*$", message = "Designation must contain only letters, spaces, or hyphens")
     private String designation;
 
     @Override

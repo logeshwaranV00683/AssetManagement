@@ -54,10 +54,10 @@ public interface AssetsRepository extends JpaRepository<AssetsEntity, Number> {
             "SUM(CASE WHEN LOWER(status) = 'assigned' THEN 1 ELSE 0 END) AS assignedCount, " +
             "SUM(CASE WHEN LOWER(status) IN ('unassigned', 'assigned') THEN 1 ELSE 0 END) AS totalCount " +
             "FROM tbl_assets " +
-            "WHERE LOWER(asset_name) = LOWER(:assetName) " +
-            "GROUP BY LOWER(location), LOWER(asset_name)",
+            "WHERE LOWER(type) = LOWER(:assetType) " +
+            "GROUP BY LOWER(location), LOWER(type)",
             nativeQuery = true)
-    List<Object[]> findAggregatedAssetCountsByAssetNameAndLocation(@Param("assetName") String assetName);
+    List<Object[]> findAggregatedAssetCountsByAssetTypeAndLocation(@Param("assetType") String assetType);
 
     @Query(value = "SELECT DISTINCT LOWER(a.asset_name) FROM tbl_assets a", nativeQuery = true)
     List<String> findDistinctAssetTypes();

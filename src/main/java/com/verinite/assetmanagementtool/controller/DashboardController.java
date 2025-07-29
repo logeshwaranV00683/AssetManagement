@@ -30,7 +30,7 @@ public class DashboardController {
     }
 
     @GetMapping("/assets/countsByLocation")
-    public Map<String, Map<String, Object>> getAssetCounts(@RequestParam List<String> locations) {
+    public ResponseEntity<?> getAssetCounts(@RequestParam List<String> locations) {
         return dashboardServiceImpl.getFormattedAssetCounts(locations);
     }
 
@@ -40,12 +40,12 @@ public class DashboardController {
         return ResponseEntity.ok(assetTypes);
     }
 
-    @GetMapping("/assets/count/{assetName}")
-    public ResponseEntity<Map<String, Map<String, Object>>> getAssetsCountWithLocationByAssetName(
-            @PathVariable String assetName) {
+    @GetMapping("/assets/count/{assetType}")
+    public ResponseEntity<Map<String, Map<String, Object>>> getAssetsCountWithLocationByAssetType(
+            @PathVariable String assetType) {
 
-        Map<String, Map<String, Object>> locationByAssetName = dashboardServiceImpl
-                .getAssetsCountWithLocationByAssetName(assetName);
-        return new ResponseEntity<>(locationByAssetName, HttpStatus.OK);
+        Map<String, Map<String, Object>> locationByAssetType = dashboardServiceImpl
+                .getAssetsCountWithLocationByAssetType(assetType);
+        return new ResponseEntity<>(locationByAssetType, HttpStatus.OK);
     }
 }

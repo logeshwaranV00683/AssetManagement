@@ -271,7 +271,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         List<EmployeeEntity> employees = employeeRepo.findByIgnoreCaseLocation(str);
         if (employees.isEmpty()) {
             String message = "No employees found for location: " + str;
-            return ResponseEntity.ok(message);
+            return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
         }
         return ResponseEntity.ok(employees);
     }

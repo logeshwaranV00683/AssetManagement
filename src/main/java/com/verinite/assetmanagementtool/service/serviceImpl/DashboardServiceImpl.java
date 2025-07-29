@@ -6,6 +6,8 @@ import com.verinite.assetmanagementtool.repository.LocationRepository;
 import com.verinite.assetmanagementtool.service.AssetService;
 import com.verinite.assetmanagementtool.service.DashboardService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -32,9 +34,13 @@ public class DashboardServiceImpl implements DashboardService {
         return all;
     }
 
-    public Map<String, Map<String, Object>> getFormattedAssetCounts(List<String> locations) {
+    public ResponseEntity<?> getFormattedAssetCounts(List<String> locations) {
         List<Object[]> queryResult = assetRepo.findAggregatedAssetCountsByLocations(locations);
-        return transformAssetCounts(queryResult);
+        if(queryResult.isEmpty()){
+            String message = "No assets found for location: " + locations;
+            return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
+        }
+        return ResponseEntity.ok(transformAssetCounts(queryResult));
     }
 
     private Map<String, Map<String, Object>> transformAssetCounts(List<Object[]> queryResult) {
@@ -69,11 +75,11 @@ public class DashboardServiceImpl implements DashboardService {
         return assetRepo.findDistinctAssetTypes();
     }
 
-    public Map<String, Map<String, Object>> getAssetsCountWithLocationByAssetName(String assetName) {
+    public Map<String, Map<String, Object>> getAssetsCountWithLocationByAssetType(String assetType) {
         Map<String, Map<String, Object>> locationDataMap = new HashMap<>();
 
         try {
-            List<Object[]> queryResult = assetRepo.findAggregatedAssetCountsByAssetNameAndLocation(assetName);
+            List<Object[]> queryResult = assetRepo.findAggregatedAssetCountsByAssetTypeAndLocation(assetType);
 
             for (Object[] row : queryResult) {
                 String location = (String) row[0];
