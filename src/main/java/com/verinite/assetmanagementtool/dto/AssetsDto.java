@@ -38,8 +38,6 @@ public class AssetsDto {
     @Pattern(regexp = "^(?i)[a-z]+(?:[ '-][a-z]+)*$", message = "Location must contain only letters, spaces, or hyphens")
     private String location;
     @NotNull
-    private Integer locCode;
-    @NotBlank
     @Pattern(regexp = "^(\\w+)?$", message = "ModelName must be alphanumeric & _")
     private String modelName;
     @NotBlank
@@ -84,7 +82,6 @@ public class AssetsDto {
                 ", purchaseDate='" + purchaseDate + '\'' +
                 ", warrantyDate='" + warrantyDate + '\'' +
                 ", location='" + location + '\'' +
-                ", locCode=" + locCode +
                 ", modelName='" + modelName + '\'' +
                 ", operatingSystem='" + operatingSystem + '\'' +
                 ", returnDate=" + returnDate +

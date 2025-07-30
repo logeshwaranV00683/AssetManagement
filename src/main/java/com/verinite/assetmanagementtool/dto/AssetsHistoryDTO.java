@@ -19,7 +19,6 @@ public class AssetsHistoryDTO {
     private String warrantyDate;
     private String empId;
     private String location;
-    private int locCode;
     private String modelName;
     private String operatingSystem;
     @JsonFormat(pattern = "yyyy-MM-dd")

@@ -23,7 +23,6 @@ public class AssetsEntity {
     private LocalDate purchaseDate;
     private LocalDate warrantyDate;
     private String location;
-    private Integer locCode;
     private String modelName;
     private String operatingSystem;
     private LocalDate returnDate;

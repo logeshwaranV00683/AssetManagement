@@ -57,7 +57,6 @@ CREATE TABLE `tbl_assets` (
   `assigned_by` varchar(255) DEFAULT NULL,
   `assigned_date` datetime(6) DEFAULT NULL,
   `emp_id` varchar(255) DEFAULT NULL,
-  `loc_code` int DEFAULT NULL,
   `location` varchar(255) DEFAULT NULL,
   `model_name` varchar(255) DEFAULT NULL,
   `operating_system` varchar(255) DEFAULT NULL,

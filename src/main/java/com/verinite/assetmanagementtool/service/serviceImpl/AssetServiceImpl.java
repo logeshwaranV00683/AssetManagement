@@ -58,6 +58,8 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
     AssignedAssetsServiceImpl assignedAssetsServiceImp;
     @Autowired
     ModelMapper modelMapper;
+    @Autowired
+    AdminRegistrationRepository adminRegistrationRepository;
 
     @Autowired
     AssignedAssetsServiceImpl assignedAssetsService;
@@ -75,6 +77,9 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
         if(assetRepo.existsBySerialNumber(assetDto.getSerialNumber()))
         {
             throw new IllegalArgumentException("Already Serial Number is exists");
+        }
+        if(adminRegistrationRepository.existsByEmpId(assetDto.getAddedBy())){
+            throw new IllegalArgumentException("Only Admin can add asset");
         }
         int count = 0;
         assets.setStatus("UnAssigned");
@@ -282,8 +287,6 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
                 existingAsset.setEmpId(asset.getEmpId());
             if (asset.getLocation() != null)
                 existingAsset.setLocation(asset.getLocation());
-            if (asset.getLocCode() != null)
-                existingAsset.setLocCode(asset.getLocCode());
             if (asset.getReturnDate() != null&&existingAsset.getReturnDate()==null)
                 existingAsset.setReturnDate(asset.getReturnDate());
             if (asset.getAssignedDate() != null&&existingAsset.getAssignedDate()==null)
@@ -689,7 +692,7 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
         Sheet sheet = workbook.createSheet("Assigned Assets");
         String[] headers = {
                 "Asset Name", "Serial Number", "Assigned To (Emp ID)", "Status", "Type", "Purchase Date",
-                "Warranty Date", "Location", "Loc Code", "Model Name", "Operating System",
+                "Warranty Date", "Location", "Model Name", "Operating System",
                 /*"Return Date",*/ "Added By", "Assigned Date", "Assigned By", "Sourced By"
         };
 
@@ -712,7 +715,6 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
             createDataCell(row, col++, String.valueOf(dto.getPurchaseDate()), dataStyle);
             createDataCell(row, col++, String.valueOf(dto.getWarrantyDate()), dataStyle);
             createDataCell(row, col++, dto.getLocation(), dataStyle);
-            createDataCell(row, col++, dto.getLocCode(), dataStyle);
             createDataCell(row, col++, dto.getModelName(), dataStyle);
             createDataCell(row, col++, dto.getOperatingSystem(), dataStyle);
 //            createDataCell(row, col++, String.valueOf(dto.getReturnDate()), dataStyle);
@@ -729,7 +731,7 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
         Sheet sheet = workbook.createSheet("Unassigned Assets");
         String[] headers = {
                 "Asset Name", "Serial Number", "Status", "Type", "Purchase Date",
-                "Warranty Date", "Location", "Loc Code", "Model Name", "Operating System",
+                "Warranty Date", "Location", "Model Name", "Operating System",
                 "Added By", "Sourced By"
         };
 
@@ -751,7 +753,6 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
             createDataCell(row, col++, String.valueOf(dto.getPurchaseDate()), dataStyle);
             createDataCell(row, col++, String.valueOf(dto.getWarrantyDate()), dataStyle);
             createDataCell(row, col++, dto.getLocation(), dataStyle);
-            createDataCell(row, col++, dto.getLocCode(), dataStyle);
             createDataCell(row, col++, dto.getModelName(), dataStyle);
             createDataCell(row, col++, dto.getOperatingSystem(), dataStyle);
             createDataCell(row, col++, dto.getAddedBy(), dataStyle);
@@ -765,7 +766,7 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
         Sheet sheet = workbook.createSheet("Scraped Assets");
         String[] headers = {
                 "Asset Name", "Serial Number", "Purchase Date", "Scraped Date", "Scraped By",
-                "Operating System"/*, "Users"*/, "Status", "Type", "Location", "Loc Code",
+                "Operating System"/*, "Users"*/, "Status", "Type", "Location",
                 "Model Name", "Added By", "Sourced By"
         };
 
@@ -790,7 +791,6 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
             createDataCell(row, col++, dto.getStatus(), dataStyle);
             createDataCell(row, col++, dto.getType(), dataStyle);
             createDataCell(row, col++, dto.getLocation(), dataStyle);
-            createDataCell(row, col++, dto.getLocCode(), dataStyle);
             createDataCell(row, col++, dto.getModelName(), dataStyle);
             createDataCell(row, col++, dto.getAddedBy(), dataStyle);
             createDataCell(row, col, dto.getAssetSourcedBy(), dataStyle);
@@ -886,11 +886,10 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
             asset.setPurchaseDate(parseDateSafe(getCellValue(row, 4)));
             asset.setWarrantyDate(parseDateSafe(getCellValue(row, 5)));
             asset.setLocation(getCellValue(row, 6));
-            asset.setLocCode(parseIntSafe(getCellValue(row, 7)));
-            asset.setModelName(getCellValue(row, 8));
-            asset.setOperatingSystem(getCellValue(row, 9));
-            asset.setAddedBy(getCellValue(row, 10));
-            asset.setAssetSourcedBy(getCellValue(row, 11));
+            asset.setModelName(getCellValue(row, 7));
+            asset.setOperatingSystem(getCellValue(row, 8));
+            asset.setAddedBy(getCellValue(row, 9));
+            asset.setAssetSourcedBy(getCellValue(row, 10));
             if (assetRepo.existsBySerialNumber(asset.getSerialNumber())) {
                 log.warn("Skipping row due to already exist serial number while importing Unassigned Asset.");
                 skippedData.put(asset.getSerialNumber(), "Skipping row due to already exist serial number while importing Unassigned Asset");
@@ -944,13 +943,12 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
                 asset.setPurchaseDate(parseDateSafe(getCellValue(row, 5)));
                 asset.setWarrantyDate(parseDateSafe(getCellValue(row, 6)));
                 asset.setLocation(getCellValue(row, 7));
-                asset.setLocCode(parseIntSafe(getCellValue(row, 8)));
-                asset.setModelName(getCellValue(row, 9));
-                asset.setOperatingSystem(getCellValue(row, 10));
-                asset.setAddedBy(getCellValue(row, 11));
-                asset.setAssignedBy(getCellValue(row, 13));
-                asset.setAssetSourcedBy(getCellValue(row, 14));
-                asset.setAssignedDate(parseDateSafe(getCellValue(row, 12)));
+                asset.setModelName(getCellValue(row, 8));
+                asset.setOperatingSystem(getCellValue(row, 9));
+                asset.setAddedBy(getCellValue(row, 10));
+                asset.setAssignedBy(getCellValue(row, 12));
+                asset.setAssetSourcedBy(getCellValue(row, 13));
+                asset.setAssignedDate(parseDateSafe(getCellValue(row, 11)));
                 //     asset.setReturnDate(parseDateSafe(getCellValue(row, )));
                 assignedAssetsService.assignedCountImport((Objects.requireNonNull(getCellValue(row, 4))), (Objects.requireNonNull(getCellValue(row, 7))));
                 assignedAssetsService.totalCountImport((Objects.requireNonNull(getCellValue(row, 4))), (Objects.requireNonNull(getCellValue(row, 7))));
@@ -996,7 +994,6 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
                         continue;
                     }
                 }
-
                 asset.setStatus("Assigned");
                 assetRepo.save(modelMapper.map(asset, AssetsEntity.class));
                 AssignableAssetDto assignableAssetDto = new AssignableAssetDto();
@@ -1058,10 +1055,9 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
             asset.setOperatingSystem(getCellValue(row, 5));
             asset.setType(getCellValue(row, 7));
             asset.setLocation(getCellValue(row, 8));
-            asset.setLocCode(parseIntSafe(getCellValue(row, 9)));
-            asset.setModelName(getCellValue(row, 10));
-            asset.setAddedBy(getCellValue(row, 11));
-            asset.setAssetSourcedBy(getCellValue(row, 12));
+            asset.setModelName(getCellValue(row, 9));
+            asset.setAddedBy(getCellValue(row, 10));
+            asset.setAssetSourcedBy(getCellValue(row, 11));
             Set<ConstraintViolation<AssetsDto>> violations = validator.validate(asset);
             if (!violations.isEmpty()) {
                 StringBuilder sb = new StringBuilder();

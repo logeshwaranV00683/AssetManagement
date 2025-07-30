@@ -19,6 +19,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URLEncoder;
@@ -113,9 +114,13 @@ public class EmployeeController {
     }
 
     @GetMapping("/employee/status/{checkStatus}")
-    public List<EmployeeEntity> getActiveAccounts(@PathVariable String checkStatus) {
-
-        return employeeService.getActiveAccounts(checkStatus);
+    public ResponseEntity<?> getActiveAccounts(@PathVariable  String checkStatus) {
+        if (!checkStatus.equalsIgnoreCase("Active") && !checkStatus.equalsIgnoreCase("Inactive")) {
+            return ResponseEntity
+                    .badRequest()
+                    .body("Invalid status. Allowed values: Active or Inactive.");
+        }
+        return ResponseEntity.ok(employeeService.getActiveAccounts(checkStatus));
     }
 
     @GetMapping("/location/{locationName}")

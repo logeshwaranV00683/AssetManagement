@@ -28,7 +28,6 @@ public class SaveAssetResponse {
     private String warrantyDate;
     @Pattern(regexp = "^(\\w+)?$", message = "Must be a Alphanumeric & _")
     private String location;
-    private Integer locCode;
     @Pattern(regexp = "^(\\w+)?$", message = "ModelName must be alphanumeric & _")
     private String modelName;
     @Pattern(regexp = "^(\\w+)?$", message = "operatingSystem must be alphanumeric & _")

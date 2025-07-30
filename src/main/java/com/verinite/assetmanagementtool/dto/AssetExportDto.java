@@ -17,7 +17,6 @@ public class AssetExportDto {
     private String purchaseDate;
     private String warrantyDate;
     private String location;
-    private String locCode;
     private String modelName;
     private String operatingSystem;
     private String returnDate;
