@@ -17,6 +17,7 @@ public class AssetsDto {
 
     private int assetId;
     @NotBlank
+    @Pattern(regexp = "^(\\w+)?$", message = "Must be a Alphanumeric & _")
     private String assetName;
     @NotBlank
     @Pattern(regexp = "^(\\w+)?$", message = "Must be a Alphanumeric & _")

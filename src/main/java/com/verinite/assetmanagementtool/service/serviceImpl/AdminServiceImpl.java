@@ -121,10 +121,9 @@ public class AdminServiceImpl implements AdminService {
         adminRegistrationEntity.setStatus(employee.getStatus());
         adminRegistrationEntity.setLocation(employee.getLocation());
 
-        // update the existing admin registration
+
         registerRepo.save(adminRegistrationEntity);
 
-        // Return a success response
         ResponseEntity.status(HttpStatus.CREATED).body("Admin Updated successfully.");
 
     }
@@ -136,7 +135,6 @@ public class AdminServiceImpl implements AdminService {
 
     public String updateAdmin(String id) {
         AdminRegistrationEntity adminRegistrationEntity = registerRepo.findByEmpId(id);
-        adminRegistrationEntity.setStatus("active");
         registerRepo.save(adminRegistrationEntity);
         return "Updated Successfully";
     }

@@ -1,5 +1,6 @@
 package com.verinite.assetmanagementtool.service.serviceImpl;
 
+import com.verinite.assetmanagementtool.dto.AdminRegistrationDto;
 import com.verinite.assetmanagementtool.dto.EmployeeDto;
 import com.verinite.assetmanagementtool.dto.EmployeeExportDto;
 import com.verinite.assetmanagementtool.entity.EmployeeEntity;
@@ -233,13 +234,25 @@ public class EmployeeServiceImpl implements EmployeeService {
                 existingEmployee.setMobile(employee.getMobile());
             }
             if (employee.getStatus() != null) {
-                existingEmployee.setStatus(employee.getStatus());
+                if(employee.getStatus().equalsIgnoreCase("Inactive")&&adminRegistrationRepository.existsByEmpId(employee.getEmpId()))
+                {
+                    existingEmployee.setStatus(employee.getStatus());
+                    adminServiceImpl.deleteAdmin(existingEmployee.getEmpId());
+                }
+                else
+                {
+                    existingEmployee.setStatus(employee.getStatus());
+                }
             }
 
             if (employee.getRole() != null) {
                 if (employee.getRole().equalsIgnoreCase("Admin")) {
                     if (!adminRegistrationRepository.existsByEmpId(employee.getEmpId())) {
-                        adminServiceImpl.registerNewAdminWithoutPassword(existingEmployee);
+                        if(employee.getStatus().equalsIgnoreCase("active"))
+                        {
+                            adminServiceImpl.registerNewAdminWithoutPassword(existingEmployee);
+                            existingEmployee.setRole(employee.getRole());
+                        }
                     } else {
                         adminServiceImpl.updateAdminEntity(existingEmployee);
                     }
@@ -249,7 +262,6 @@ public class EmployeeServiceImpl implements EmployeeService {
                         adminServiceImpl.deleteAdmin(existingEmployee.getEmpId());
                     }
                 }
-                existingEmployee.setRole(employee.getRole());
             }
             return employeeRepo.save(existingEmployee);
         } catch (Exception e) {
