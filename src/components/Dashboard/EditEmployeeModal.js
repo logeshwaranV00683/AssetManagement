@@ -11,6 +11,7 @@ import InputLabel from "@mui/material/InputLabel";
 import { IconButton } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { updateEmployee } from "../Services/EmployeeService";
+import { toast } from "react-hot-toast";
 
 const useStyles = makeStyles((theme) => ({
   modal: {
@@ -66,12 +67,12 @@ function EditEmployeeModal({
   const [mail, setMail] = useState(employee.mail);
   const [mobile, setMobile] = useState(employee.mobile);
   const [location, setLocation] = useState(employee.location);
-  const [status, setStatus] = useState(employee.status);
+  const [status, setStatus] = useState("Active");
   const [department, setDepartment] = useState(employee.department);
   const [designation, setDesignation] = useState(employee.designation);
 
   const handleSaveEmployee = async () => {
-    const updatedFields = {};
+    const updatedFields = { status };
     if (firstName !== employee.firstName) updatedFields.firstName = firstName;
     if (lastName !== employee.lastName) updatedFields.lastName = lastName;
     if (role !== employee.role) updatedFields.role = role;
@@ -85,12 +86,14 @@ function EditEmployeeModal({
       updatedFields.designation = designation;
 
     try {
-      await updateEmployee(empId, updatedFields);
-      console.log("Employee updated:", updatedFields);
+      const res = await updateEmployee(empId, updatedFields);
+      console.log("Employee updated:", res);
+      toast.success(`Employee ${empId} updated successfully`);
       refreshEmployeeList();
       handleClose();
     } catch (error) {
       console.error("Error updating employee:", error);
+      toast.error("Failed to update employee");
     }
   };
 
@@ -111,7 +114,7 @@ function EditEmployeeModal({
       setMail(employee.mail);
       setMobile(employee.mobile);
       setLocation(employee.location);
-      setStatus(employee.status?.trim());
+      setStatus(employee.status?.trim() || "Active");
       setDepartment(employee.department);
       setDesignation(employee.designation);
     }

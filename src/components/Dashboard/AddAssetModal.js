@@ -19,7 +19,6 @@ function AddAssetModal({ open, handleClose, refreshAssetList }) {
   const [assetName, setAssetName] = useState("");
   const [serialNumber, setSerialNumber] = useState("");
   const [location, setLocation] = useState("");
-  const [locCode, setLocCode] = useState("0");
   const [operatingSystem, setOperatingSystem] = useState("");
   const [modelName, setModelName] = useState("");
   const [purchaseDate, setPurchaseDate] = useState("");
@@ -34,7 +33,6 @@ function AddAssetModal({ open, handleClose, refreshAssetList }) {
       assetName,
       serialNumber,
       location,
-      locCode,
       status,
       type,
       operatingSystem,
@@ -64,7 +62,9 @@ function AddAssetModal({ open, handleClose, refreshAssetList }) {
           error.data || `Asset ${newAsset.serialNumber} already exists`
         );
       } else {
-        toast.error(`Adding ${newAsset.serialNumber} Warranty Date must not be before Purchase Date or Already Serial Number is exists `);
+        toast.error(
+          `Adding ${newAsset.serialNumber} Warranty Date must not be before Purchase Date or Already Serial Number is exists `
+        );
       }
     } finally {
       setIsAdding(false);
@@ -76,7 +76,6 @@ function AddAssetModal({ open, handleClose, refreshAssetList }) {
     setSerialNumber("");
     setLocation("");
     setStatus("Unassigned");
-    setLocCode("");
     setOperatingSystem("");
     setModelName("");
     setType("");

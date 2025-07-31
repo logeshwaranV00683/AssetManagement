@@ -74,9 +74,16 @@ export const updateAsset = async (asset, serialNumber) => {
     );
 
     if (!response.ok) {
-      throw new Error("Network response was not ok " + response.statusText);
+      const text = await response.text();
+      throw new Error(`Server error: ${text}`);
     }
-    return await response.json();
+
+    const text = await response.text();
+    try {
+      return JSON.parse(text);
+    } catch {
+      return { message: text };
+    }
   } catch (error) {
     console.error("Error updating asset:", error);
     throw error;

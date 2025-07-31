@@ -26,7 +26,6 @@ function EditAssetModal({
     assetName: "",
     serialNumber: "",
     location: "",
-    locCode: "",
     operatingSystem: "",
     modelName: "",
     purchaseDate: "",
@@ -48,7 +47,6 @@ function EditAssetModal({
         assetName: asset.assetName || "",
         serialNumber: asset.serialNumber || "",
         location: asset.location || "",
-        locCode: asset.locCode || "",
         operatingSystem: asset.operatingSystem || "",
         modelName: asset.modelName || "",
         purchaseDate: asset.purchaseDate || "",
@@ -98,14 +96,32 @@ function EditAssetModal({
   const handleUpdateAsset = async () => {
     if (!asset) return;
 
+    const normalizeDate = (dateStr) => {
+      if (!dateStr) return null;
+      const d = new Date(dateStr);
+      return isNaN(d) ? null : d.toISOString().split("T")[0];
+    };
+
     const updatedFields = {};
     for (const key in fields) {
-      const oldVal = asset[key] ?? "";
-      const newVal = fields[key] ?? "";
+      let newVal = fields[key] ?? "";
+      let oldVal = asset[key] ?? "";
+
+      if (
+        ["purchaseDate", "warrantyDate", "assignedDate", "returnDate"].includes(
+          key
+        )
+      ) {
+        newVal = normalizeDate(newVal);
+        oldVal = normalizeDate(oldVal);
+      }
+
       if (newVal !== oldVal) {
         updatedFields[key] = newVal;
       }
     }
+
+    console.log("Payload sent to backend:", updatedFields);
 
     if (Object.keys(updatedFields).length === 0) {
       handleClose();
@@ -124,7 +140,6 @@ function EditAssetModal({
       await refreshAssetList();
     } catch (error) {
       console.error("Error updating Asset:", error);
-      handleClose();
       showErrorAlert("Update Failed", `${fields.serialNumber} Updation Failed`);
     } finally {
       setIsUpdating(false);
@@ -200,13 +215,6 @@ function EditAssetModal({
             label="Location"
             value={fields.location}
             onChange={handleChange("location")}
-            fullWidth
-            disabled={viewOnly}
-          />
-          <TextField
-            label="Location Code"
-            value={fields.locCode}
-            onChange={handleChange("locCode")}
             fullWidth
             disabled={viewOnly}
           />
