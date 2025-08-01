@@ -105,11 +105,16 @@ export const scrapAsset = async (assetId) => {
     );
 
     if (!response.ok) {
-      throw new Error("Network response was not ok " + response.statusText);
+      const errorText = await response.text();
+
+      const error = new Error(errorText || "Failed to scrap asset");
+      error.status = response.status;
+      throw error;
     }
+
     return true;
   } catch (error) {
-    console.error("Error updating asset:", error);
+    console.error("Error deleting asset:", error);
     throw error;
   }
 };
@@ -194,8 +199,6 @@ export const getAssignedAssetsByEmployee = async (empId) => {
   return await response.json();
 };
 
-
-
 export const getAssetTypes = async () => {
   const url = `${apiUrl}/assetManager/v1/AssetCount/GetAssetType`;
 
@@ -222,5 +225,3 @@ export const getAssetTypes = async () => {
     return [];
   }
 };
-
-

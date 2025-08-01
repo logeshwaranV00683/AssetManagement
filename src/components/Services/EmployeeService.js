@@ -98,16 +98,21 @@ export const deleteEmployee = async (empId) => {
     const response = await fetch(
       `${apiUrl}/assetManager/v1/deleteEmp/${empId}`,
       {
-        method: "Delete",
+        method: "DELETE",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
       }
     );
+
     if (!response.ok) {
-      throw new Error("Network response was not ok");
+      const errorText = await response.text();
+      const error = new Error(errorText || "Failed to delete employee");
+      error.status = response.status;
+      throw error;
     }
+
     return true;
   } catch (error) {
     console.error("Error deleting employee:", error);

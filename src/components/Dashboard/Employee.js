@@ -123,10 +123,17 @@ function Employee() {
       }
     } catch (error) {
       console.error("Error deleting Employee:", error);
-      toast.error(`Cannot Delete the Employee with ID: ${employee.empId}`);
+
+      if (error.status && error.message) {
+        toast.error(`Error ${error.message}`);
+      } else {
+        toast.error(`Cannot delete the Employee with ID: ${employee.empId}`);
+      }
     }
+
     console.log(`Delete employee with ID: ${employee.empId}`);
   };
+
   const [openAssignAssetDialog, setOpenAssignAssetDialog] = useState(false);
   const [selectedAssignEmployee, setSelectedAssignEmployee] = useState(null);
 

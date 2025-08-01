@@ -88,6 +88,7 @@ function Assets() {
       "Do you want to Scrap this asset?"
     );
     if (!confirmDelete) return;
+
     try {
       const success = await scrapAsset(asset.assetId);
       if (success) {
@@ -97,9 +98,15 @@ function Assets() {
         fetchAssets();
       }
     } catch (error) {
-      toast.error(
-        `Cannot Scrap the Asset with Serial Number: ${asset.serialNumber}`
-      );
+      if (error.status === 406) {
+        toast.error(
+          error.message || "Cannot scrap asset due to invalid status."
+        );
+      } else {
+        toast.error(
+          `Cannot Scrap the Asset with Serial Number: ${asset.serialNumber}`
+        );
+      }
     }
   };
 
