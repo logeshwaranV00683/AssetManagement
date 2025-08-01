@@ -14,11 +14,12 @@ public interface AssetCountRepository extends JpaRepository<CountOfAssetsEntity,
 
     List<CountOfAssetsEntity> findByLocationIgnoreCase(String location);
 
-    @Query("SELECT SUM(c.assigned) FROM CountOfAssetsEntity c")
+    @Query(value = "SELECT SUM(assigned) FROM tbl_count", nativeQuery = true)
     Integer getTotalAssigned();
 
-    @Query("SELECT SUM(c.unassigned) FROM CountOfAssetsEntity c")
+    @Query(value = "SELECT SUM(unassigned) FROM tbl_count", nativeQuery = true)
     Integer getTotalUnassigned();
+
 
 
 }
