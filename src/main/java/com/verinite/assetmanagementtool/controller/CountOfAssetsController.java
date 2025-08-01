@@ -41,29 +41,4 @@ public class CountOfAssetsController {
     public Map<String, Integer> getAssignedAssets(@RequestParam String location) {
         return countOFAssetsService.getAssignedAssets(location);
     }
-
-    @GetMapping("/unassignedCount")
-    public ResponseEntity<Integer> getCountOfUnassigned() {
-        int unassignedCount = assetService.getCountOfUnassigned();
-        return ResponseEntity.ok(unassignedCount);
-    }
-
-    @GetMapping("/assignedCount")
-    public ResponseEntity<Integer> getCountOfAssigned() {
-        int assignedCount = assetService.getCountOfAssigned();
-        return ResponseEntity.ok(assignedCount);
-    }
-
-    @GetMapping("/unassignedList")
-    public ResponseEntity<List<AssetsEntity>> getUnAssignedAssets() {
-        List<AssetsEntity> unAssignedAssets = assetService.getUnAssigned();
-        return ResponseEntity.ok(unAssignedAssets);
-    }
-
-    @GetMapping("/assignedList")
-    public ResponseEntity<List<AssetsEntity>> getAssignedAssets() {
-        List<AssetsEntity> assignedAssets = assetService.getAssigned();
-        return ResponseEntity.ok(assignedAssets);
-    }
-
 }
