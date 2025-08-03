@@ -10,7 +10,7 @@
     "@mui/icons-material": "^5.15.18",
     "@mui/material": "^5.15.18",
     "@mui/x-data-grid": "^7.5.1",
-    "@react-three/drei": "^9.92.1",
+    "@react-three/drei": "^9.77.1",
     "@react-three/fiber": "^8.13.0",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
@@ -33,7 +33,7 @@
     "recharts": "^2.12.7",
     "sweetalert2": "^11.6.13",
     "sweetalert2-react-content": "^5.1.0",
-    "three": "^0.154.0",
+    "three": "^0.152.2",
     "web-vitals": "^2.1.4",
     "xlsx": "^0.18.5"
   },
