@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import "../Style/Assets.css";
 import {
   FormControl,
@@ -32,6 +32,7 @@ function AssignAssetToEmployee({ open, onClose, employee, refresh }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
 
+  // Fetch assets and assigned assets on modal open
   useEffect(() => {
     if (open && employee?.empId) {
       getAssetList()
@@ -58,6 +59,23 @@ function AssignAssetToEmployee({ open, onClose, employee, refresh }) {
     }
   }, [open, employee]);
 
+  // Handler: open dropdown
+  const handleSelectClick = (event) => {
+    setAnchorEl(event.currentTarget);
+    setMenuOpen(true);
+  };
+
+  // Handler: confirm selected assets from dropdown
+  const handleOkClick = useCallback(() => {
+    if (selectedAssets.length === 0) {
+      showWarningAlert("No assets selected", "Please select at least one.");
+      return;
+    }
+    setConfirmedAssets([...selectedAssets]);
+    setMenuOpen(false);
+  }, [selectedAssets]);
+
+  // Handle Enter key press to confirm asset selection
   useEffect(() => {
     const handleKeyDown = (event) => {
       if (menuOpen && event.key === "Enter") {
@@ -70,22 +88,9 @@ function AssignAssetToEmployee({ open, onClose, employee, refresh }) {
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [menuOpen, selectedAssets]);
+  }, [menuOpen, handleOkClick]);
 
-  const handleSelectClick = (event) => {
-    setAnchorEl(event.currentTarget);
-    setMenuOpen(true);
-  };
-
-  const handleOkClick = () => {
-    if (selectedAssets.length === 0) {
-      showWarningAlert("No assets selected", "Please select at least one.");
-      return;
-    }
-    setConfirmedAssets([...selectedAssets]);
-    setMenuOpen(false);
-  };
-
+  // Assign confirmed assets
   const handleAssign = async () => {
     const user = JSON.parse(localStorage.getItem("user"));
     const assetData = confirmedAssets.map((serialNumber) => {
@@ -110,13 +115,14 @@ function AssignAssetToEmployee({ open, onClose, employee, refresh }) {
           "Some assets are already assigned."
         );
       } else if (error.status === 404) {
-        return showWarningAlert("Employee Status Was In InActive");
+        showWarningAlert("Employee Status Was In Inactive");
       } else {
         showErrorAlert("Assigning Asset Failed", "Could not assign assets.");
       }
     }
   };
 
+  // Unassign selected assigned assets
   const handleUnassign = async () => {
     try {
       await unassignAsset(selectedUnassignAssets);
@@ -146,6 +152,7 @@ function AssignAssetToEmployee({ open, onClose, employee, refresh }) {
             &times;
           </button>
           <div className="import-3d-file-wrapper">
+            {/* Already assigned assets with unassign option */}
             {alreadyAssignedAssets.length > 0 && (
               <Box className="assigned-assets-box">
                 <strong>Already Assigned Assets:</strong>
@@ -177,6 +184,8 @@ function AssignAssetToEmployee({ open, onClose, employee, refresh }) {
                 )}
               </Box>
             )}
+
+            {/* Asset assignment section */}
             <div className="import-3d-title">
               Assign Assets to {employee?.name}
             </div>
@@ -189,6 +198,7 @@ function AssignAssetToEmployee({ open, onClose, employee, refresh }) {
               />
             </FormControl>
 
+            {/* Dropdown menu */}
             <Menu
               anchorEl={anchorEl}
               open={menuOpen}
@@ -216,16 +226,13 @@ function AssignAssetToEmployee({ open, onClose, employee, refresh }) {
                 </MenuItem>
               ))}
               <Box textAlign="center" p={1}>
-                <Button
-                  variant="contained"
-                  size="small"
-                  onClick={handleOkClick}
-                >
+                <Button variant="contained" size="small" onClick={handleOkClick}>
                   OK
                 </Button>
               </Box>
             </Menu>
 
+            {/* Confirm assignment */}
             {confirmedAssets.length > 0 && (
               <button className="import-3d-button" onClick={handleAssign}>
                 Confirm Assigning
