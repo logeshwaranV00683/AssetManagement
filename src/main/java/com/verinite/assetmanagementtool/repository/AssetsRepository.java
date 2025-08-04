@@ -47,4 +47,7 @@ public interface AssetsRepository extends JpaRepository<AssetsEntity, Number> {
     List<Object[]> findAggregatedAssetCountsByAssetTypeAndLocation(@Param("assetType") String assetType);
 
     boolean existsBySerialNumber(String serialNumber);
+
+    @Query(value = "SELECT DISTINCT asset_sourced_by FROM tbl_assets",nativeQuery = true)
+    List<String> getUniqueAssetSourcedBy();
 }

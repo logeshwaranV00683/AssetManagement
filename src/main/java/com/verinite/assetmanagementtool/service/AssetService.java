@@ -38,4 +38,6 @@ public interface AssetService {
     void exportAssetsToExcel(List<AssetExportDto> allAssets, OutputStream outputStream) throws IOException;
 
     ResponseEntity<?> importAssetsFromExcel(InputStream inputStream) throws IOException;
+
+    List<String> getUniqueAssetSourcedBy();
 }
