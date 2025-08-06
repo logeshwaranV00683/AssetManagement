@@ -20,7 +20,13 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 import { toast } from "react-hot-toast";
 
-function EditAssetModal({ open, handleClose, asset, refreshAssetList, viewOnly }) {
+function EditAssetModal({
+  open,
+  handleClose,
+  asset,
+  refreshAssetList,
+  viewOnly,
+}) {
   const user = JSON.parse(localStorage.getItem("user"));
 
   const [isUpdating, setIsUpdating] = useState(false);
@@ -55,12 +61,11 @@ function EditAssetModal({ open, handleClose, asset, refreshAssetList, viewOnly }
     warrantyDate: false,
     assetSourcedBy: false,
   });
-
-  // Utility for error text style
+  const blinkClass = (condition) => (condition ? "error-blink" : "");
   const errorStyle = (show) => ({
     color: show ? "red" : "transparent",
     fontSize: "0.8rem",
-    minHeight: "16px", // Reserve space
+    minHeight: "16px",
     marginBottom: "2px",
   });
 
@@ -115,8 +120,34 @@ function EditAssetModal({ open, handleClose, asset, refreshAssetList, viewOnly }
       setOptions((prev) => [...prev, value]);
     }
   };
-
+  const [shakeForm, setShakeForm] = useState(false);
   const handleUpdateAsset = async () => {
+    const requiredFields = {
+      assetName,
+      serialNumber,
+      location,
+      type: type || customType,
+      purchaseDate,
+      warrantyDate,
+      assetSourcedBy,
+    };
+
+    const newTouched = { ...touched };
+    let hasError = false;
+
+    Object.entries(requiredFields).forEach(([key, value]) => {
+      if (!value) {
+        newTouched[key] = true;
+        hasError = true;
+      }
+    });
+    setTouched(newTouched);
+
+    if (hasError) {
+      setShakeForm(true);
+      setTimeout(() => setShakeForm(false), 500);
+      return;
+    }
     if (!asset) return;
 
     const finalType = type === "__custom__" ? customType : type;
@@ -182,9 +213,9 @@ function EditAssetModal({ open, handleClose, asset, refreshAssetList, viewOnly }
           backgroundColor: "background.paper",
           boxShadow: 24,
           p: 4,
-          width: "70%",          // Increased width
-          maxWidth: 800,         // Larger modal
-          maxHeight: "80%",      // Taller modal
+          width: "70%",
+          maxWidth: 800,
+          maxHeight: "80%",
           overflowY: "auto",
           borderRadius: 4,
           position: "absolute",
@@ -212,6 +243,7 @@ function EditAssetModal({ open, handleClose, asset, refreshAssetList, viewOnly }
           component="form"
           noValidate
           autoComplete="off"
+          className={shakeForm ? "form-shake" : ""}
           sx={{
             display: "grid",
             gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" },
@@ -227,16 +259,24 @@ function EditAssetModal({ open, handleClose, asset, refreshAssetList, viewOnly }
               label="Asset Name"
               value={assetName}
               onChange={(e) => setAssetName(e.target.value)}
-              onBlur={() => setTouched((prev) => ({ ...prev, assetName: true }))}
+              onBlur={() =>
+                setTouched((prev) => ({ ...prev, assetName: true }))
+              }
               fullWidth
               disabled={viewOnly}
+              className={blinkClass(!assetName && touched.assetName)}
             />
           </Box>
 
           {/* Serial Number */}
           <Box sx={{ display: "flex", flexDirection: "column" }}>
             <span style={errorStyle(false)}> </span>
-            <TextField label="Serial Number" value={serialNumber} fullWidth disabled />
+            <TextField
+              label="Serial Number"
+              value={serialNumber}
+              fullWidth
+              disabled
+            />
           </Box>
 
           {/* Location */}
@@ -252,10 +292,18 @@ function EditAssetModal({ open, handleClose, asset, refreshAssetList, viewOnly }
                 setLocation(newValue || "");
                 commitNewOption(newValue, locationOptions, setLocationOptions);
               }}
-              onInputChange={(event, newInputValue) => setLocation(newInputValue || "")}
+              onInputChange={(event, newInputValue) =>
+                setLocation(newInputValue || "")
+              }
               onBlur={() => setTouched((prev) => ({ ...prev, location: true }))}
               renderInput={(params) => (
-                <TextField {...params} label="Location" fullWidth disabled={viewOnly} />
+                <TextField
+                  {...params}
+                  label="Location"
+                  fullWidth
+                  disabled={viewOnly}
+                  className={blinkClass(!location && touched.location)}
+                />
               )}
             />
           </Box>
@@ -263,21 +311,21 @@ function EditAssetModal({ open, handleClose, asset, refreshAssetList, viewOnly }
           {/* Status */}
           <Box sx={{ display: "flex", flexDirection: "column" }}>
             <span style={errorStyle(false)}> </span>
-          <FormControl fullWidth disabled={viewOnly || status === "Assigned"}>
-            <InputLabel id="status-label">Status</InputLabel>
-            <Select
-              labelId="status-label"
-              value={status}
-              onChange={(e) => setStatus(e.target.value)}
-              label="Status"
-            >
-              {status === "Assigned" && (
-                <MenuItem value="Assigned">Assigned</MenuItem>
-              )}
-                  <MenuItem value="UnAssigned">UnAssigned</MenuItem>
-                  <MenuItem value="Scrap">Scrap</MenuItem>
-            </Select>
-          </FormControl>
+            <FormControl fullWidth disabled={viewOnly || status === "Assigned"}>
+              <InputLabel id="status-label">Status</InputLabel>
+              <Select
+                labelId="status-label"
+                value={status}
+                onChange={(e) => setStatus(e.target.value)}
+                label="Status"
+              >
+                {status === "Assigned" && (
+                  <MenuItem value="Assigned">Assigned</MenuItem>
+                )}
+                <MenuItem value="UnAssigned">UnAssigned</MenuItem>
+                <MenuItem value="Scrap">Scrap</MenuItem>
+              </Select>
+            </FormControl>
           </Box>
 
           {/* Assigned By */}
@@ -336,7 +384,13 @@ function EditAssetModal({ open, handleClose, asset, refreshAssetList, viewOnly }
               }}
               onBlur={() => setTouched((prev) => ({ ...prev, type: true }))}
               renderInput={(params) => (
-                <TextField {...params} label="Asset Type" fullWidth disabled={viewOnly} />
+                <TextField
+                  {...params}
+                  label="Asset Type"
+                  fullWidth
+                  disabled={viewOnly}
+                  className={blinkClass(!type && touched.type)}
+                />
               )}
             />
           </Box>
@@ -360,7 +414,9 @@ function EditAssetModal({ open, handleClose, asset, refreshAssetList, viewOnly }
               label="Model Name"
               value={modelName}
               onChange={(e) => setModelName(e.target.value)}
-              onBlur={() => setTouched((prev) => ({ ...prev, modelName: true }))}
+              onBlur={() =>
+                setTouched((prev) => ({ ...prev, modelName: true }))
+              }
               fullWidth
               disabled={viewOnly}
             />
@@ -382,10 +438,13 @@ function EditAssetModal({ open, handleClose, asset, refreshAssetList, viewOnly }
               type="date"
               value={purchaseDate}
               onChange={(e) => setPurchaseDate(e.target.value)}
-              onBlur={() => setTouched((prev) => ({ ...prev, purchaseDate: true }))}
+              onBlur={() =>
+                setTouched((prev) => ({ ...prev, purchaseDate: true }))
+              }
               InputLabelProps={{ shrink: true }}
               fullWidth
               disabled={viewOnly}
+              className={blinkClass(!purchaseDate && touched.purchaseDate)}
             />
           </Box>
 
@@ -399,10 +458,13 @@ function EditAssetModal({ open, handleClose, asset, refreshAssetList, viewOnly }
               type="date"
               value={warrantyDate}
               onChange={(e) => setWarrantyDate(e.target.value)}
-              onBlur={() => setTouched((prev) => ({ ...prev, warrantyDate: true }))}
+              onBlur={() =>
+                setTouched((prev) => ({ ...prev, warrantyDate: true }))
+              }
               InputLabelProps={{ shrink: true }}
               fullWidth
               disabled={viewOnly}
+              className={blinkClass(!warrantyDate && touched.warrantyDate)}
             />
           </Box>
 
@@ -417,7 +479,11 @@ function EditAssetModal({ open, handleClose, asset, refreshAssetList, viewOnly }
               value={assetSourcedBy}
               onChange={(event, newValue) => {
                 setAssetSourcedBy(newValue || "");
-                commitNewOption(newValue, assetSourceOptions, setAssetSourceOptions);
+                commitNewOption(
+                  newValue,
+                  assetSourceOptions,
+                  setAssetSourceOptions
+                );
               }}
               onInputChange={(event, newInputValue) =>
                 setAssetSourcedBy(newInputValue || "")
@@ -426,7 +492,15 @@ function EditAssetModal({ open, handleClose, asset, refreshAssetList, viewOnly }
                 setTouched((prev) => ({ ...prev, assetSourcedBy: true }))
               }
               renderInput={(params) => (
-                <TextField {...params} label="Asset Sourced By" fullWidth disabled={viewOnly} />
+                <TextField
+                  {...params}
+                  label="Asset Sourced By"
+                  fullWidth
+                  disabled={viewOnly}
+                  className={blinkClass(
+                    !assetSourcedBy && touched.assetSourcedBy
+                  )}
+                />
               )}
             />
           </Box>

@@ -54,7 +54,7 @@ function AddAssetModal({ open, handleClose, refreshAssetList }) {
     marginBottom: "2px",
     visibility: visible ? "visible" : "hidden",
   });
-
+  const blinkClass = (condition) => (condition ? "error-blink" : "");
   useEffect(() => {
     if (open) {
       fetchAssetTypes();
@@ -95,53 +95,79 @@ function AddAssetModal({ open, handleClose, refreshAssetList }) {
       setOptions((prev) => [...prev, value]);
     }
   };
+  const [shakeForm, setShakeForm] = useState(false);
 
-const handleAddAsset = async () => {
-  const finalType = type === "__custom__" ? customType : type;
+  const handleAddAsset = async () => {
+    const requiredFields = {
+      assetName,
+      serialNumber,
+      location,
+      type: type || customType,
+      purchaseDate,
+      warrantyDate,
+      assetSourcedBy,
+    };
 
-  const newAsset = {
-    assetName,
-    serialNumber,
-    location,
-    status,
-    type: finalType,
-    operatingSystem: operatingSystem.trim() || "Nill",
-    modelName: modelName.trim() || "Nill",
-    purchaseDate,
-    warrantyDate,
-    addedBy,
-    assetSourcedBy,
-  };
+    const newTouched = { ...touched };
+    let hasError = false;
 
-  console.log("Asset added:", newAsset);
-  setIsAdding(true);
-
-  try {
-    await saveAsset(newAsset);
-    refreshAssetList();
-    toast.success(`${newAsset.serialNumber} Asset Added Successfully`);
-    handleCloseModal();
-  } catch (error) {
-    console.error("Error adding Asset:", error);
-
-    if (error.status === 400 && typeof error.data === "object") {
-      Object.entries(error.data).forEach(([field, message]) => {
-        toast.error(`${field}: ${message}`);
-      });
-    } else if (error.status === 409) {
-      toast.error(
-        error.data || `Asset ${newAsset.serialNumber} already exists`
-      );
-    } else {
-      toast.error(
-        `Adding ${newAsset.serialNumber} failed: Warranty Date must not be before Purchase Date or Serial Number already exists`
-      );
+    Object.entries(requiredFields).forEach(([key, value]) => {
+      if (!value) {
+        newTouched[key] = true;
+        hasError = true;
+      }
+    });
+    setTouched(newTouched);
+    if (hasError) {
+      setShakeForm(true);
+      setTimeout(() => setShakeForm(false), 500);
+      toast.error("Please fill all required fields!");
+      return;
     }
-  } finally {
-    setIsAdding(false);
-  }
-};
+    const finalType = type === "__custom__" ? customType : type;
 
+    const newAsset = {
+      assetName,
+      serialNumber,
+      location,
+      status,
+      type: finalType,
+      operatingSystem: operatingSystem.trim() || "Nill",
+      modelName: modelName.trim() || "Nill",
+      purchaseDate,
+      warrantyDate,
+      addedBy,
+      assetSourcedBy,
+    };
+
+    console.log("Asset added:", newAsset);
+    setIsAdding(true);
+
+    try {
+      await saveAsset(newAsset);
+      refreshAssetList();
+      toast.success(`${newAsset.serialNumber} Asset Added Successfully`);
+      handleCloseModal();
+    } catch (error) {
+      console.error("Error adding Asset:", error);
+
+      if (error.status === 400 && typeof error.data === "object") {
+        Object.entries(error.data).forEach(([field, message]) => {
+          toast.error(`${field}: ${message}`);
+        });
+      } else if (error.status === 409) {
+        toast.error(
+          error.data || `Asset ${newAsset.serialNumber} already exists`
+        );
+      } else {
+        toast.error(
+          `Adding ${newAsset.serialNumber} failed: Warranty Date must not be before Purchase Date or Serial Number already exists`
+        );
+      }
+    } finally {
+      setIsAdding(false);
+    }
+  };
 
   const resetForm = () => {
     setAssetName("");
@@ -217,6 +243,7 @@ const handleAddAsset = async () => {
           component="form"
           noValidate
           autoComplete="off"
+          className={shakeForm ? "form-shake" : ""}
           sx={{
             display: "grid",
             gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" },
@@ -237,6 +264,7 @@ const handleAddAsset = async () => {
               }
               fullWidth
               required
+              className={blinkClass(!assetName && touched.assetName)}
             />
           </Box>
 
@@ -254,6 +282,7 @@ const handleAddAsset = async () => {
               }
               fullWidth
               required
+              className={blinkClass(!serialNumber && touched.serialNumber)}
             />
           </Box>
 
@@ -278,7 +307,13 @@ const handleAddAsset = async () => {
                 commitNewOption(location, locationOptions, setLocationOptions);
               }}
               renderInput={(params) => (
-                <TextField {...params} label="Location" fullWidth required />
+                <TextField
+                  {...params}
+                  label="Location"
+                  fullWidth
+                  required
+                  className={blinkClass(!location && touched.location)}
+                />
               )}
             />
           </Box>
@@ -313,7 +348,13 @@ const handleAddAsset = async () => {
               }}
               onBlur={() => setTouched((prev) => ({ ...prev, type: true }))}
               renderInput={(params) => (
-                <TextField {...params} label="Asset Type" fullWidth required />
+                <TextField
+                  {...params}
+                  label="Asset Type"
+                  fullWidth
+                  required
+                  className={blinkClass(!type && touched.type)}
+                />
               )}
             />
           </Box>
@@ -350,6 +391,7 @@ const handleAddAsset = async () => {
               InputLabelProps={{ shrink: true }}
               fullWidth
               required
+              className={blinkClass(!purchaseDate && touched.purchaseDate)}
             />
           </Box>
 
@@ -369,6 +411,7 @@ const handleAddAsset = async () => {
               InputLabelProps={{ shrink: true }}
               fullWidth
               required
+              className={blinkClass(!warrantyDate && touched.warrantyDate)}
             />
           </Box>
 
@@ -406,6 +449,9 @@ const handleAddAsset = async () => {
                   label="Asset Sourced By"
                   fullWidth
                   required
+                  className={blinkClass(
+                    !assetSourcedBy && touched.assetSourcedBy
+                  )}
                 />
               )}
             />

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import {
   Modal,
@@ -64,6 +64,19 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: "space-between",
     marginTop: theme.spacing(2),
   },
+  shake: {
+    animation: `$shake 0.3s ease-in-out, $blink 0.6s step-end 0s 2`,
+  },
+  "@keyframes shake": {
+    "0%": { transform: "translateX(0)" },
+    "25%": { transform: "translateX(-4px)" },
+    "50%": { transform: "translateX(4px)" },
+    "75%": { transform: "translateX(-4px)" },
+    "100%": { transform: "translateX(0)" },
+  },
+  "@keyframes blink": {
+    "50%": { borderColor: "red" },
+  },
 }));
 
 function EditEmployeeModal({
@@ -103,6 +116,18 @@ function EditEmployeeModal({
     department: false,
     designation: false,
   });
+
+  const fieldRefs = {
+    firstName: useRef(null),
+    lastName: useRef(null),
+    role: useRef(null),
+    mail: useRef(null),
+    mobile: useRef(null),
+    location: useRef(null),
+    status: useRef(null),
+    department: useRef(null),
+    designation: useRef(null),
+  };
 
   useEffect(() => {
     if (open) {
@@ -173,29 +198,30 @@ function EditEmployeeModal({
   const handleUpdateEmployee = async () => {
     if (viewOnly || !employee) return;
 
-    if (
-      !firstName ||
-      !lastName ||
-      !role ||
-      !mail ||
-      !mobile ||
-      !location ||
-      !status ||
-      !department ||
-      !designation
-    ) {
-      setTouched({
-        firstName: true,
-        lastName: true,
-        role: true,
-        mail: true,
-        mobile: true,
-        location: true,
-        status: true,
-        department: true,
-        designation: true,
-      });
+    const requiredFields = [
+      "firstName",
+      "lastName",
+      "role",
+      "mail",
+      "mobile",
+      "location",
+      "status",
+      "department",
+      "designation",
+    ];
+
+    const invalidField = requiredFields.find((f) => !eval(f));
+
+    if (invalidField) {
+      setTouched(
+        requiredFields.reduce((acc, key) => ({ ...acc, [key]: true }), {})
+      );
       toast.error("Please fill all required fields!");
+
+      const firstInvalidRef = fieldRefs[invalidField]?.current;
+      if (firstInvalidRef) {
+        firstInvalidRef.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
       return;
     }
 
@@ -246,7 +272,11 @@ function EditEmployeeModal({
   };
 
   const renderFieldWithError = (label, value, setValue, key, type = "text") => (
-    <Box sx={{ display: "flex", flexDirection: "column" }}>
+    <Box
+      sx={{ display: "flex", flexDirection: "column" }}
+      ref={fieldRefs[key]}
+      className={touched[key] && !value ? classes.shake : ""}
+    >
       <span
         className={classes.errorText}
         style={{
@@ -291,7 +321,13 @@ function EditEmployeeModal({
         <form>
           <div className={classes.formGrid}>
             {/* Employee ID (readonly) */}
-            <TextField label="Employee ID" value={empId} fullWidth disabled style={{ marginTop: '19px' }}/>
+            <TextField
+              label="Employee ID"
+              value={empId}
+              fullWidth
+              disabled
+              style={{ marginTop: "19px" }}
+            />
 
             {renderFieldWithError(
               "First Name",
@@ -307,7 +343,11 @@ function EditEmployeeModal({
             )}
 
             {/* Role */}
-            <Box sx={{ display: "flex", flexDirection: "column" }}>
+            <Box
+              sx={{ display: "flex", flexDirection: "column" }}
+              ref={fieldRefs.role}
+              className={touched.role && !role ? classes.shake : ""}
+            >
               <span
                 className={classes.errorText}
                 style={{
@@ -342,7 +382,11 @@ function EditEmployeeModal({
             {renderFieldWithError("Mobile", mobile, setMobile, "mobile")}
 
             {/* Location */}
-            <Box sx={{ display: "flex", flexDirection: "column" }}>
+            <Box
+              sx={{ display: "flex", flexDirection: "column" }}
+              ref={fieldRefs.location}
+              className={touched.location && !location ? classes.shake : ""}
+            >
               <span
                 className={classes.errorText}
                 style={{
@@ -378,7 +422,11 @@ function EditEmployeeModal({
             </Box>
 
             {/* Status */}
-            <Box sx={{ display: "flex", flexDirection: "column" }}>
+            <Box
+              sx={{ display: "flex", flexDirection: "column" }}
+              ref={fieldRefs.status}
+              className={touched.status && !status ? classes.shake : ""}
+            >
               <span
                 className={classes.errorText}
                 style={{
@@ -410,7 +458,11 @@ function EditEmployeeModal({
             </Box>
 
             {/* Department */}
-            <Box sx={{ display: "flex", flexDirection: "column" }}>
+            <Box
+              sx={{ display: "flex", flexDirection: "column" }}
+              ref={fieldRefs.department}
+              className={touched.department && !department ? classes.shake : ""}
+            >
               <span
                 className={classes.errorText}
                 style={{
@@ -450,7 +502,13 @@ function EditEmployeeModal({
             </Box>
 
             {/* Designation */}
-            <Box sx={{ display: "flex", flexDirection: "column" }}>
+            <Box
+              sx={{ display: "flex", flexDirection: "column" }}
+              ref={fieldRefs.designation}
+              className={
+                touched.designation && !designation ? classes.shake : ""
+              }
+            >
               <span
                 className={classes.errorText}
                 style={{

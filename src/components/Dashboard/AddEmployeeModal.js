@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
@@ -62,6 +62,7 @@ const useStyles = makeStyles((theme) => ({
 
 function AddEmployeeModal({ open, handleClose, refreshEmployeeList }) {
   const classes = useStyles();
+  const [shakeForm, setShakeForm] = useState(false);
 
   const [empId, setEmpId] = useState("");
   const [firstName, setFirstName] = useState("");
@@ -91,6 +92,19 @@ function AddEmployeeModal({ open, handleClose, refreshEmployeeList }) {
     role: false,
     designation: false,
   });
+
+  const fieldRefs = {
+    empId: useRef(),
+    firstName: useRef(),
+    lastName: useRef(),
+    mail: useRef(),
+    mobile: useRef(),
+    location: useRef(),
+    status: useRef(),
+    department: useRef(),
+    role: useRef(),
+    designation: useRef(),
+  };
 
   useEffect(() => {
     if (open) {
@@ -146,30 +160,40 @@ function AddEmployeeModal({ open, handleClose, refreshEmployeeList }) {
   };
 
   const handleAddEmployee = async () => {
-    if (
-      !empId ||
-      !firstName ||
-      !lastName ||
-      !mail ||
-      !mobile ||
-      !location ||
-      !status ||
-      !department ||
-      !role ||
-      !designation
-    ) {
-      setTouched({
-        empId: true,
-        firstName: true,
-        lastName: true,
-        mail: true,
-        mobile: true,
-        location: true,
-        status: true,
-        department: true,
-        role: true,
-        designation: true,
-      });
+    const requiredFields = {
+      empId,
+      firstName,
+      lastName,
+      mail,
+      mobile,
+      location,
+      status,
+      department,
+      role,
+      designation,
+    };
+
+    let hasError = false;
+    const newTouched = { ...touched };
+
+    for (const [key, value] of Object.entries(requiredFields)) {
+      if (!value) {
+        newTouched[key] = true;
+        if (!hasError) {
+          fieldRefs[key].current?.scrollIntoView({
+            behavior: "smooth",
+            block: "center",
+          });
+        }
+        hasError = true;
+      }
+    }
+
+    setTouched(newTouched);
+
+    if (hasError) {
+      setShakeForm(true);
+      setTimeout(() => setShakeForm(false), 500);
       toast.error("Please fill all required fields!");
       return;
     }
@@ -225,7 +249,12 @@ function AddEmployeeModal({ open, handleClose, refreshEmployeeList }) {
       className={classes.modal}
       aria-labelledby="add-employee-modal-title"
     >
-      <Box className={classes.paper}>
+      <Box
+        component="form"
+        noValidate
+        autoComplete="off"
+        className={`${classes.paper} ${shakeForm ? "form-shake" : ""}`}
+      >
         <IconButton
           edge="end"
           aria-label="close"
@@ -239,109 +268,44 @@ function AddEmployeeModal({ open, handleClose, refreshEmployeeList }) {
 
         <form>
           <div className={classes.formGrid}>
-            {/* Employee ID */}
-            <Box sx={{ display: "flex", flexDirection: "column" }}>
-              <span
-                className={classes.errorText}
-                style={{
-                  visibility: touched.empId && !empId ? "visible" : "hidden",
-                }}
+            {[
+              ["empId", "Employee ID", empId, setEmpId],
+              ["firstName", "First Name", firstName, setFirstName],
+              ["lastName", "Last Name", lastName, setLastName],
+              ["mail", "Email", mail, setMail],
+              ["mobile", "Mobile", mobile, setMobile],
+            ].map(([key, label, value, setter]) => (
+              <Box
+                key={key}
+                sx={{ display: "flex", flexDirection: "column" }}
+                ref={fieldRefs[key]}
               >
-                This field is required *
-              </span>
-              <TextField
-                label="Employee ID"
-                value={empId}
-                onChange={(e) => setEmpId(e.target.value)}
-                onBlur={() => setTouched((prev) => ({ ...prev, empId: true }))}
-                fullWidth
-              />
-            </Box>
-
-            {/* First Name */}
-            <Box sx={{ display: "flex", flexDirection: "column" }}>
-              <span
-                className={classes.errorText}
-                style={{
-                  visibility:
-                    touched.firstName && !firstName ? "visible" : "hidden",
-                }}
-              >
-                This field is required *
-              </span>
-              <TextField
-                label="First Name"
-                value={firstName}
-                onChange={(e) => setFirstName(e.target.value)}
-                onBlur={() =>
-                  setTouched((prev) => ({ ...prev, firstName: true }))
-                }
-                fullWidth
-              />
-            </Box>
-
-            {/* Last Name */}
-            <Box sx={{ display: "flex", flexDirection: "column" }}>
-              <span
-                className={classes.errorText}
-                style={{
-                  visibility:
-                    touched.lastName && !lastName ? "visible" : "hidden",
-                }}
-              >
-                This field is required *
-              </span>
-              <TextField
-                label="Last Name"
-                value={lastName}
-                onChange={(e) => setLastName(e.target.value)}
-                onBlur={() =>
-                  setTouched((prev) => ({ ...prev, lastName: true }))
-                }
-                fullWidth
-              />
-            </Box>
-
-            {/* Email */}
-            <Box sx={{ display: "flex", flexDirection: "column" }}>
-              <span
-                className={classes.errorText}
-                style={{
-                  visibility: touched.mail && !mail ? "visible" : "hidden",
-                }}
-              >
-                This field is required *
-              </span>
-              <TextField
-                label="Email"
-                value={mail}
-                onChange={(e) => setMail(e.target.value)}
-                onBlur={() => setTouched((prev) => ({ ...prev, mail: true }))}
-                fullWidth
-              />
-            </Box>
-
-            {/* Mobile */}
-            <Box sx={{ display: "flex", flexDirection: "column" }}>
-              <span
-                className={classes.errorText}
-                style={{
-                  visibility: touched.mobile && !mobile ? "visible" : "hidden",
-                }}
-              >
-                This field is required *
-              </span>
-              <TextField
-                label="Mobile"
-                value={mobile}
-                onChange={(e) => setMobile(e.target.value)}
-                onBlur={() => setTouched((prev) => ({ ...prev, mobile: true }))}
-                fullWidth
-              />
-            </Box>
+                <span
+                  className={classes.errorText}
+                  style={{
+                    visibility: touched[key] && !value ? "visible" : "hidden",
+                  }}
+                >
+                  This field is required *
+                </span>
+                <TextField
+                  label={label}
+                  value={value}
+                  onChange={(e) => setter(e.target.value)}
+                  onBlur={() =>
+                    setTouched((prev) => ({ ...prev, [key]: true }))
+                  }
+                  fullWidth
+                  className={touched[key] && !value ? "error-blink" : ""}
+                />
+              </Box>
+            ))}
 
             {/* Location */}
-            <Box sx={{ display: "flex", flexDirection: "column" }}>
+            <Box
+              sx={{ display: "flex", flexDirection: "column" }}
+              ref={fieldRefs.location}
+            >
               <span
                 className={classes.errorText}
                 style={{
@@ -366,13 +330,23 @@ function AddEmployeeModal({ open, handleClose, refreshEmployeeList }) {
                   setTouched((prev) => ({ ...prev, location: true }))
                 }
                 renderInput={(params) => (
-                  <TextField {...params} label="Location" fullWidth />
+                  <TextField
+                    {...params}
+                    label="Location"
+                    fullWidth
+                    className={
+                      touched.location && !location ? "error-blink" : ""
+                    }
+                  />
                 )}
               />
             </Box>
 
             {/* Status */}
-            <Box sx={{ display: "flex", flexDirection: "column" }}>
+            <Box
+              sx={{ display: "flex", flexDirection: "column" }}
+              ref={fieldRefs.status}
+            >
               <span
                 className={classes.errorText}
                 style={{
@@ -389,6 +363,7 @@ function AddEmployeeModal({ open, handleClose, refreshEmployeeList }) {
                   onBlur={() =>
                     setTouched((prev) => ({ ...prev, status: true }))
                   }
+                  className={touched.status && !status ? "error-blink" : ""}
                 >
                   <MenuItem value="Active">Active</MenuItem>
                   <MenuItem value="Inactive">Inactive</MenuItem>
@@ -397,7 +372,10 @@ function AddEmployeeModal({ open, handleClose, refreshEmployeeList }) {
             </Box>
 
             {/* Department */}
-            <Box sx={{ display: "flex", flexDirection: "column" }}>
+            <Box
+              sx={{ display: "flex", flexDirection: "column" }}
+              ref={fieldRefs.department}
+            >
               <span
                 className={classes.errorText}
                 style={{
@@ -426,13 +404,23 @@ function AddEmployeeModal({ open, handleClose, refreshEmployeeList }) {
                   setTouched((prev) => ({ ...prev, department: true }))
                 }
                 renderInput={(params) => (
-                  <TextField {...params} label="Department" fullWidth />
+                  <TextField
+                    {...params}
+                    label="Department"
+                    fullWidth
+                    className={
+                      touched.department && !department ? "error-blink" : ""
+                    }
+                  />
                 )}
               />
             </Box>
 
             {/* Role */}
-            <Box sx={{ display: "flex", flexDirection: "column" }}>
+            <Box
+              sx={{ display: "flex", flexDirection: "column" }}
+              ref={fieldRefs.role}
+            >
               <span
                 className={classes.errorText}
                 style={{
@@ -447,6 +435,7 @@ function AddEmployeeModal({ open, handleClose, refreshEmployeeList }) {
                   value={role}
                   onChange={(e) => setRole(e.target.value)}
                   onBlur={() => setTouched((prev) => ({ ...prev, role: true }))}
+                  className={touched.role && !role ? "error-blink" : ""}
                 >
                   <MenuItem value="Employee">Employee</MenuItem>
                   <MenuItem value="Admin">Admin</MenuItem>
@@ -455,7 +444,10 @@ function AddEmployeeModal({ open, handleClose, refreshEmployeeList }) {
             </Box>
 
             {/* Designation */}
-            <Box sx={{ display: "flex", flexDirection: "column" }}>
+            <Box
+              sx={{ display: "flex", flexDirection: "column" }}
+              ref={fieldRefs.designation}
+            >
               <span
                 className={classes.errorText}
                 style={{
@@ -484,7 +476,14 @@ function AddEmployeeModal({ open, handleClose, refreshEmployeeList }) {
                   setTouched((prev) => ({ ...prev, designation: true }))
                 }
                 renderInput={(params) => (
-                  <TextField {...params} label="Designation" fullWidth />
+                  <TextField
+                    {...params}
+                    label="Designation"
+                    fullWidth
+                    className={
+                      touched.designation && !designation ? "error-blink" : ""
+                    }
+                  />
                 )}
               />
             </Box>
