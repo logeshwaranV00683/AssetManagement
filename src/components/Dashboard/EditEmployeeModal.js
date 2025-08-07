@@ -398,6 +398,7 @@ function EditEmployeeModal({
               </span>
               <Autocomplete
                 freeSolo
+                disabled={viewOnly}
                 options={locationOptions}
                 value={location}
                 onChange={(event, newValue) => {
@@ -411,12 +412,7 @@ function EditEmployeeModal({
                   setTouched((prev) => ({ ...prev, location: true }))
                 }
                 renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label="Location"
-                    fullWidth
-                    disabled={viewOnly}
-                  />
+                  <TextField {...params} label="Location" fullWidth />
                 )}
               />
             </Box>
@@ -474,6 +470,7 @@ function EditEmployeeModal({
               </span>
               <Autocomplete
                 freeSolo
+                disabled={viewOnly}
                 options={departmentOptions}
                 value={department}
                 onChange={(event, newValue) => {
@@ -491,12 +488,7 @@ function EditEmployeeModal({
                   setTouched((prev) => ({ ...prev, department: true }))
                 }
                 renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label="Department"
-                    fullWidth
-                    disabled={viewOnly}
-                  />
+                  <TextField {...params} label="Department" fullWidth />
                 )}
               />
             </Box>
@@ -520,6 +512,7 @@ function EditEmployeeModal({
               </span>
               <Autocomplete
                 freeSolo
+                disabled={viewOnly}
                 options={designationOptions}
                 value={designation}
                 onChange={(event, newValue) => {
@@ -537,12 +530,7 @@ function EditEmployeeModal({
                   setTouched((prev) => ({ ...prev, designation: true }))
                 }
                 renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label="Designation"
-                    fullWidth
-                    disabled={viewOnly}
-                  />
+                  <TextField {...params} label="Designation" fullWidth />
                 )}
               />
             </Box>

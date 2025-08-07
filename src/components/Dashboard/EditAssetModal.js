@@ -39,7 +39,6 @@ function EditAssetModal({
   const [warrantyDate, setWarrantyDate] = useState("");
   const [status, setStatus] = useState("UnAssigned");
   const [assignedDate, setAssignedDate] = useState("");
-  const [scrapDate, setScrapDate] = useState("");
   const [addedBy] = useState(user.empId);
   const [assignedBy, setAssignedBy] = useState("");
   const [empId, setEmpId] = useState("");
@@ -100,7 +99,6 @@ function EditAssetModal({
       setWarrantyDate(asset.warrantyDate || "");
       setStatus(asset.status || "UnAssigned");
       setAssignedDate(asset.assignedDate || "");
-      setScrapDate(asset.scrapDate || "");
       setType(asset.type || "");
       setLocation(asset.location || "");
       setAssetSourcedBy(asset.assetSourcedBy || "");
@@ -185,8 +183,7 @@ function EditAssetModal({
       addedBy,
       assignedBy,
       empId,
-      assignedDate: status === "Assigned" ? assignedDate : null,
-      scrapDate: status === "Scrap" ? scrapDate : null,
+      assignedDate,
     };
 
     const changedFields = {};
@@ -325,10 +322,10 @@ function EditAssetModal({
                   name="location"
                   label="Location"
                   fullWidth
-                  disabled={viewOnly}
                   className={blinkClass(!location && touched.location)}
                 />
               )}
+              disabled={viewOnly}
             />
           </Box>
 
@@ -384,6 +381,7 @@ function EditAssetModal({
               This field is required *
             </span>
             <Autocomplete
+              disabled={viewOnly}
               freeSolo
               options={typeOptions}
               value={customType || type}
@@ -413,7 +411,6 @@ function EditAssetModal({
                   name="type"
                   label="Asset Type"
                   fullWidth
-                  disabled={viewOnly}
                   className={blinkClass(!type && touched.type)}
                 />
               )}
@@ -421,30 +418,14 @@ function EditAssetModal({
           </Box>
 
           {/* Assigned Date */}
-          {isAssigned && (
+          {(isAssigned || isScrap) && (
             <Box sx={{ display: "flex", flexDirection: "column" }}>
               <span style={errorStyle(false)}> </span>
               <TextField
-                label="Assigned Date"
+                label={isScrap ? "Scraped Date" : "Assigned Date"}
                 type="date"
                 value={assignedDate}
                 onChange={(e) => setAssignedDate(e.target.value)}
-                InputLabelProps={{ shrink: true }}
-                fullWidth
-                disabled={true}
-              />
-            </Box>
-          )}
-
-          {/* Scrap Date */}
-          {isScrap && (
-            <Box sx={{ display: "flex", flexDirection: "column" }}>
-              <span style={errorStyle(false)}> </span>
-              <TextField
-                label="Scrap Date"
-                type="date"
-                value={scrapDate}
-                onChange={(e) => setScrapDate(e.target.value)}
                 InputLabelProps={{ shrink: true }}
                 fullWidth
                 disabled={true}
@@ -533,6 +514,7 @@ function EditAssetModal({
             </span>
             <Autocomplete
               freeSolo
+              disabled={viewOnly}
               options={assetSourceOptions}
               value={assetSourcedBy}
               onChange={(event, newValue) => {
@@ -555,7 +537,6 @@ function EditAssetModal({
                   name="assetSourcedBy"
                   label="Asset Sourced By"
                   fullWidth
-                  disabled={viewOnly}
                   className={blinkClass(
                     !assetSourcedBy && touched.assetSourcedBy
                   )}
