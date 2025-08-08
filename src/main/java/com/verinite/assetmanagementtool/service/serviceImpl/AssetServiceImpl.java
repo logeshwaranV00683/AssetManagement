@@ -148,7 +148,18 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
         if (asset.getSerialNumber() != null)
             existingAsset.setSerialNumber(asset.getSerialNumber());
         if (asset.getStatus() != null && !oldStatus.equalsIgnoreCase("Assigned"))
-            existingAsset.setStatus(asset.getStatus());
+            {
+                 if(asset.getStatus().equalsIgnoreCase("Scrap")&&asset.getAssignedBy() != null && existingAsset.getAssignedBy() == null&&asset.getAssignedDate() != null && existingAsset.getAssignedDate() == null)
+                 {
+                     existingAsset.setAssignedDate(asset.getAssignedDate());
+                     existingAsset.setAssignedBy(asset.getAssignedBy());
+                     existingAsset.setStatus("Scrap");
+                 }else {
+                     existingAsset.setAssignedDate(null);
+                     existingAsset.setAssignedBy(null);
+                     existingAsset.setStatus("Unassigned");
+                 }
+            }
         if (asset.getType() != null)
             existingAsset.setType(asset.getType());
         if (asset.getAddedBy() != null)
@@ -163,10 +174,6 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
             existingAsset.setLocation(asset.getLocation());
         if (asset.getReturnDate() != null && existingAsset.getReturnDate() == null)
             existingAsset.setReturnDate(asset.getReturnDate());
-        if (asset.getAssignedDate() != null && existingAsset.getAssignedDate() == null)
-            existingAsset.setAssignedDate(asset.getAssignedDate());
-        if (asset.getAssignedBy() != null && existingAsset.getAssignedBy() == null)
-            existingAsset.setAssignedBy(asset.getAssignedBy());
         if (asset.getAssertSourcedBy() != null)
             existingAsset.setAssetSourcedBy(asset.getAssertSourcedBy());
 
