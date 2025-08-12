@@ -68,6 +68,7 @@ CREATE TABLE `tbl_assigned_assets` (
   `emp_id` varchar(255) DEFAULT NULL,
   `serial_number` varchar(255) DEFAULT NULL,
   `status` varchar(255) DEFAULT NULL,
+  `type` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`assigned_assets_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
