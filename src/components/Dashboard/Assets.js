@@ -421,6 +421,7 @@ function Assets() {
                     variant="outlined"
                     onChange={handleSearch}
                     value={filterValue}
+                    placeholder="Search"
                     fullWidth
                     sx={{
                       "& .MuiOutlinedInput-root": {

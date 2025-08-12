@@ -355,6 +355,7 @@ function Employee() {
                     variant="outlined"
                     onChange={handleSearch}
                     value={filterValue}
+                    placeholder="Search"
                     fullWidth
                     sx={{
                       "& .MuiOutlinedInput-root": {
@@ -375,8 +376,6 @@ function Employee() {
                       "& .MuiInputLabel-root": {
                         fontFamily: "'Racing Sans One', sans-serif",
                         fontSize: "1rem",
-                        color: "#083A40",
-                        transform: "translate(14px, 16px) scale(1)",
                         transition: "all 0.2s ease",
                       },
                       "& .MuiInputLabel-root.Mui-focused": {
