@@ -154,18 +154,22 @@ function AddEmployeeModal({ open, handleClose, refreshEmployeeList }) {
       toast.error("Please fill all required fields!");
       return;
     }
+        const formatType = (value) => {
+  if (!value) return value; 
+  return value.charAt(0).toUpperCase() + value.slice(1).toLowerCase();
+};
 
     const newEmployee = {
-      empId,
-      firstName,
-      lastName,
+      empId:formatType(empId),
+      firstName:formatType(firstName),
+      lastName:formatType(lastName),
       role,
       mail,
       mobile,
-      location,
+      location:formatType(location),
       status,
-      department,
-      designation,
+      department:formatType(department),
+      designation:formatType(designation),
     };
 
     try {
@@ -311,7 +315,7 @@ function AddEmployeeModal({ open, handleClose, refreshEmployeeList }) {
                 setTouched((prev) => ({ ...prev, location: true }))
               }
               renderInput={(params) => (
-                <TextField {...params} label="Location" fullWidth />
+                <TextField {...params} label="Location" fullWidth placeholder="Enter The Location If not in Below List"/>
               )}
             />
           </Box>
@@ -371,7 +375,7 @@ function AddEmployeeModal({ open, handleClose, refreshEmployeeList }) {
                 setTouched((prev) => ({ ...prev, department: true }))
               }
               renderInput={(params) => (
-                <TextField {...params} label="Department" fullWidth />
+                <TextField {...params} label="Department" fullWidth placeholder="Enter The Department If not in Below List" />
               )}
             />
           </Box>
@@ -431,7 +435,7 @@ function AddEmployeeModal({ open, handleClose, refreshEmployeeList }) {
                 setTouched((prev) => ({ ...prev, designation: true }))
               }
               renderInput={(params) => (
-                <TextField {...params} label="Designation" fullWidth />
+                <TextField {...params} label="Designation" fullWidth placeholder="Enter The Designation If not in Below List"/>
               )}
             />
           </Box>

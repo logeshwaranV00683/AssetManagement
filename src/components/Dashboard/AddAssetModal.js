@@ -144,20 +144,25 @@ function AddAssetModal({ open, handleClose, refreshAssetList }) {
       return;
     }
 
+    const formatType = (value) => {
+  if (!value) return value; 
+  return value.charAt(0).toUpperCase() + value.slice(1).toLowerCase();
+};
+
     const finalType = type === "__custom__" ? customType : type;
 
     const newAsset = {
-      assetName,
-      serialNumber,
-      location,
+      assetName:formatType(assetName),
+      serialNumber:formatType(serialNumber),
+      location:formatType(location),
       status,
-      type: finalType,
+      type: formatType(finalType),
       operatingSystem: operatingSystem.trim() || "Nill",
       modelName: modelName.trim() || "Nill",
       purchaseDate,
       warrantyDate,
       addedBy,
-      assetSourcedBy,
+      assetSourcedBy:formatType(assetSourcedBy),
     };
 
     console.log("Asset added:", newAsset);
@@ -341,6 +346,7 @@ function AddAssetModal({ open, handleClose, refreshAssetList }) {
                   label="Location"
                   fullWidth
                   required
+                  placeholder="Enter The Location If not in Below List"
                   className={blinkClass(!location && touched.location)}
                 />
               )}
@@ -385,6 +391,7 @@ function AddAssetModal({ open, handleClose, refreshAssetList }) {
                   label="Asset Type"
                   fullWidth
                   required
+                  placeholder="Enter The Type If not in Below List"
                   className={blinkClass(!type && touched.type)}
                 />
               )}
@@ -490,6 +497,7 @@ function AddAssetModal({ open, handleClose, refreshAssetList }) {
                   label="Asset Sourced By"
                   fullWidth
                   required
+                  placeholder="Enter The SourcedBy If not in Below List"
                   className={blinkClass(
                     !assetSourcedBy && touched.assetSourcedBy
                   )}
