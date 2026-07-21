@@ -19,6 +19,7 @@ public class EmployeeDto {
     @NotBlank
     private String empId;
     @NotBlank(groups = NotBlank.class)
+    @NotNull
     @Pattern(regexp = "^(?i)[a-z]+(?:[ '-][a-z]+)*$", message = "First Name must contain only letters, spaces, or hyphens")
     private String firstName;
     @NotBlank(groups = NotBlank.class)
