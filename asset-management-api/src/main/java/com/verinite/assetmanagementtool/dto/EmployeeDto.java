@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 @Data
@@ -14,6 +15,8 @@ import javax.validation.constraints.Pattern;
 public class EmployeeDto {
 
     @Pattern(regexp = "^(V\\d{5})?$", message = "Must be V followed by 5 digits or empty")
+    @NotNull
+    @NotBlank
     private String empId;
     @NotBlank(groups = NotBlank.class)
     @Pattern(regexp = "^(?i)[a-z]+(?:[ '-][a-z]+)*$", message = "First Name must contain only letters, spaces, or hyphens")
