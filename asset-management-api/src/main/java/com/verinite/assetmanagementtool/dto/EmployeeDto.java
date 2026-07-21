@@ -22,6 +22,7 @@ public class EmployeeDto {
     @NotNull
     @Pattern(regexp = "^(?i)[a-z]+(?:[ '-][a-z]+)*$", message = "First Name must contain only letters, spaces, or hyphens")
     private String firstName;
+    @NotNull
     @NotBlank(groups = NotBlank.class)
     @Pattern(regexp = "^(?i)[a-z]+(?:[ '-][a-z]+)*$", message = "Last Name must contain only letters, spaces, or hyphens")
     private String lastName;
@@ -35,12 +36,14 @@ public class EmployeeDto {
     @NotBlank(groups = NotBlank.class)
     @Pattern(regexp = "^(0|\\+91)?[6-9]\\d{9}$", message = "Valid Mobile Number Needed")
     private String mobile;
+    @NotNull
     @NotBlank(groups = NotBlank.class)
     @Pattern(regexp = "^(?i)[a-z]+(?:[ '-][a-z]+)*$", message = "Location must contain only letters, spaces, or hyphens")
     private String location;
     @NotBlank(groups = NotBlank.class)
     @Pattern(regexp = "^(?i)(Active|Inactive)?$", message = "status can be Active or Inactive")
     private String status;
+    @NotNull
     @NotBlank(groups = NotBlank.class)
     @Pattern(regexp = "^(?i)[a-z]+(?:[ '-][a-z]+)*$", message = "Department must contain only letters, spaces, or hyphens")
     private String department;
