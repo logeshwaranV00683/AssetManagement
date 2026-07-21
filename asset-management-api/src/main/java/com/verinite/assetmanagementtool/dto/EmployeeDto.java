@@ -4,10 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
+import javax.validation.constraints.*;
 
 @Data
 @NoArgsConstructor
@@ -21,7 +18,9 @@ public class EmployeeDto {
     @NotBlank(groups = NotBlank.class)
     @NotNull
     @Pattern(regexp = "^(?i)[a-z]+(?:[ '-][a-z]+)*$", message = "First Name must contain only letters, spaces, or hyphens")
+    @Size(min = 3,max = 20, message = "First name cannot exceeds more than 20 characters and cannot be below 3 characters")
     private String firstName;
+    @NotNull
     @NotBlank(groups = NotBlank.class)
     @Pattern(regexp = "^(?i)[a-z]+(?:[ '-][a-z]+)*$", message = "Last Name must contain only letters, spaces, or hyphens")
     private String lastName;
@@ -30,17 +29,22 @@ public class EmployeeDto {
     private String role;
     @NotBlank(groups = NotBlank.class)
     @Email
+    @NotNull
     @Pattern(regexp = "^[A-Za-z0-9+_.-]+@([A-Za-z_]+\\.)[A-Za-z]{2,3}$", message = "Invalid email address")
+    @Size(max = 254, message = "Email address cannot exceed 254 characters")
     private String mail;
     @NotBlank(groups = NotBlank.class)
+    @NotNull
     @Pattern(regexp = "^(0|\\+91)?[6-9]\\d{9}$", message = "Valid Mobile Number Needed")
     private String mobile;
+    @NotNull
     @NotBlank(groups = NotBlank.class)
     @Pattern(regexp = "^(?i)[a-z]+(?:[ '-][a-z]+)*$", message = "Location must contain only letters, spaces, or hyphens")
     private String location;
     @NotBlank(groups = NotBlank.class)
     @Pattern(regexp = "^(?i)(Active|Inactive)?$", message = "status can be Active or Inactive")
     private String status;
+    @NotNull
     @NotBlank(groups = NotBlank.class)
     @Pattern(regexp = "^(?i)[a-z]+(?:[ '-][a-z]+)*$", message = "Department must contain only letters, spaces, or hyphens")
     private String department;
