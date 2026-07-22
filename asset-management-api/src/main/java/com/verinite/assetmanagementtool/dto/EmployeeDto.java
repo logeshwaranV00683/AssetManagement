@@ -11,7 +11,7 @@ import javax.validation.constraints.*;
 @AllArgsConstructor
 public class EmployeeDto {
 
-    @Pattern(regexp = "^(V\\d{5})?$", message = "Must be V followed by 5 digits or empty")
+    @Pattern(regexp = "^(V\\d{5})?$", message = "Must be V followed by 5 digits")
     @NotNull
     @NotBlank
     private String empId;
