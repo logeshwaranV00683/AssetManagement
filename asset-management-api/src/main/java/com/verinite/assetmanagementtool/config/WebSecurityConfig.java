@@ -13,10 +13,16 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.firewall.HttpFirewall;
+import org.springframework.security.web.firewall.HttpStatusRequestRejectedHandler;
+import org.springframework.security.web.firewall.RequestRejectedHandler;
+import org.springframework.security.web.firewall.StrictHttpFirewall;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 
@@ -95,5 +101,27 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         };
 
     }
+    @Bean
+    public RequestRejectedHandler rejectedHandler(){
+        return (request, response, ex) ->{
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+
+            String timestamp= OffsetDateTime.now().toString();
+
+            response.getWriter().write("""
+                    "timestamp": "%s",
+                    "status": 400,
+                    "error": "Invalid HTTP Request"
+                    "path": "%s"
+                    """.formatted(timestamp,request.getRequestURI()));
+
+            response.getWriter().flush();
+
+        };
+    }
+
+
 
 }
