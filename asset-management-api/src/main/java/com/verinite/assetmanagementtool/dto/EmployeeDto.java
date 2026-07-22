@@ -23,7 +23,9 @@ public class EmployeeDto {
     @NotNull
     @NotBlank(groups = NotBlank.class)
     @Pattern(regexp = "^(?i)[a-z]+(?:[ '-][a-z]+)*$", message = "Last Name must contain only letters, spaces, or hyphens")
+    @Size(max = 20, message = "Last name cannot exceeds more than 20 characters")
     private String lastName;
+    @NotNull
     @NotBlank(groups = NotBlank.class)
     @Pattern(regexp = "^(?i)(Employee|Admin)?$", message = "Role can be Admin or Employee")
     private String role;
@@ -31,7 +33,7 @@ public class EmployeeDto {
     @Email
     @NotNull
     @Pattern(regexp = "^[A-Za-z0-9+_.-]+@([A-Za-z_]+\\.)[A-Za-z]{2,3}$", message = "Invalid email address")
-    @Size(max = 254, message = "Email address cannot exceed 254 characters")
+    @Size(max = 50, message = "Email address cannot exceed 50 characters")
     private String mail;
     @NotBlank(groups = NotBlank.class)
     @NotNull
@@ -40,14 +42,17 @@ public class EmployeeDto {
     @NotNull
     @NotBlank(groups = NotBlank.class)
     @Pattern(regexp = "^(?i)[a-z]+(?:[ '-][a-z]+)*$", message = "Location must contain only letters, spaces, or hyphens")
+    @Size(max =30,message = "Location Cannot Exceed More Than 30 Characters")
     private String location;
     @NotBlank(groups = NotBlank.class)
     @Pattern(regexp = "^(?i)(Active|Inactive)?$", message = "status can be Active or Inactive")
     private String status;
     @NotNull
+    @Size(max = 30, message = "Department Cannot Exceed More Than 30 Characters")
     @NotBlank(groups = NotBlank.class)
     @Pattern(regexp = "^(?i)[a-z]+(?:[ '-][a-z]+)*$", message = "Department must contain only letters, spaces, or hyphens")
     private String department;
+    @Size(max = 30, message = "Designation Cannot Exceed More Than 30 Characters")
     @NotBlank(groups = NotBlank.class)
     @Pattern(regexp = "^(?i)[a-z]+(?:[ '-][a-z]+)*$", message = "Designation must contain only letters, spaces, or hyphens")
     @NotNull
