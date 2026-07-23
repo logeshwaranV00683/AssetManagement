@@ -197,11 +197,11 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
 
-    public Object updateEmp(String empId, EmployeeDto employee) {
+    public ResponseEntity<?> updateEmp(String empId, EmployeeDto employee) {
+        EmployeeEntity existingEmployee = employeeRepo.findByEmpId(empId);
         try {
-            EmployeeEntity existingEmployee = employeeRepo.findByEmpId(empId);
             if (existingEmployee == null) {
-                return "Record not found for ID: " + empId;
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Employee Not Found With This ID: " + empId);
             }
             if (employee.getDepartment() != null) {
                 existingEmployee.setDepartment(employee.getDepartment());
@@ -218,14 +218,35 @@ public class EmployeeServiceImpl implements EmployeeService {
             if (employee.getLocation() != null) {
                 existingEmployee.setLocation(employee.getLocation());
             }
-            if (employee.getMail() != null) {
-                existingEmployee.setMail(employee.getMail());
+
+
+            if (employee.getMail() != null &&
+                    !employee.getMail().equalsIgnoreCase(existingEmployee.getMail()) &&
+                    employeeRepo.existsByMail(employee.getMail())) {
+
+                return ResponseEntity.status(HttpStatus.CONFLICT)
+                        .body("Email Already Exists!");
             }
-            if (employee.getMobile() != null) {
-                existingEmployee.setMobile(employee.getMobile());
+
+
+           if(employee.getMail()!=null) existingEmployee.setMail(employee.getMail());
+
+
+           if (employee.getMobile() != null &&
+                    !employee.getMobile().equals(existingEmployee.getMobile()) &&
+                    employeeRepo.existsByMobile(employee.getMobile())) {
+
+                return ResponseEntity.status(HttpStatus.CONFLICT)
+                        .body("Mobile Number Already Exists!");
             }
+
+            if (employee.getMobile() != null) existingEmployee.setMobile(employee.getMobile());
+
+
             if (employee.getStatus() != null) {
-                if (employee.getStatus().equalsIgnoreCase("Inactive") && adminRegistrationRepository.existsByEmpId(employee.getEmpId())) {
+                String status = employee.getStatus().trim();
+                String formatStatus = status.substring(0, 1).toUpperCase() + status.substring(1).toLowerCase();
+                if (formatStatus.equalsIgnoreCase("Inactive") && adminRegistrationRepository.existsByEmpId(employee.getEmpId())) {
                     existingEmployee.setStatus(employee.getStatus());
                     adminServiceImpl.deleteAdmin(existingEmployee.getEmpId());
                 } else {
@@ -248,12 +269,14 @@ public class EmployeeServiceImpl implements EmployeeService {
                     if (existingEmployee.getRole().equalsIgnoreCase("Admin")) {
                         adminServiceImpl.deleteAdmin(existingEmployee.getEmpId());
                     }
+                    existingEmployee.setRole("Employee");
                 }
             }
-            return employeeRepo.save(existingEmployee);
         } catch (Exception e) {
-            return "Error updating record with ID: " + empId + ". Error: " + e.getMessage();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(e.getMessage());
         }
+        return ResponseEntity.ok(employeeRepo.save(existingEmployee));
     }
 
     @Override
