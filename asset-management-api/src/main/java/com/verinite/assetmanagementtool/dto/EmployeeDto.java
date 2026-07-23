@@ -44,6 +44,7 @@ public class EmployeeDto {
     @Pattern(regexp = "^(?i)[a-z]+(?:[ '-][a-z]+)*$", message = "Location must contain only letters, spaces, or hyphens")
     @Size(max =30,message = "Location Cannot Exceed More Than 30 Characters")
     private String location;
+    @NotNull
     @NotBlank(groups = NotBlank.class)
     @Pattern(regexp = "^(?i)(Active|Inactive)?$", message = "status can be Active or Inactive")
     private String status;
