@@ -99,12 +99,8 @@ public class EmployeeController {
     @PutMapping("/updateEmp/{empId}")
     public ResponseEntity<?> updateEmployee(@PathVariable String empId, @RequestBody @Valid EmployeeDto employee) {
         try {
-            Object result = employeeService.updateEmp(empId, employee);
-            if (result instanceof EmployeeEntity) {
-                return ResponseEntity.ok(result);
-            } else {
-                return ResponseEntity.badRequest().body(result);
-            }
+            return employeeService.updateEmp(empId, employee);
+
         } catch (Exception e) {
             return ResponseEntity.status(500).body("An error occurred while updating the employee: " + e.getMessage());
         }
