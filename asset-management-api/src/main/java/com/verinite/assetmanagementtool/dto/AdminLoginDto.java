@@ -16,6 +16,6 @@ public class AdminLoginDto {
     @NotNull
     private String empId;
     @NotBlank
-    @Size(min = 8, max = 15, message = "Password must be between 8 and 20 characters")
+    @Size(min = 8, max = 15, message = "Invalid Password")
     private String password;
 }
