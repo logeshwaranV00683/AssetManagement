@@ -4,6 +4,7 @@ import com.verinite.assetmanagementtool.dto.EmployeeDto;
 import com.verinite.assetmanagementtool.dto.EmployeeExportDto;
 import com.verinite.assetmanagementtool.entity.EmployeeEntity;
 import com.verinite.assetmanagementtool.service.serviceImpl.EmployeeServiceImpl;
+import com.verinite.assetmanagementtool.validation.ValidationGroups;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -18,6 +19,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import javax.validation.groups.Default;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URLEncoder;
@@ -33,7 +35,7 @@ public class EmployeeController {
     EmployeeServiceImpl employeeService;
 
     @PostMapping("employee/saveemployee")
-    public ResponseEntity<?> saveEmployee(@RequestBody @Valid @Validated(NotBlank.class) EmployeeDto employeeDTO) {
+    public ResponseEntity<?> saveEmployee(@RequestBody @Validated({Default.class, ValidationGroups.OnCreate.class}) EmployeeDto employeeDTO) {
         try {
             EmployeeDto savedEmployee = employeeService.saveEmployee(employeeDTO);
             return ResponseEntity.status(HttpStatus.CREATED).body(savedEmployee);
@@ -97,7 +99,7 @@ public class EmployeeController {
 
 
     @PutMapping("/updateEmp/{empId}")
-    public ResponseEntity<?> updateEmployee(@PathVariable String empId, @RequestBody @Valid EmployeeDto employee) {
+    public ResponseEntity<?> updateEmployee(@PathVariable String empId, @RequestBody @Validated({Default.class, ValidationGroups.OnUpdate.class}) EmployeeDto employee) {
         try {
             return employeeService.updateEmp(empId, employee);
 
