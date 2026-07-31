@@ -6,10 +6,12 @@ import com.verinite.assetmanagementtool.dto.AssignableAssetDto;
 import com.verinite.assetmanagementtool.entity.AssetsEntity;
 import com.verinite.assetmanagementtool.entity.AssignedAssetsEntity;
 import com.verinite.assetmanagementtool.entity.CountOfAssetsEntity;
+import com.verinite.assetmanagementtool.exceptionhandler.InvalidDateException;
 import com.verinite.assetmanagementtool.repository.*;
 import com.verinite.assetmanagementtool.response.SaveAssetResponse;
 import com.verinite.assetmanagementtool.service.AssetService;
 import com.verinite.assetmanagementtool.service.AssetsHistoryServices;
+import com.verinite.assetmanagementtool.validation.ValidationGroups;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -22,6 +24,7 @@ import org.springframework.stereotype.Service;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
+import javax.validation.groups.Default;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -63,10 +66,22 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
 
     public ResponseEntity<AssetsDto> saveAsset(AssetsDto assetDto) {
         ModelMapper modelMapper = new ModelMapper();
+        LocalDate threeMonths = LocalDate.now().minusMonths(3);
+        // assetDto.setAssignedDate(LocalDate.now());
+        assetDto.setEmpId("");
+        if (assetDto.getPurchaseDate().isBefore(threeMonths) && !assetDto.getPurchaseDate().equals(LocalDate.now())) {
+            throw new InvalidDateException("Purchase Date cannot be in future and it can be before 3 months from current date");
+
+        }
+
         AssetsEntity assets = modelMapper.map(assetDto, AssetsEntity.class);
 
         if (assets.getWarrantyDate().isBefore(assets.getPurchaseDate())) {
-            throw new IllegalArgumentException("Warranty Date must not be before Purchase Date");
+            throw new InvalidDateException("Warranty Date must not be before Purchase Date");
+        }
+
+        if (assets.getAssignedDate().isBefore(assets.getPurchaseDate())) {
+            throw new InvalidDateException("Assigned Date must not be before Purchase Date");
         }
 
         if (assetRepo.existsBySerialNumber(assetDto.getSerialNumber())) {
@@ -106,7 +121,13 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
 
         assetCountRepository.save(countEntity);
 
-        return ResponseEntity.ok(modelMapper.map(assets, AssetsDto.class));
+
+        AssetsEntity bySerialNumber = assetRepo.findBySerialNumber(assetDto.getSerialNumber());
+        AssetsDto data = modelMapper.map(assets, AssetsDto.class);
+        data.setAssetId(bySerialNumber.getAssetId());
+
+
+        return ResponseEntity.ok(data);
     }
 
 
@@ -558,7 +579,7 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
                 skippedData.put(asset.getSerialNumber(), "Skipping row due to already exist serial number while importing Unassigned Asset");
                 continue;
             }
-            Set<ConstraintViolation<AssetsDto>> violations = validator.validate(asset);
+            Set<ConstraintViolation<AssetsDto>> violations = validator.validate(asset, Default.class);
             if (!violations.isEmpty()) {
                 StringBuilder sb = new StringBuilder();
                 for (ConstraintViolation<AssetsDto> v : violations) {
@@ -608,7 +629,7 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
                 asset.setAssignedBy(getCellValue(row, 12));
                 asset.setAssetSourcedBy(getCellValue(row, 13));
                 asset.setAssignedDate(parseDateSafe(getCellValue(row, 11)));
-                Set<ConstraintViolation<AssetsDto>> violations = validator.validate(asset);
+                Set<ConstraintViolation<AssetsDto>> violations = validator.validate(asset, Default.class, ValidationGroups.OnAssigned.class);
                 if (!violations.isEmpty()) {
                     StringBuilder sb = new StringBuilder();
                     for (ConstraintViolation<AssetsDto> v : violations) {
@@ -711,7 +732,10 @@ public class AssetServiceImpl implements AssetService, ApplicationRunner {
             asset.setModelName(getCellValue(row, 9));
             asset.setAddedBy(getCellValue(row, 10));
             asset.setAssetSourcedBy(getCellValue(row, 11));
-            Set<ConstraintViolation<AssetsDto>> violations = validator.validate(asset);
+            Set<ConstraintViolation<AssetsDto>> violations = "Assigned".equalsIgnoreCase(asset.getStatus())
+                    ? validator.validate(asset, Default.class, ValidationGroups.OnAssigned.class)
+                    : validator.validate(asset, Default.class);
+
             if (!violations.isEmpty()) {
                 StringBuilder sb = new StringBuilder();
                 for (ConstraintViolation<AssetsDto> v : violations) {
