@@ -1,5 +1,6 @@
 package com.verinite.assetmanagementtool.dto;
 
+import com.verinite.assetmanagementtool.validation.ValidationGroups;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,46 +16,46 @@ public class EmployeeDto {
     @NotNull
     @NotBlank
     private String empId;
-    @NotBlank(groups = NotBlank.class)
+    @NotBlank(groups = ValidationGroups.OnCreate.class)
     @NotNull
     @Pattern(regexp = "^(?i)[a-z]+(?:[ '-][a-z]+)*$", message = "First Name must contain only letters, spaces, or hyphens")
     @Size(min = 3,max = 20, message = "First name cannot exceeds more than 20 characters and cannot be below 3 characters")
     private String firstName;
     @NotNull
-    @NotBlank(groups = NotBlank.class)
+    @NotBlank(groups = ValidationGroups.OnCreate.class)
     @Pattern(regexp = "^(?i)[a-z]+(?:[ '-][a-z]+)*$", message = "Last Name must contain only letters, spaces, or hyphens")
     @Size(max = 20, message = "Last name cannot exceeds more than 20 characters")
     private String lastName;
     @NotNull
-    @NotBlank(groups = NotBlank.class)
+    @NotBlank(groups = ValidationGroups.OnCreate.class)
     @Pattern(regexp = "^(?i)(Employee|Admin)?$", message = "Role can be Admin or Employee")
     private String role;
-    @NotBlank(groups = NotBlank.class)
+    @NotBlank(groups = ValidationGroups.OnCreate.class)
     @Email
     @NotNull
     @Pattern(regexp = "^[A-Za-z0-9+_.-]+@([A-Za-z_]+\\.)[A-Za-z]{2,3}$", message = "Invalid email address")
     @Size(max = 50, message = "Email address cannot exceed 50 characters")
     private String mail;
-    @NotBlank(groups = NotBlank.class)
+    @NotBlank(groups = ValidationGroups.OnCreate.class)
     @NotNull
     @Pattern(regexp = "^(0|\\+91)?[6-9]\\d{9}$", message = "Valid Mobile Number Needed")
     private String mobile;
     @NotNull
-    @NotBlank(groups = NotBlank.class)
+    @NotBlank(groups = ValidationGroups.OnCreate.class)
     @Pattern(regexp = "^(?i)[a-z]+(?:[ '-][a-z]+)*$", message = "Location must contain only letters, spaces, or hyphens")
     @Size(max =30,message = "Location Cannot Exceed More Than 30 Characters")
     private String location;
     @NotNull
-    @NotBlank(groups = NotBlank.class)
+    @NotBlank(groups = ValidationGroups.OnCreate.class)
     @Pattern(regexp = "^(?i)(Active|Inactive)?$", message = "status can be Active or Inactive")
     private String status;
     @NotNull
     @Size(max = 30, message = "Department Cannot Exceed More Than 30 Characters")
-    @NotBlank(groups = NotBlank.class)
+    @NotBlank(groups = ValidationGroups.OnCreate.class)
     @Pattern(regexp = "^(?i)[a-z]+(?:[ '-][a-z]+)*$", message = "Department must contain only letters, spaces, or hyphens")
     private String department;
     @Size(max = 30, message = "Designation Cannot Exceed More Than 30 Characters")
-    @NotBlank(groups = NotBlank.class)
+    @NotBlank(groups = ValidationGroups.OnCreate.class)
     @Pattern(regexp = "^(?i)[a-z]+(?:[ '-][a-z]+)*$", message = "Designation must contain only letters, spaces, or hyphens")
     @NotNull
     private String designation;
