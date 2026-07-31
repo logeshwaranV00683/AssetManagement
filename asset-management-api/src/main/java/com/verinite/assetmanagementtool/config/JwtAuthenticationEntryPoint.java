@@ -27,10 +27,12 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint, Se
         String timestamp= OffsetTime.now().toString();
 
         response.getWriter().write("""
+                {
                 "timestamp": "%s",
                  "status": 401,
                  "error": "Unauthorized",
                  "message": "Invalid or Expired Token"
+                 }
                 """.formatted(timestamp));
 
         response.getWriter().flush();
