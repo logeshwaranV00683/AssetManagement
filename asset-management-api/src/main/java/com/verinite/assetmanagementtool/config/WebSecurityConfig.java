@@ -1,5 +1,9 @@
 package com.verinite.assetmanagementtool.config;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.deser.std.StdScalarDeserializer;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.verinite.assetmanagementtool.service.JwtUserDetailsServie;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -13,15 +17,13 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.firewall.HttpFirewall;
-import org.springframework.security.web.firewall.HttpStatusRequestRejectedHandler;
 import org.springframework.security.web.firewall.RequestRejectedHandler;
-import org.springframework.security.web.firewall.StrictHttpFirewall;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.Collections;
@@ -111,15 +113,29 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             String timestamp= OffsetDateTime.now().toString();
 
             response.getWriter().write("""
+                    {
                     "timestamp": "%s",
                     "status": 400,
-                    "error": "Invalid HTTP Request"
+                    "error": "Invalid HTTP Request",
                     "path": "%s"
+                    }
                     """.formatted(timestamp,request.getRequestURI()));
 
             response.getWriter().flush();
 
         };
+    }
+
+    @Bean
+    public SimpleModule stringTrimModule() {
+        SimpleModule module = new SimpleModule();
+        module.addDeserializer(String.class, new StdScalarDeserializer<String>(String.class) {
+            @Override
+            public String deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
+                return p.getValueAsString() != null ? p.getValueAsString().trim() : null;
+            }
+        });
+        return module;
     }
 
 
